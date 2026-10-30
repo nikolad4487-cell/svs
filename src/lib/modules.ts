@@ -1,0 +1,77 @@
+export const modules = [
+  {
+    slug: "portal",
+    name: "Centralni portal",
+    description: "Vaše akademske aktivnosti na jednom mjestu.",
+    icon: "LayoutDashboard",
+    color: "blue",
+    items: ["Pregled", "Osobni podaci", "Obavijesti"],
+  },
+  {
+    slug: "studomat",
+    name: "Studomat",
+    description: "Studij, kolegiji, ispitni rokovi i ocjene.",
+    icon: "GraduationCap",
+    color: "indigo",
+    items: ["Pregled studija", "Kolegiji", "Ispiti", "Ocjene", "ECTS bodovi"],
+  },
+  {
+    slug: "merlin",
+    name: "E-učenje",
+    description: "Materijali, zadaci i prostor za učenje.",
+    icon: "BookOpen",
+    color: "violet",
+    items: ["Moji kolegiji", "Zadaci", "Materijali", "Kvizovi"],
+  },
+  {
+    slug: "webmail",
+    name: "Webmail",
+    description: "Povežite svoju akademsku elektroničku poštu.",
+    icon: "Mail",
+    color: "cyan",
+    items: ["Povezivanje usluge", "Informacije"],
+  },
+  {
+    slug: "isvu",
+    name: "Administracija studija",
+    description: "Studijski programi i akademske evidencije.",
+    icon: "LibraryBig",
+    color: "blue",
+    items: ["Pregled", "Studijski programi", "Upisi", "Akademske godine"],
+  },
+  {
+    slug: "referada",
+    name: "Studentska referada",
+    description: "Zahtjevi, potvrde i podrška tijekom studija.",
+    icon: "Files",
+    color: "emerald",
+    items: ["Moji zahtjevi", "Potvrde", "Dokumenti"],
+  },
+  {
+    slug: "raspored",
+    name: "Raspored",
+    description: "Nastava, ispitni rokovi i akademski kalendar.",
+    icon: "CalendarDays",
+    color: "amber",
+    items: ["Tjedni raspored", "Kalendar", "Dvorane"],
+  },
+  {
+    slug: "auth",
+    name: "Prijava u sustav",
+    description: "Jedan korisnički račun za sve vaše module.",
+    icon: "KeyRound",
+    color: "slate",
+    items: ["Prijava", "Sigurnost računa"],
+  },
+  {
+    slug: "admin",
+    name: "Administracija sustava",
+    description: "Ustanove, ovlasti i konfiguracija platforme.",
+    icon: "ShieldCheck",
+    color: "rose",
+    items: ["Pregled sustava", "Ustanove", "Korisnici", "Moduli"],
+  },
+] as const;
+export type ModuleSlug = (typeof modules)[number]["slug"];
+export const isModule = (value: string): value is ModuleSlug =>
+  modules.some((m) => m.slug === value);
