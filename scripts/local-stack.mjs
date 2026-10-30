@@ -2,6 +2,7 @@
 // This is not a full Supabase CLI stack and is never a production deployment.
 import { execFileSync, spawn } from "node:child_process";
 import {
+  readdirSync,
   readFileSync,
   writeFileSync,
   existsSync,
@@ -195,7 +196,17 @@ await wait(async () => (await fetch("http://127.0.0.1:54325/health")).ok);
 sql(
   `create or replace function auth.uid() returns uuid language sql stable as $$ select (nullif(current_setting('request.jwt.claims',true),'')::jsonb->>'sub')::uuid $$; create or replace function auth.jwt() returns jsonb language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb $$;`,
 );
-sql(readFileSync("supabase/migrations/202610300001_identity.sql", "utf8"));
+for (const migration of readdirSync("supabase/migrations")
+  .filter((n) => n.endsWith(".sql"))
+  .sort())
+  sql(readFileSync(`supabase/migrations/${migration}`, "utf8"));
+sql(
+  "create table public.local_test_migrations(name text primary key); revoke all on public.local_test_migrations from public,anon,authenticated;",
+);
+for (const migration of readdirSync("supabase/migrations").filter((n) =>
+  n.endsWith(".sql"),
+))
+  sql(`insert into public.local_test_migrations values('${migration}');`);
 sql(readFileSync("supabase/seed.sql", "utf8"));
 run(names[2], "ghcr.io/supabase/postgrest:v16.5", ["54326:3000"], {
   PGRST_DB_URI: `postgres://authenticator:${dbpass}@svs-test-db:5432/postgres`,

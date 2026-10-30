@@ -8,7 +8,9 @@ Modularna hrvatska platforma visokog obrazovanja: Next.js 16 App Router, TypeScr
 
 **Faza 2:** serverska prijava, registracija po pozivu, potvrda e-pošte, reset/promjena lozinke, SSO kolačići za vlastitu roditeljsku domenu, upravljanje i opoziv sesija, profili, ustanove, višestruka članstva/uloge, administrativni zapisnik i RLS. Detaljne upute i sigurnosni preduvjeti: [docs/FAZA-2.md](docs/FAZA-2.md).
 
-Studomat evidencije, raspored, LMS i poslovni zahtjevi referade slijede u idućim fazama. Modul e-učenja nije službeni Merlin/Moodle, a administracija studija nije službeni ISVU. Nema lažne e-pošte: pružatelj još nije povezan. Bez Supabase konfiguracije prikazuje se objašnjenje, a ne lažna prijava.
+**Faza 3:** funkcionalni portal prema ulozi, studijski programi/godine/semestri, upisi i kolegiji, dodjela nastavnika, ispitni rokovi i prijave/odjave, ocjenjivanje i ECTS, grupe, dvorane, tjedni/mjesečni raspored i obavijesti. [Tehničke upute faze 3](docs/FAZA-3.md).
+
+LMS i poslovni zahtjevi referade slijede u idućim fazama. Modul e-učenja nije službeni Merlin/Moodle, a administracija studija nije službeni ISVU. Nema lažne e-pošte: pružatelj još nije povezan. Bez Supabase konfiguracije prikazuje se objašnjenje, a ne lažna prijava.
 
 ## Pokretanje
 
@@ -69,3 +71,5 @@ Vercelove točne platformom zadane adrese (`VERCEL_URL`, `VERCEL_PROJECT_PRODUCT
 Pri promjeni domene ažurirajte DNS/TLS, `BASE_DOMAIN`, Auth redirect adrese i e-mail predloške; korisnici će se ponovno prijaviti. Sve poddomene moraju biti pod vašom kontrolom jer dijele cookie roditeljske domene.
 
 Objava, konfiguracija produkcijskog Supabasea i SMTP zahtijevaju pristup vašim računima. Prolazak lokalnih provjera ne znači da su vanjske usluge povezane ili produkcija objavljena.
+
+Za novi Supabase projekt pokrenite jednom `supabase/setup.sql` u SQL Editoru. Za već instaliranu fazu 2 koristite samo `supabase/migrations/202610300002_academic.sql`. Gotova javna adresa korisnika: https://svs-zeta-three.vercel.app; Supabase callback: https://svs-zeta-three.vercel.app/api/auth/callback.

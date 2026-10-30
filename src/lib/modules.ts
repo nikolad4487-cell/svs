@@ -5,7 +5,7 @@ export const modules = [
     description: "Vaše akademske aktivnosti na jednom mjestu.",
     icon: "LayoutDashboard",
     color: "blue",
-    items: ["Pregled", "Osobni podaci", "Obavijesti"],
+    items: ["Pregled", "Osobni podaci", "Obavijesti", "Ustanove"],
   },
   {
     slug: "studomat",
@@ -13,7 +13,15 @@ export const modules = [
     description: "Studij, kolegiji, ispitni rokovi i ocjene.",
     icon: "GraduationCap",
     color: "indigo",
-    items: ["Pregled studija", "Kolegiji", "Ispiti", "Ocjene", "ECTS bodovi"],
+    items: [
+      "Pregled studija",
+      "Osobni podaci",
+      "Kolegiji",
+      "Ispiti",
+      "Ocjene",
+      "ECTS bodovi",
+      "Ocjenjivanje",
+    ],
   },
   {
     slug: "merlin",
@@ -37,7 +45,15 @@ export const modules = [
     description: "Studijski programi i akademske evidencije.",
     icon: "LibraryBig",
     color: "blue",
-    items: ["Pregled", "Studijski programi", "Upisi", "Akademske godine"],
+    items: [
+      "Studijski programi",
+      "Akademske godine",
+      "Kolegiji",
+      "Studenti i upisi",
+      "Dvorane",
+      "Ispitni rokovi",
+      "Obavijesti",
+    ],
   },
   {
     slug: "referada",
@@ -53,7 +69,13 @@ export const modules = [
     description: "Nastava, ispitni rokovi i akademski kalendar.",
     icon: "CalendarDays",
     color: "amber",
-    items: ["Tjedni raspored", "Kalendar", "Dvorane"],
+    items: [
+      "Tjedni raspored",
+      "Kalendar",
+      "Ispitni rokovi",
+      "Dvorane",
+      "Upravljanje terminima",
+    ],
   },
   {
     slug: "auth",

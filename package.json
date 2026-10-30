@@ -15,7 +15,12 @@
     "db:seed-users": "node scripts/seed-local.mjs",
     "test:integration": "node scripts/test-integration.mjs",
     "db:test:start": "node scripts/local-stack.mjs",
-    "db:test:stop": "node scripts/local-stack.mjs --stop"
+    "db:test:stop": "node scripts/local-stack.mjs --stop",
+    "db:test:migrate": "node scripts/migrate-local.mjs",
+    "db:seed-academic": "node scripts/seed-academic.mjs",
+    "test:academic": "node scripts/test-academic.mjs",
+    "db:bundle": "node scripts/build-setup.mjs",
+    "test:migrations": "node scripts/check-migrations.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",

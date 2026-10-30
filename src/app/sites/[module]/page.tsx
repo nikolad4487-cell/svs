@@ -3,6 +3,7 @@ import { identity } from "@/lib/auth/access";
 import { canAccessModule } from "@/lib/auth/policy";
 import { supabaseConfig } from "@/lib/supabase/config";
 import { AuthPanel, ConfigNotice } from "@/components/auth/auth-panel";
+import { AcademicWorkspace } from "@/components/academic/workspace";
 import { Institutions } from "@/components/auth/institutions";
 import { notFound } from "next/navigation";
 import {
@@ -30,12 +31,14 @@ export default async function Module({
     mode?: string;
     status?: string;
     next?: string;
+    institution?: string;
+    date?: string;
   }>;
 }) {
   const { module } = await params;
   const m = modules.find((m) => m.slug === module);
   if (!m) notFound();
-  const { view, mode, status, next } = await searchParams;
+  const { view, mode, status, next, institution, date } = await searchParams;
   const active = m.items.find((i) => i === view) || m.items[0];
   const url = await navigation();
   const account = await identity();
@@ -79,7 +82,7 @@ export default async function Module({
           {m.items.map((item) => (
             <a
               key={item}
-              href={`${url(m.slug)}${url(m.slug).includes("?") ? "&" : "?"}view=${encodeURIComponent(item)}`}
+              href={`${url(m.slug)}${url(m.slug).includes("?") ? "&" : "?"}view=${encodeURIComponent(item)}${institution ? `&institution=${encodeURIComponent(institution)}` : ""}`}
               aria-current={active === item ? "page" : undefined}
               className={`mb-2 block rounded-lg px-3 py-3 text-sm ${active === item ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-500 hover:bg-slate-50"}`}
             >
@@ -134,8 +137,16 @@ export default async function Module({
                   Nemate potrebnu ulogu za ovaj modul. Podaci nisu učitani.
                 </p>
               </div>
-            ) : module === "admin" || module === "portal" ? (
-              <Institutions system={module === "admin"} status={status} />
+            ) : module === "admin" ? (
+              <Institutions system status={status} />
+            ) : ["portal", "studomat", "isvu", "raspored"].includes(module) ? (
+              <AcademicWorkspace
+                module={m.slug}
+                view={active}
+                status={status}
+                institution={institution}
+                date={date}
+              />
             ) : (
               <>
                 <div className="mb-6 inline-flex rounded-xl bg-blue-50 p-4 text-blue-700">
@@ -152,8 +163,8 @@ export default async function Module({
                 <div className="mt-7 flex max-w-2xl gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
                   <Info size={20} className="shrink-0" />
                   <p>
-                    Faza 2 · Vaša sesija i ovlasti su provjerene. Studijske i
-                    druge poslovne funkcije slijede u idućim fazama.
+                    Vaša sesija i ovlasti su provjerene. Funkcionalnosti ovog
+                    modula slijede u idućim fazama.
                   </p>
                 </div>
               </>
