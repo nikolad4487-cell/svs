@@ -8,26 +8,38 @@
     "start": "next start --hostname 0.0.0.0",
     "test": "node --import tsx --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "test:smoke": "node scripts/smoke.mjs"
+    "test:smoke": "node scripts/smoke.mjs",
+    "db:start": "supabase start --exclude studio,realtime,storage-api,imgproxy,edge-runtime,logflare,vector,supavisor,postgres-meta",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset --local",
+    "db:seed-users": "node scripts/seed-local.mjs",
+    "test:integration": "node scripts/test-integration.mjs",
+    "db:test:start": "node scripts/local-stack.mjs",
+    "db:test:stop": "node scripts/local-stack.mjs --stop"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.468.0",
     "next": "^16.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "lucide-react": "^0.468.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.0.0",
-    "@radix-ui/react-slot": "^1.2.0"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "typescript": "^5.9.0",
+    "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "supabase": "^2.122.0",
     "tailwindcss": "^4.0.0",
-    "@tailwindcss/postcss": "^4.0.0",
-    "tsx": "^4.20.0"
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
   },
   "engines": {
     "node": "24.x"

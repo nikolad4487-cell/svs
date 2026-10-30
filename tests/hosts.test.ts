@@ -53,10 +53,26 @@ test("prijelaz između poddomena i lokalni fallback", () => {
 });
 
 test("Vercel accepts exact injected deployment hosts with HTTPS module links", () => {
- const deployment = resolveHost("svs-project.vercel.app", "domena.hr", "", ["svs-project.vercel.app"]);
- assert.ok(deployment);
- assert.equal(moduleUrl("studomat", deployment), "https://svs-project.vercel.app/?module=studomat");
- assert.equal(moduleUrl("home", deployment), "https://svs-project.vercel.app/");
- assert.equal(resolveHost("evil.vercel.app", "domena.hr", "", ["svs-project.vercel.app"]), null);
- assert.equal(resolveHost("admin.svs-project.vercel.app", "domena.hr", "", ["svs-project.vercel.app"]), null);
+  const deployment = resolveHost("svs-project.vercel.app", "domena.hr", "", [
+    "svs-project.vercel.app",
+  ]);
+  assert.ok(deployment);
+  assert.equal(
+    moduleUrl("studomat", deployment),
+    "https://svs-project.vercel.app/?module=studomat",
+  );
+  assert.equal(
+    moduleUrl("home", deployment),
+    "https://svs-project.vercel.app/",
+  );
+  assert.equal(
+    resolveHost("evil.vercel.app", "domena.hr", "", ["svs-project.vercel.app"]),
+    null,
+  );
+  assert.equal(
+    resolveHost("admin.svs-project.vercel.app", "domena.hr", "", [
+      "svs-project.vercel.app",
+    ]),
+    null,
+  );
 });

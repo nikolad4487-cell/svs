@@ -23,8 +23,14 @@ export function resolveHost(
   const parsed = hostname(host);
   if (!parsed) return null;
   // Only exact deployment hosts injected by Vercel; never trust arbitrary *.vercel.app.
-  if (deploymentHosts.some(h => h && hostname(h)?.name === parsed.name)) {
-    return { module: "home", base: parsed.name, port: parsed.port, local: false, singleDomain: true };
+  if (deploymentHosts.some((h) => h && hostname(h)?.name === parsed.name)) {
+    return {
+      module: "home",
+      base: parsed.name,
+      port: parsed.port,
+      local: false,
+      singleDomain: true,
+    };
   }
   const bases = [
     "localhost",
@@ -56,6 +62,9 @@ export function moduleUrl(
 
 export function deploymentHosts(): string[] {
   return process.env.VERCEL === "1"
-    ? [process.env.VERCEL_URL, process.env.VERCEL_PROJECT_PRODUCTION_URL].filter((value): value is string => !!value)
+    ? [
+        process.env.VERCEL_URL,
+        process.env.VERCEL_PROJECT_PRODUCTION_URL,
+      ].filter((value): value is string => !!value)
     : [];
 }

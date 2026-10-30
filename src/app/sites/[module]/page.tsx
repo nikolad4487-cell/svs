@@ -1,3 +1,9 @@
+import { redirect } from "next/navigation";
+import { identity } from "@/lib/auth/access";
+import { canAccessModule } from "@/lib/auth/policy";
+import { supabaseConfig } from "@/lib/supabase/config";
+import { AuthPanel, ConfigNotice } from "@/components/auth/auth-panel";
+import { Institutions } from "@/components/auth/institutions";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -19,14 +25,29 @@ export default async function Module({
   searchParams,
 }: {
   params: Promise<{ module: string }>;
-  searchParams: Promise<{ view?: string }>;
+  searchParams: Promise<{
+    view?: string;
+    mode?: string;
+    status?: string;
+    next?: string;
+  }>;
 }) {
   const { module } = await params;
   const m = modules.find((m) => m.slug === module);
   if (!m) notFound();
-  const { view } = await searchParams;
+  const { view, mode, status, next } = await searchParams;
   const active = m.items.find((i) => i === view) || m.items[0];
   const url = await navigation();
+  const account = await identity();
+  if (module !== "auth" && supabaseConfig() && !account) {
+    const target = new URL(url("auth"));
+    target.searchParams.set("next", m.slug);
+    redirect(target.toString());
+  }
+  const allowed =
+    module === "auth" ||
+    (!!account &&
+      canAccessModule(m.slug, account.superadmin, account.memberships));
   const copy: Record<string, string> = {
     portal:
       "Osobni podaci, kolegiji i obavijesti bit će dostupni nakon povezivanja korisničkog računa.",
@@ -86,7 +107,7 @@ export default async function Module({
             {module !== "auth" && (
               <Button asChild size="sm">
                 <a href={url("auth")}>
-                  Prijava <ArrowRight size={14} />
+                  {account ? "Moj račun" : "Prijava"} <ArrowRight size={14} />
                 </a>
               </Button>
             )}
@@ -102,24 +123,41 @@ export default async function Module({
           </h1>
           <p className="mt-3 text-slate-500">{m.description}</p>
           <div className="mt-10 rounded-xl border border-slate-200 bg-white p-6 md:p-10">
-            <div className="mb-6 inline-flex rounded-xl bg-blue-50 p-4 text-blue-700">
-              {module === "webmail" ? (
-                <ExternalLink size={28} />
-              ) : (
-                <LockKeyhole size={28} />
-              )}
-            </div>
-            <h2 className="text-xl font-bold">{active}</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-500">
-              {copy[module]}
-            </p>
-            <div className="mt-7 flex max-w-2xl gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
-              <Info size={20} className="shrink-0" />
-              <p>
-                Faza 1 · Modul i navigacija su dostupni. Poslovne funkcije i
-                korisnički podaci još nisu aktivirani.
-              </p>
-            </div>
+            {module === "auth" ? (
+              <AuthPanel mode={mode} status={status} next={next} />
+            ) : !supabaseConfig() ? (
+              <ConfigNotice />
+            ) : !allowed ? (
+              <div role="alert">
+                <h2 className="text-xl font-bold">Pristup nije dopušten</h2>
+                <p className="mt-3 text-slate-500">
+                  Nemate potrebnu ulogu za ovaj modul. Podaci nisu učitani.
+                </p>
+              </div>
+            ) : module === "admin" || module === "portal" ? (
+              <Institutions system={module === "admin"} status={status} />
+            ) : (
+              <>
+                <div className="mb-6 inline-flex rounded-xl bg-blue-50 p-4 text-blue-700">
+                  {module === "webmail" ? (
+                    <ExternalLink size={28} />
+                  ) : (
+                    <LockKeyhole size={28} />
+                  )}
+                </div>
+                <h2 className="text-xl font-bold">{active}</h2>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-500">
+                  {copy[module]}
+                </p>
+                <div className="mt-7 flex max-w-2xl gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
+                  <Info size={20} className="shrink-0" />
+                  <p>
+                    Faza 2 · Vaša sesija i ovlasti su provjerene. Studijske i
+                    druge poslovne funkcije slijede u idućim fazama.
+                  </p>
+                </div>
+              </>
+            )}
           </div>
           <section className="mt-10">
             <h2 className="mb-4 text-sm font-semibold text-slate-500">

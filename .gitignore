@@ -5,3 +5,6 @@ node_modules/
 *.tsbuildinfo
 
 .vercel/
+.local-test-users.json
+.local-*.json
+.local-*.env

@@ -1,0 +1,45 @@
+import "server-only";
+import { cache } from "react";
+import { supabaseServer } from "../supabase/server";
+import { supabaseConfig } from "../supabase/config";
+import { canAccessModule, type Membership } from "./policy";
+import type { ModuleSlug } from "../modules";
+export const identity = cache(async () => {
+  if (!supabaseConfig()) return null;
+  const db = await supabaseServer();
+  const {
+    data: { user },
+    error,
+  } = await db.auth.getUser();
+  if (error || !user || !user.email_confirmed_at) return null;
+  const session = await db.rpc("session_is_active");
+  if (session.error)
+    throw new Error(
+      "Provjera sesije nije dostupna. Primijenite migracije baze.",
+    );
+  if (!session.data) return null;
+  const [profile, member, superadmin] = await Promise.all([
+    db.from("profiles").select("id,full_name").eq("id", user.id).single(),
+    db.from("memberships").select("institution_id,user_id,role"),
+    db.rpc("is_superadmin"),
+  ]);
+  if (member.error || profile.error || superadmin.error)
+    throw new Error("Korisničke ovlasti nisu dostupne.");
+  return {
+    db,
+    user,
+    profile: profile.data,
+    memberships: member.data as Membership[],
+    superadmin: !!superadmin.data,
+  };
+});
+export async function requireIdentity(module?: ModuleSlug) {
+  const account = await identity();
+  if (!account) throw new Error("Potrebna je prijava.");
+  if (
+    module &&
+    !canAccessModule(module, account.superadmin, account.memberships)
+  )
+    throw new Error("Nemate ovlasti za ovaj modul.");
+  return account;
+}

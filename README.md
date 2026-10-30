@@ -1,72 +1,71 @@
 # SVS · Sustav visokog obrazovanja
 
-Next.js 16 App Router, TypeScript, Tailwind CSS 4, shadcn/ui Button (Radix Slot + CVA) i Lucide. Projekt za Vercel s modularnim usmjeravanjem po Host zaglavlju.
+Modularna hrvatska platforma visokog obrazovanja: Next.js 16 App Router, TypeScript, Tailwind CSS 4, shadcn/ui, Lucide i Supabase Auth/PostgreSQL. Kompatibilna s Vercelom.
 
-## Stanje: faza 1
+## Implementirano
 
-Implementirani su glavna stranica, devet zasebno imenovanih modula, navigacija unutar i između modula, responzivno sučelje, tamni način, loading/error/404 prikazi i sigurno mapiranje hostnamea. Podstranice koriste `view` parametar za izbor odjeljka. Kartice iskreno prikazuju razvojni status, a ne zdravlje nepovezanih usluga.
+**Faza 1:** glavna stranica, devet zasebnih modula, sigurno usmjeravanje po Host zaglavlju, lokalni hostnameovi i fallback, navigacija, responzivni dizajn, svijetli/tamni način, loading/error/404.
 
-**Nisu još implementirani** Supabase, prijava/odjava, SSO, autorizacija, poslovni CRUD, baze, RLS, testni korisnici, stvarni LMS ni integracija pošte. Modul admin je samo javna informativna ljuska bez privilegiranih podataka ili radnji. To nije zaštita budućih administrativnih API-ja: njih u fazi 2 treba zaštititi serverskom autorizacijom i RLS-om. Nema lažnih podataka, aktivnih obrazaca prijave ni službene integracije ISVU/Merlin.
+**Faza 2:** serverska prijava, registracija po pozivu, potvrda e-pošte, reset/promjena lozinke, SSO kolačići za vlastitu roditeljsku domenu, upravljanje i opoziv sesija, profili, ustanove, višestruka članstva/uloge, administrativni zapisnik i RLS. Detaljne upute i sigurnosni preduvjeti: [docs/FAZA-2.md](docs/FAZA-2.md).
 
-## Lokalni rad
+Studomat evidencije, raspored, LMS i poslovni zahtjevi referade slijede u idućim fazama. Modul e-učenja nije službeni Merlin/Moodle, a administracija studija nije službeni ISVU. Nema lažne e-pošte: pružatelj još nije povezan. Bez Supabase konfiguracije prikazuje se objašnjenje, a ne lažna prijava.
 
-Preduvjet: Node.js 22.13+ (provjereno s 24), npm.
+## Pokretanje
+
+Node.js 24 i npm:
 
 ```sh
 npm ci
 cp .env.example .env.local
+# unesite konfiguraciju prema docs/FAZA-2.md ili koristite lokalni testni profil
 npm run dev
 ```
 
-Glavna stranica: `localhost:3000`. Moduli: `portal`, `studomat`, `merlin`, `webmail`, `isvu`, `referada`, `raspored`, `auth`, `admin`, svaki kao `<modul>.localhost:3000`. `www.localhost:3000` također prikazuje početnu.
+Glavna domena: `localhost:3000`. Moduli: `portal`, `studomat`, `merlin`, `webmail`, `isvu`, `referada`, `raspored`, `auth`, `admin` kao `<modul>.localhost:3000`. Za preglednike bez wildcard localhosta koristite `localhost:3000/?module=studomat`. Na korijenskom localhostu navigacija koristi query fallback kako bi host-only sesija ostala dostupna svim modulima.
 
-Ako preglednik ne razrješava poddomene, otvorite `localhost:3000/?module=studomat`. Poveznice tada zadržavaju ovaj način pristupa. Za alternativni hostname postavite `LOCAL_BASE_DOMAIN=svs.test` i dodajte `127.0.0.1 svs.test studomat.svs.test ...` u lokalni hosts za svaku potrebnu poddomenu. Hosts datoteka ne podržava wildcard. Može se koristiti i `127.0.0.1:3000/?module=studomat`.
+Za provjereni lakši lokalni testni sustav s Dockerom koristite `npm run db:test:start`, zatim `npm run db:seed-users`; time nastaje lokalna konfiguracija bez vanjskog računa. Nemojte prije toga kopirati prazan `.env.local`, jer skripta čuva postojeće datoteke.
 
-`BASE_DOMAIN` je samo hostname bez protokola, porta ili putanje. Zadana vrijednost je `domena.hr`. Nepoznate domene i poddomene daju 404. Proxy ignorira proslijeđene hostove i prepisuje interne kontekstne headere. Izravan pristup `/sites/*` je blokiran. `?module=` radi samo na lokalnim hostnameovima. Vercelove adrese automatski se dopuštaju samo ako ih platforma postavi u `VERCEL_URL` ili `VERCEL_PROJECT_PRODUCTION_URL` uz `VERCEL=1`. Na tim adresama svi moduli koriste `?module=` i HTTPS, jer Vercelova besplatna domena ne omogućuje vlastite wildcard poddomene. Proizvoljne `*.vercel.app` adrese nisu dopuštene.
-
-## Provjere
+Za SSO preko lokalnih poddomena postavite `LOCAL_BASE_DOMAIN=svs.test` i dodajte pojedinačne hostnameove u hosts datoteku prema uputama za fazu 2. Hosts datoteka ne podržava wildcard. Nepoznati hostovi i izravan pristup internim `/sites/*` rutama daju 404. Proizvoljni `*.vercel.app` hostovi nisu dopušteni.
 
 ```sh
 npm test
 npm run build
 npm run typecheck
 npm start
-# u drugom terminalu, dok server radi na portu 3000:
+# bez konfiguriranog Supabasea (smoke test osnovnog routinga):
 npm run test:smoke
+# s lokalnom testnom bazom i serverom na portu 3002:
+AUTH_TEST_PORT=3002 npm run test:integration
 ```
 
-Unit testovi pokrivaju sve poddomene, promjenu domene, odbijanje lažnih hostova i lokalne poveznice. HTTP testovi provjeravaju stvarne odgovore servera, zasebne module, lokalne i produkcijske hostnameove, fallback i 404. Autentifikacija i izolacija ustanova moraju dobiti testove zajedno s implementacijom u fazi 2; trenutačno se ne tvrdi da su provjerene.
+Testovi Auth/SSO-a koriste stvarne Supabase Auth/PostgREST servise, provjeru uloga i RLS na PostgreSQL-u. HTTP testovi ne zamjenjuju pregledničku provjeru kolačića na konačnoj HTTPS domeni.
 
-## Organizacija
+## Arhitektura
 
-- `src/proxy.ts`: sigurno mapiranje Host → interna ruta.
-- `src/lib/hosts.ts`: čiste funkcije hostnamea i URL-ova.
-- `src/lib/modules.ts`: dopušteni moduli i odjeljci.
-- `src/app/sites/[module]`: serverski prikaz pojedinog modula.
-- `src/components/ui`: temeljne shadcn/ui komponente.
+- `src/proxy.ts`: whitelist hostnameova, interne rute, centralna CSRF provjera API mutacija i osvježavanje sesija.
+- `src/lib/hosts.ts`, `modules.ts`: odobreni moduli i sigurni URL-ovi.
+- `src/lib/supabase`: serverski klijent i proxy refresh; nema browser spremanja tokena.
+- `src/lib/auth`: autorizacija, request kontekst i HttpOnly/Secure cookie politika.
+- `src/app/api`: stvarni Auth, profil/session i institucionalni API endpointi, uz serverske provjere.
+- `src/components/auth`: obrasci, sesije, ustanove i dodjela uloga.
+- `supabase/migrations`: relacijski model, indeksi, triggeri, Auth hook i RLS.
 
-Novi modul zahtijeva izmjenu odobrenog registra u kodu; nije moguće proizvoljno izvršavanje ruta ili koda iz korisničkog unosa.
+## Vercel
 
-## Vercel i domene
+Uvezite GitHub repozitorij `nikolad4487-cell/svs`, grana `main`. `vercel.json` određuje framework, `npm ci` i `npm run build`. U Environment Variables postavite Supabase URL i javni publishable ključ prema `.env.example`; service-role ključ nije potreban aplikaciji. Nakon migracije i uključivanja Auth hooka uključite pozvanu registraciju. Ponovno objavite nakon promjene varijabli.
 
-1. Pohranite projekt u GitHub i u Vercelu odaberite Import Project → repozitorij → framework Next.js. Korijen projekta je korijen repozitorija; build `npm run build`.
-2. U Project Settings → Environment Variables postavite `BASE_DOMAIN` na odabranu glavnu domenu. Nemojte postavljati `LOCAL_BASE_DOMAIN` u produkciji. Nakon promjene varijabli ponovno objavite projekt.
-3. U Domains dodajte glavnu domenu, `www` i svaku navedenu poddomenu, ili glavnu domenu i wildcard `*.domena.hr`. Slijedite konkretne DNS zapise koje Vercel prikaže; aplikacija ne registrira niti mijenja domenu.
-4. Za wildcard TLS slijedite aktualne Vercel zahtjeve (u pravilu delegacija na Vercel nameservere). Ako delegacija nije moguća, dodajte pojedinačne poddomene i njihove DNS zapise. Vercel izdaje HTTPS certifikate nakon potvrde DNS-a.
-5. Sve domene moraju pripadati istom Vercel projektu. Provjerite HTTPS svake domene i nepoznatu poddomenu ako koristite wildcard.
+[Uvezi projekt u Vercel](https://vercel.com/new/import?s=https%3A%2F%2Fgithub.com%2Fnikolad4487-cell%2Fsvs)
 
-## Sljedeća faza: Supabase i SSO
+Vercelove točne platformom zadane adrese (`VERCEL_URL`, `VERCEL_PROJECT_PRODUCTION_URL`, uz `VERCEL=1`) automatski se prihvaćaju. Na njima moduli koriste HTTPS i `?module=`, uz host-only sesiju. Ne postavlja se cookie za javni sufiks `.vercel.app`.
 
-Kreirati zaseban Supabase projekt, migracije, višestruka članstva i RLS prije izlaganja korisničkih podataka. Tada dodati `NEXT_PUBLIC_SUPABASE_URL` i publishable ključ (javni), a serverske tajne držati isključivo u Vercel/Supabase postavkama, nikad u kodu. U Auth konfigurirati dopuštene callback/reset URL-ove i pravila registracije ustanove.
+## Vlastita domena i HTTPS
 
-Plan SSO-a je serversko upravljanje sesijama i HttpOnly kolačić za zajedničku roditeljsku domenu, sa Secure u produkciji, SameSite i CSRF provjerama za promjene podataka. Dijeljenje kolačića zahtijeva da sve poddomene budu pouzdane; localhost treba zasebno provjeriti i po potrebi koristiti lokalnu testnu domenu. Redirect odredišta moraju biti ograničena na poznate module. Ove sigurnosne značajke još nisu implementirane.
+1. Postavite `BASE_DOMAIN=domena.hr` bez protokola, porta ili putanje.
+2. U Vercel Domains dodajte glavnu domenu, `www` i svaku poddomenu, ili glavnu domenu i `*.domena.hr`.
+3. Unesite konkretne DNS zapise koje Vercel prikaže. Za wildcard certifikat slijedite Vercelove zahtjeve, u pravilu delegaciju nameservera. Ako delegacija nije moguća, dodajte pojedinačne poddomene.
+4. Sve domene moraju pripadati istom Vercel projektu. Vercel omogućuje HTTPS nakon provjere DNS-a. Aplikacija ne registrira domene i ne mijenja DNS.
+5. U Supabaseu postavite Auth Site URL, točne callback adrese i e-mail predloške prema [uputama](docs/FAZA-2.md).
 
-Promjena domene zahtijevat će novi DNS/TLS, `BASE_DOMAIN`, nove Supabase callback URL-ove i domenu kolačića te ponovnu prijavu. Pošta zahtijeva stvarni Microsoft 365/Zoho račun i odgovarajuće API ovlasti; Moodle integracija zahtijeva ovlaštenu instalaciju i podržani API/SSO. Bez tih usluga ne prikazivati poruke ili službene integracije kao aktivne.
+Pri promjeni domene ažurirajte DNS/TLS, `BASE_DOMAIN`, Auth redirect adrese i e-mail predloške; korisnici će se ponovno prijaviti. Sve poddomene moraju biti pod vašom kontrolom jer dijele cookie roditeljske domene.
 
-## Brza objava bez vlastite domene
-
-Na Vercelu uvezite GitHub repozitorij `nikolad4487-cell/svs` (grana `main`) ili koristite gumb za objavu ispod. Framework, instalacija i build zadani su u `vercel.json`. Za fazu 1 ne trebate tajne ni dodatne environment variables. Vercel automatski daje HTTPS adresu; moduli rade na toj istoj adresi preko `?module=studomat` i drugih slugova. Kada kupite domenu, dodajte DNS i postavite `BASE_DOMAIN` prema gornjim uputama.
-
-[Objavi na Vercelu](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnikolad4487-cell%2Fsvs&project-name=svs&repository-name=svs)
-
-Objava zahtijeva vaš prijavljen Vercel račun i dopušten pristup repozitoriju. Ovaj gumb ne znači da je aplikacija već objavljena.
+Objava, konfiguracija produkcijskog Supabasea i SMTP zahtijevaju pristup vašim računima. Prolazak lokalnih provjera ne znači da su vanjske usluge povezane ili produkcija objavljena.

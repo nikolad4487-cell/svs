@@ -15,7 +15,12 @@ const request = (host, path = "/") =>
   new Promise((resolve, reject) => {
     http
       .get(
-        { hostname: "127.0.0.1", port: Number(process.env.SMOKE_PORT || 3000), path, headers: { host } },
+        {
+          hostname: "127.0.0.1",
+          port: Number(process.env.SMOKE_PORT || 3000),
+          path,
+          headers: { host },
+        },
         (res) => {
           let body = "";
           res.setEncoding("utf8");
@@ -72,17 +77,21 @@ console.log(
 );
 
 if (process.env.SMOKE_VERCEL_HOST) {
- const host=process.env.SMOKE_VERCEL_HOST;
- const home=await request(host);
- assert.equal(home.status,200);
- assert.ok(home.body.includes(`https://${host}/?module=studomat`));
- for(const [slug,title] of Object.entries(modules)) {
-   const result=await request(host, `/?module=${slug}`);
-   assert.equal(result.status,200);
-   assert.ok(result.body.includes(title));
-   assert.ok(result.body.includes(`https://${host}/?module=${slug === 'portal' ? 'studomat' : 'portal'}`));
- }
- assert.equal((await request('untrusted.vercel.app')).status,404);
- assert.equal((await request(host,'/?module=invalid')).status,404);
- console.log('12 dodatnih Vercel HTTP provjera prošlo.');
+  const host = process.env.SMOKE_VERCEL_HOST;
+  const home = await request(host);
+  assert.equal(home.status, 200);
+  assert.ok(home.body.includes(`https://${host}/?module=studomat`));
+  for (const [slug, title] of Object.entries(modules)) {
+    const result = await request(host, `/?module=${slug}`);
+    assert.equal(result.status, 200);
+    assert.ok(result.body.includes(title));
+    assert.ok(
+      result.body.includes(
+        `https://${host}/?module=${slug === "portal" ? "studomat" : "portal"}`,
+      ),
+    );
+  }
+  assert.equal((await request("untrusted.vercel.app")).status, 404);
+  assert.equal((await request(host, "/?module=invalid")).status, 404);
+  console.log("12 dodatnih Vercel HTTP provjera prošlo.");
 }
