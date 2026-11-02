@@ -36,7 +36,7 @@ export default async function Home() {
     <>
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-5">
-          <a href={url("home")} aria-label="SVS početna">
+          <a href={url("home")} aria-label="ISVU početna">
             <Brand />
           </a>
           <nav className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
@@ -193,7 +193,7 @@ export default async function Home() {
                 Jedna platforma, više mogućnosti.
               </h2>
               <p className="mt-4 max-w-xl leading-7 text-slate-500">
-                SVS je modularni informacijski sustav za sveučilišta, fakultete,
+                ISVU je modularni informacijski sustav za sveučilišta, fakultete,
                 veleučilišta i akademije. Zajednički vizualni identitet povezuje
                 zasebne prostore za studij, nastavu i administraciju.
               </p>
@@ -210,7 +210,7 @@ export default async function Home() {
         </section>
       </main>
       <footer className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-6 py-8 text-xs text-slate-500">
-        <span>SVS · Sustav visokog obrazovanja</span>
+        <span>ISVU · Informacijski sustav visokih ustanova</span>
         <span>Razvojna platforma · Nije službeni ISVU ni Merlin servis</span>
       </footer>
     </>

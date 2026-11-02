@@ -1,4 +1,4 @@
-# SVS · Sustav visokog obrazovanja
+# ISVU · Informacijski sustav visokih ustanova
 
 Modularna hrvatska platforma visokog obrazovanja: Next.js 16 App Router, TypeScript, Tailwind CSS 4, shadcn/ui, Lucide i Supabase Auth/PostgreSQL. Kompatibilna s Vercelom.
 

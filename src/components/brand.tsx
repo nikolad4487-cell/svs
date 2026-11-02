@@ -7,10 +7,10 @@ export function Brand() {
       </span>
       <span>
         <strong className="block text-lg tracking-tight">
-          SVS<span className="text-blue-600">.</span>
+          ISVU<span className="text-blue-600">.</span>
         </strong>
-        <span className="block text-[10px] font-semibold uppercase tracking-widest text-slate-500">
-          Visoko obrazovanje
+        <span className="block max-w-64 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+          Informacijski sustav visokih ustanova
         </span>
       </span>
     </span>

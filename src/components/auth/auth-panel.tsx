@@ -159,7 +159,7 @@ export async function AuthPanel({
       </div>
     );
   const titles = {
-    login: "Dobro došli u SVS",
+    login: "Dobro došli u ISVU",
     signup: "Registracija po pozivu",
     reset: "Zaboravljena lozinka",
     password: "Postavite novu lozinku",

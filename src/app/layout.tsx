@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "SVS · Sustav visokog obrazovanja",
-  description: "Objedinjena platforma za hrvatska visoka učilišta",
+  title: "ISVU · Informacijski sustav visokih ustanova",
+  description: "Informacijski sustav visokih ustanova – objedinjena platforma za hrvatska visoka učilišta",
 };
 export default function RootLayout({
   children,
