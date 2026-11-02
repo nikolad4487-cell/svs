@@ -87,6 +87,10 @@ export async function Institutions({
   return (
     <div className="space-y-8">
       {system && account.superadmin && <CredentialPrint loginUrl={url("auth")} />}
+      {(account.superadmin || account.memberships.some(m => ["institution_admin", "registrar"].includes(m.role))) && <p className="rounded-lg bg-blue-50 p-4 text-sm text-blue-900">
+        Kolegijima, studijskim programima, upisima, ispitima i rasporedom upravljate u
+        {" "}<a className="font-semibold underline" href={`${url(system ? "admin" : "isvu")}${url(system ? "admin" : "isvu").includes("?") ? "&" : "?"}view=${encodeURIComponent("Studijski programi")}`}>Administraciji studija</a>.
+      </p>}
       {status && (
         <p
           role="status"
@@ -158,6 +162,7 @@ export async function Institutions({
                   </span>
                 ))}
             </div>
+            {manager && <a className="mt-4 inline-block font-semibold text-blue-700" href={`${url(system ? "admin" : "isvu")}${url(system ? "admin" : "isvu").includes("?") ? "&" : "?"}view=${encodeURIComponent("Kolegiji")}&institution=${encodeURIComponent(i.id)}`}>Upravljaj kolegijima i studijem →</a>}
             {manager && (
               <>
                 <details className="mt-5">

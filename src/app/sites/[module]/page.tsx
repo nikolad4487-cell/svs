@@ -13,7 +13,7 @@ import {
   Info,
   ExternalLink,
 } from "lucide-react";
-import { modules } from "@/lib/modules";
+import { modules, academicAdminItems } from "@/lib/modules";
 import { navigation } from "@/lib/context";
 import { Brand } from "@/components/brand";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -137,9 +137,9 @@ export default async function Module({
                   Nemate potrebnu ulogu za ovaj modul. Podaci nisu učitani.
                 </p>
               </div>
-            ) : module === "admin" ? (
+            ) : module === "admin" && !academicAdminItems.some(item => item === active) ? (
               <Institutions system status={status} />
-            ) : ["portal", "studomat", "isvu", "raspored"].includes(module) ? (
+            ) : ["portal", "studomat", "isvu", "raspored", "admin"].includes(module) ? (
               <AcademicWorkspace
                 module={m.slug}
                 view={active}

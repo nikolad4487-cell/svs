@@ -37,10 +37,17 @@ export async function AcademicWorkspace({
     Dvorane: ["room"],
     "Ispitni rokovi": ["exam"],
     Obavijesti: ["announcement"],
+    "Upravljanje terminima": ["schedule"],
   };
   return (
     <div>
       <InstitutionPicker data={data} base={url(module)} view={view} />
+      {(module === "admin" || module === "isvu") && data.manager && (
+        <p className="mb-6 rounded-lg bg-blue-50 p-4 text-sm text-blue-900">
+          Upravljate podacima ustanove: <strong>{data.institution.name}</strong>.
+          Za prvi kolegij najprije dodajte studijski program, akademsku godinu i semestar.
+        </p>
+      )}
       {status && status !== "saved" && (
         <p
           role="alert"
@@ -68,7 +75,7 @@ export async function AcademicWorkspace({
       ) : (
         <AcademicAdmin
           data={data}
-          module="isvu"
+          module={module}
           view={view}
           actions={sections[view] || ["program"]}
         />

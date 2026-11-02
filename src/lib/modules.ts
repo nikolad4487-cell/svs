@@ -1,3 +1,7 @@
+export const academicAdminItems = [
+  "Studijski programi", "Akademske godine", "Kolegiji", "Studenti i upisi",
+  "Dvorane", "Ispitni rokovi", "Upravljanje terminima", "Obavijesti",
+] as const;
 export const modules = [
   {
     slug: "portal",
@@ -91,7 +95,7 @@ export const modules = [
     description: "Ustanove, ovlasti i konfiguracija platforme.",
     icon: "ShieldCheck",
     color: "rose",
-    items: ["Pregled sustava", "Ustanove", "Korisnici", "Moduli"],
+    items: ["Pregled sustava", "Ustanove", "Korisnici", "Moduli", ...academicAdminItems],
   },
 ] as const;
 export type ModuleSlug = (typeof modules)[number]["slug"];

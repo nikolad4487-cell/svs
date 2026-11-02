@@ -48,3 +48,12 @@ npm run typecheck
 Koristite račune iz ignorirane lokalne datoteke prema uputama faze 2. Testni programi i studenti nalaze se isključivo u lokalnoj testnoj bazi. Testovi mijenjaju poznate lokalne fixture zapise; ne pokretati ih na produkciji. Cloud može sačuvati datoteke bez živih procesa; lokalni gateway/kontejneri i aplikacija moraju se ponovno pokrenuti.
 
 Testovi provjeravaju izolaciju ustanova, serverske i DB uloge, FK integritet, upise, poziv RPC-ja bez ovlasti, rokove i kapacitet ispita pri istodobnim prijavama, ocjenjivanje, zaštitu povijesnog ECTS-a, preklapanje nastave pri istodobnim unosima te stvarne HTTP obrasce. Posebno se provjerava instalacija na čistoj PostgreSQL bazi s pravom Auth shemom i RLS na svih 21 aplikacijskih tablica. HTTP testovi ne zamjenjuju browser provjeru produkcijskog SSO-a.
+
+
+## Akademsko upravljanje glavnog administratora
+
+Glavni administrator može iz **Administracija sustava** izravno otvoriti Studijske programe, Akademske godine (uključujući semestre), Kolegije (nastavnike i grupe), Studente i upise, Dvorane, Ispitne rokove, Upravljanje terminima i Obavijesti. U svakom odjeljku bira ustanovu; obrasci nakon spremanja ostaju u istom administratorskom odjeljku i ustanovi. Glavnom administratoru nije potrebno dodatno članstvo da bi upravljao ustanovom.
+
+Uz ustanovu je poveznica **Upravljaj kolegijima i studijem**, koja otvara upravo njezine podatke. Administrator ustanove i dalje koristi **Administraciju studija**, s pravima samo u vlastitoj ustanovi. Za prvi kolegij redom kreirajte studijski program, akademsku godinu i semestar, pa odaberite **Kolegiji → Novi zapis**. Poveznice ne daju nove ovlasti studentima ni nastavnicima; serverske i RLS provjere ostaju aktivne.
+
+Lokalni regresijski test: uz pripremljenu bazu i izgrađenu aplikaciju na portu 3005 pokrenite `node scripts/test-admin-academic.mjs` (ili postavite `AUTH_TEST_PORT`). Provjerava glavnog administratora bez članstava, sve akademske administratorske odjeljke i stvarno stvaranje programa, godine, semestra, kolegija i dvorane. Testne zapise uklanja nakon provjere.
