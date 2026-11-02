@@ -6,6 +6,7 @@ import { InstitutionPicker, Empty } from "./shared";
 import { Portal } from "./portal";
 import { Studomat } from "./studomat";
 import { Timetable } from "./schedule";
+import { StudentServicesAdmin } from "./student-services";
 import { AcademicAdmin } from "./admin";
 export async function AcademicWorkspace({
   module,
@@ -13,12 +14,16 @@ export async function AcademicWorkspace({
   status,
   institution,
   date,
+  courseId,
+  academicYear,
 }: {
   module: ModuleSlug;
   view: string;
   status?: string;
   institution?: string;
   date?: string;
+  courseId?: string;
+  academicYear?: string;
 }) {
   const data = await academicData(institution);
   if (!data)
@@ -44,8 +49,9 @@ export async function AcademicWorkspace({
       <InstitutionPicker data={data} base={url(module)} view={view} />
       {(module === "admin" || module === "isvu") && data.manager && (
         <p className="mb-6 rounded-lg bg-blue-50 p-4 text-sm text-blue-900">
-          Upravljate podacima ustanove: <strong>{data.institution.name}</strong>.
-          Za prvi kolegij najprije dodajte studijski program, akademsku godinu i semestar.
+          Upravljate podacima ustanove: <strong>{data.institution.name}</strong>
+          . Za prvi kolegij najprije dodajte studijski program, akademsku godinu
+          i semestar.
         </p>
       )}
       {status && status !== "saved" && (
@@ -53,9 +59,9 @@ export async function AcademicWorkspace({
           role="alert"
           className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
         >
-          Promjena nije spremljena. Provjerite povezanost programa, akademske
-          godine i kolegija, rokove prijave, kapacitet te moguće preklapanje
-          termina.
+          Promjena nije spremljena. Provjerite unesene vrijednosti, studenta,
+          povezanost programa, akademske godine i kolegija, rokove prijave,
+          kapacitet te moguće preklapanje termina.
         </p>
       )}
       {status === "saved" && (
@@ -69,9 +75,16 @@ export async function AcademicWorkspace({
       {module === "portal" ? (
         <Portal data={data} view={view} status={status} />
       ) : module === "studomat" ? (
-        <Studomat data={data} view={view} />
+        <Studomat
+          data={data}
+          view={view}
+          courseId={courseId}
+          academicYear={academicYear}
+        />
       ) : module === "raspored" ? (
         <Timetable data={data} view={view} base={url(module)} date={date} />
+      ) : view === "Studentske evidencije" ? (
+        <StudentServicesAdmin data={data} module={module} />
       ) : (
         <AcademicAdmin
           data={data}

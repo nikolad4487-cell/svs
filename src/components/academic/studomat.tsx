@@ -1,3 +1,8 @@
+import { StudentServices } from "./student-services";
+import { StudyProgress } from "./study-progress";
+import { serviceDefinitions } from "@/lib/academic/student-services";
+import { studentProgress } from "@/lib/academic/student-progress";
+import { navigation } from "@/lib/context";
 import type { AcademicData } from "@/lib/academic/data";
 import { earnedCredits } from "@/lib/academic/summary";
 import { hrDate } from "@/lib/academic/time";
@@ -25,8 +30,42 @@ export function ExamList({
       .filter((e) => e.student_id === data.account.user.id)
       .map((e) => e.course_id),
   );
+  const visible = data.exams.filter((e) => {
+    if (!own.has(e.course_id) && !data.manager && !data.isTeacher) return false;
+    const registered = data.registrations.some(
+      (r) =>
+        r.exam_id === e.id &&
+        r.student_id === data.account.user.id &&
+        r.status === "registered",
+    );
+    const graded = data.grades.some(
+      (g) => g.exam_id === e.id && g.student_id === data.account.user.id,
+    );
+    const passed = data.grades.some(
+      (g) =>
+        g.student_id === data.account.user.id &&
+        g.grade > 1 &&
+        data.courses.find(
+          (c) => c.id === data.exams.find((x) => x.id === g.exam_id)?.course_id,
+        )?.code === data.courses.find((c) => c.id === e.course_id)?.code,
+    );
+    if (view === "Prijava ispita")
+      return (
+        !registered &&
+        !graded &&
+        !passed &&
+        Date.parse(e.registration_deadline) >= Date.now()
+      );
+    if (view === "Odjava ispita")
+      return (
+        registered && !graded && Date.parse(e.withdrawal_deadline) >= Date.now()
+      );
+    if (view === "Ispiti u tijeku") return registered && !graded;
+    if (view === "Pregled ispita") return registered || graded;
+    return true;
+  });
   return (
-    <Section title="Ispitni rokovi">
+    <Section title={view === "Ispiti" ? "Ispitni rokovi" : view}>
       <Table
         headings={[
           "Kolegij",
@@ -35,7 +74,7 @@ export function ExamList({
           "Status",
           "Radnja",
         ]}
-        rows={[...data.exams]
+        rows={[...visible]
           .sort((a, b) => a.starts_at.localeCompare(b.starts_at))
           .map((e) => {
             const reg = data.registrations.find(
@@ -197,18 +236,209 @@ function Grading({ data, view }: { data: AcademicData; view: string }) {
     </Section>
   );
 }
-export function Studomat({ data, view }: { data: AcademicData; view: string }) {
+export async function Studomat({
+  data,
+  view,
+  courseId,
+  academicYear,
+}: {
+  data: AcademicData;
+  view: string;
+  courseId?: string;
+  academicYear?: string;
+}) {
   const ownId = data.account.user.id;
   const ownStudies = data.studies.filter((s) => s.student_id === ownId);
   const ownCourses = data.enrollments.filter((e) => e.student_id === ownId);
   const ownGrades = data.grades.filter((g) => g.student_id === ownId);
+  const extraCredits = data.services
+    .filter((s) => s.student_id === ownId && s.kind === "extra_ects")
+    .reduce((sum, s) => sum + Number(s.payload.ects || 0), 0);
+  const url = await navigation();
+  if (
+    [
+      "Osobni podaci",
+      "E-mail opcije",
+      "Moj račun ustanove",
+      "Upute",
+      "Kontakt referade",
+      ...Object.values(serviceDefinitions).map((d) => d.title),
+    ].includes(view)
+  )
+    return <StudentServices data={data} view={view} yearId={academicYear} />;
+  if (view === "Pregled podataka o studiranju")
+    return <StudyProgress data={data} />;
+  if (["Upisane godine i predmeti", "Aktivni predmeti"].includes(view)) {
+    const progress = studentProgress(
+      data.courses,
+      data.exams,
+      data.grades,
+      ownId,
+    );
+    const shown = ownCourses.filter(
+      (e) =>
+        view !== "Aktivni predmeti" ||
+        !progress.passedCodes.includes(
+          data.courses.find((c) => c.id === e.course_id)?.code || "",
+        ),
+    );
+    const link = (id: string) => {
+      const u = new URL(url("studomat"));
+      u.searchParams.set("view", view);
+      u.searchParams.set("institution", data.institution.id);
+      u.searchParams.set("course", id);
+      return u.toString();
+    };
+    if (courseId) {
+      const c = data.courses.find(
+        (c) =>
+          c.id === courseId && ownCourses.some((e) => e.course_id === c.id),
+      );
+      if (!c) return <Empty>Nemate upisan taj kolegij.</Empty>;
+      const grades = ownGrades.filter(
+        (g) => data.exams.find((e) => e.id === g.exam_id)?.course_id === c.id,
+      );
+      const attendance = data.services.filter(
+        (s) =>
+          s.student_id === ownId &&
+          s.kind === "attendance" &&
+          s.payload.course_id === c.id,
+      );
+      return (
+        <div className="space-y-8">
+          <Section title={`Detalji predmeta: ${c.name}`}>
+            <Table
+              headings={["Podatak", "Vrijednost"]}
+              rows={[
+                ["Naziv", c.name],
+                ["Šifra", c.code],
+                [
+                  "Semestar",
+                  data.semesters.find((s) => s.id === c.semester_id)?.name ||
+                    "—",
+                ],
+                ["Izborna grupa", c.elective_group || "Nije u izbornoj grupi"],
+                ["Predavanja", c.lecture_hours ?? 0],
+                ["Vježbe", c.exercise_hours ?? 0],
+                ["ECTS", c.ects],
+              ]}
+            />
+          </Section>
+          <Section title="Tjedni plan nastave">
+            <p className="whitespace-pre-wrap">
+              {c.teaching_plan || "Plan nastave nije evidentiran."}
+            </p>
+            <Table
+              headings={["Termin", "Tema"]}
+              rows={data.schedule
+                .filter((s) => s.course_id === c.id)
+                .map((s) => [hrDate(s.starts_at), s.title])}
+            />
+          </Section>
+          <Section title="Prisustvo na nastavi">
+            <Table
+              headings={["Datum", "Održano sati", "Prisutno sati"]}
+              rows={attendance.map((a) => [
+                String(a.payload.date),
+                String(a.payload.held_hours),
+                String(a.payload.attended_hours),
+              ])}
+            />
+          </Section>
+          <Section title="Ispiti predmeta">
+            <Table
+              headings={["Termin", "Ocjena", "Napomena"]}
+              rows={grades.map((g) => [
+                hrDate(
+                  data.exams.find((e) => e.id === g.exam_id)?.starts_at ||
+                    g.graded_at,
+                ),
+                g.grade,
+                g.feedback || "—",
+              ])}
+            />
+          </Section>
+          <a className="text-blue-700 underline" href={link("")}>
+            Natrag na predmete
+          </a>
+        </div>
+      );
+    }
+    return (
+      <div className="space-y-8">
+        <Section title="Upisane godine">
+          <Table
+            headings={[
+              "Program",
+              "Akademska godina",
+              "Godina studija",
+              "Matični broj",
+              "Status",
+            ]}
+            rows={ownStudies.map((s) => [
+              data.programs.find((p) => p.id === s.program_id)?.name || "—",
+              data.years.find((y) => y.id === s.academic_year_id)?.name || "—",
+              s.study_year,
+              s.student_number,
+              s.status,
+            ])}
+          />
+        </Section>
+        <Section title={view}>
+          <Table
+            headings={[
+              "Predmet",
+              "Izborna grupa",
+              "Godina / semestar",
+              "Predavanja",
+              "Vježbe",
+              "ECTS",
+              "Status",
+              "Detalji",
+            ]}
+            rows={shown.map((e) => {
+              const c = data.courses.find((c) => c.id === e.course_id);
+              const sem = data.semesters.find((s) => s.id === c?.semester_id);
+              return [
+                c?.name || "—",
+                c?.elective_group || "—",
+                `${data.years.find((y) => y.id === sem?.academic_year_id)?.name || "—"} · ${sem?.name || ""}`,
+                c?.lecture_hours ?? 0,
+                c?.exercise_hours ?? 0,
+                c?.ects || 0,
+                progress.passedCodes.includes(c?.code || "")
+                  ? "Položen"
+                  : "Aktivan",
+                <a
+                  key={e.id}
+                  className="text-blue-700 underline"
+                  href={link(e.course_id)}
+                >
+                  Detalji
+                </a>,
+              ];
+            })}
+          />
+        </Section>
+      </div>
+    );
+  }
   if (view === "Ocjenjivanje")
     return data.manager || data.isTeacher ? (
       <Grading data={data} view={view} />
     ) : (
       <Empty>Nemate ovlasti za ocjenjivanje.</Empty>
     );
-  if (view === "Ispiti")
+  if (
+    [
+      "Ispiti",
+      "Prijava ispita",
+      "Odjava ispita",
+      "Ispiti u tijeku",
+      "Pregled ispitnih rokova",
+      "Pregled ispita",
+    ].includes(view)
+  )
     return (
       <div className="space-y-10">
         <ExamList data={data} view={view} />
@@ -228,11 +458,12 @@ export function Studomat({ data, view }: { data: AcademicData; view: string }) {
         <div className="rounded-xl bg-blue-50 p-6 text-blue-900">
           <p className="text-sm">Ostvareni ECTS bodovi</p>
           <p className="mt-2 text-4xl font-bold">
-            {earnedCredits(data.courses, data.exams, data.grades, ownId)}
+            {earnedCredits(data.courses, data.exams, data.grades, ownId) +
+              extraCredits}
           </p>
           <p className="mt-3 text-xs">
             Bodovi se priznaju samo za položene kolegije, jednom po šifri
-            kolegija.
+            kolegija, uz zasebno priznate dodatne ECTS bodove ({extraCredits}).
           </p>
         </div>
         <Table
@@ -286,21 +517,9 @@ export function Studomat({ data, view }: { data: AcademicData; view: string }) {
         />
       </Section>
     );
-  if (view === "Osobni podaci")
-    return (
-      <Section title="Osobni podaci">
-        <Table
-          headings={["Podatak", "Vrijednost"]}
-          rows={[
-            ["Ime i prezime", data.account.profile.full_name],
-            ["E-adresa", data.account.user.email],
-            ["Ustanova", data.institution.name],
-          ]}
-        />
-      </Section>
-    );
   return (
     <Section title="Pregled studija">
+      <StudyProgress data={data} />
       <Table
         headings={[
           "Program",
@@ -323,7 +542,8 @@ export function Studomat({ data, view }: { data: AcademicData; view: string }) {
       />
       <p className="text-sm text-slate-500">
         Upisanih kolegija: {ownCourses.length} · Ostvareno ECTS:{" "}
-        {earnedCredits(data.courses, data.exams, data.grades, ownId)}
+        {earnedCredits(data.courses, data.exams, data.grades, ownId) +
+          extraCredits}
       </p>
     </Section>
   );

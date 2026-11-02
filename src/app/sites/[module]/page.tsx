@@ -13,7 +13,7 @@ import {
   Info,
   ExternalLink,
 } from "lucide-react";
-import { modules, academicAdminItems } from "@/lib/modules";
+import { modules, academicAdminItems, studomatGroups } from "@/lib/modules";
 import { navigation } from "@/lib/context";
 import { Brand } from "@/components/brand";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -33,12 +33,15 @@ export default async function Module({
     next?: string;
     institution?: string;
     date?: string;
+    course?: string;
+    academic_year?: string;
   }>;
 }) {
   const { module } = await params;
   const m = modules.find((m) => m.slug === module);
   if (!m) notFound();
-  const { view, mode, status, next, institution, date } = await searchParams;
+  const { view, mode, status, next, institution, date, course, academic_year } =
+    await searchParams;
   const active = m.items.find((i) => i === view) || m.items[0];
   const url = await navigation();
   const account = await identity();
@@ -79,16 +82,38 @@ export default async function Module({
           {m.name}
         </p>
         <nav className="flex flex-wrap gap-2 lg:block">
-          {m.items.map((item) => (
-            <a
-              key={item}
-              href={`${url(m.slug)}${url(m.slug).includes("?") ? "&" : "?"}view=${encodeURIComponent(item)}${institution ? `&institution=${encodeURIComponent(institution)}` : ""}`}
-              aria-current={active === item ? "page" : undefined}
-              className={`mb-2 block rounded-lg px-3 py-3 text-sm ${active === item ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-500 hover:bg-slate-50"}`}
-            >
-              {item}
-            </a>
-          ))}
+          {m.slug === "studomat"
+            ? Object.entries(studomatGroups).map(([group, items]) => (
+                <details
+                  key={group}
+                  open={items.some((item) => item === active)}
+                  className="mb-3"
+                >
+                  <summary className="cursor-pointer py-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+                    {group}
+                  </summary>
+                  {items.map((item) => (
+                    <a
+                      key={item}
+                      href={`${url(m.slug)}${url(m.slug).includes("?") ? "&" : "?"}view=${encodeURIComponent(item)}${institution ? `&institution=${encodeURIComponent(institution)}` : ""}`}
+                      aria-current={active === item ? "page" : undefined}
+                      className={`mb-1 block rounded-lg px-3 py-2 text-sm ${active === item ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-500 hover:bg-slate-50"}`}
+                    >
+                      {item}
+                    </a>
+                  ))}
+                </details>
+              ))
+            : m.items.map((item) => (
+                <a
+                  key={item}
+                  href={`${url(m.slug)}${url(m.slug).includes("?") ? "&" : "?"}view=${encodeURIComponent(item)}${institution ? `&institution=${encodeURIComponent(institution)}` : ""}`}
+                  aria-current={active === item ? "page" : undefined}
+                  className={`mb-2 block rounded-lg px-3 py-3 text-sm ${active === item ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-500 hover:bg-slate-50"}`}
+                >
+                  {item}
+                </a>
+              ))}
         </nav>
         <div className="mt-8 border-t border-slate-200 pt-5">
           <a
@@ -119,7 +144,7 @@ export default async function Module({
         <main className="mx-auto max-w-6xl p-6 md:p-10">
           <div className="mb-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-700">
             <span className="h-2 w-2 rounded-full bg-blue-600" />
-            {m.slug}.svs
+            {m.slug}.isvu
           </div>
           <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
             {m.name}
@@ -137,15 +162,20 @@ export default async function Module({
                   Nemate potrebnu ulogu za ovaj modul. Podaci nisu učitani.
                 </p>
               </div>
-            ) : module === "admin" && !academicAdminItems.some(item => item === active) ? (
+            ) : module === "admin" &&
+              !academicAdminItems.some((item) => item === active) ? (
               <Institutions system status={status} />
-            ) : ["portal", "studomat", "isvu", "raspored", "admin"].includes(module) ? (
+            ) : ["portal", "studomat", "isvu", "raspored", "admin"].includes(
+                module,
+              ) ? (
               <AcademicWorkspace
                 module={m.slug}
                 view={active}
                 status={status}
                 institution={institution}
                 date={date}
+                courseId={course}
+                academicYear={academic_year}
               />
             ) : (
               <>

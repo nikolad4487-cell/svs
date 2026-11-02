@@ -7,6 +7,14 @@ import { emailDomainsInput } from "@/lib/auth/email-domains";
 const institutionSchema = z.object({
   name: z.string().trim().min(2).max(200),
   code: z.string().regex(/^[A-Z0-9-]{2,20}$/),
+  registrar_contact: z.string().trim().max(2000).default(""),
+  student_instructions: z.string().trim().max(5000).default(""),
+  identity_portal_url: z
+    .union([
+      z.url().refine((v) => new URL(v).protocol === "https:"),
+      z.literal(""),
+    ])
+    .default(""),
   email_domains: emailDomainsInput.default([]),
   headquarters: z.string().trim().max(200),
   contact_email: z

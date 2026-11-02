@@ -12,6 +12,8 @@ Modularna hrvatska platforma visokog obrazovanja: Next.js 16 App Router, TypeScr
 
 LMS i poslovni zahtjevi referade slijede u idućim fazama. Modul e-učenja nije službeni Merlin/Moodle, a administracija studija nije službeni ISVU. Nema lažne e-pošte: pružatelj još nije povezan. Bez Supabase konfiguracije prikazuje se objašnjenje, a ne lažna prijava.
 
+**Prošireni Studomat:** odvojeni pregledi ispita, osobni godišnji podaci i postavke obavijesti, detalji predmeta i plan nastave, statistike i agregat generacije, dodatni ECTS, prehrana, školarine, participacije, boravci, kategorije, prisustvo i evidencija potvrda. Nove podatke vodi administrator/referada u Studentskim evidencijama. [Upute i migracija](docs/FAZA-4-STUDOMAT.md).
+
 ## Pokretanje
 
 Node.js 24 i npm:

@@ -1,6 +1,43 @@
+export const studomatGroups = {
+  Početna: ["Pregled studija"],
+  Ispiti: [
+    "Prijava ispita",
+    "Odjava ispita",
+    "Ispiti u tijeku",
+    "Pregled ispitnih rokova",
+    "Pregled ispita",
+  ],
+  "Podaci o studentu": [
+    "Osobni podaci",
+    "Razina prava na prehranu",
+    "E-mail opcije",
+    "Moj račun ustanove",
+  ],
+  "Podaci o studiranju": [
+    "Pregled podataka o studiranju",
+    "Upisane godine i predmeti",
+    "Aktivni predmeti",
+    "Dodatni ECTS bodovi",
+    "Pregled školarina",
+    "Pregled izračunatih participacija",
+    "Pregled boravaka",
+    "Kategorija studenta",
+    "Ocjene",
+    "ECTS bodovi",
+  ],
+  Podrška: ["Potvrde", "Upute", "Kontakt referade"],
+  Nastavnici: ["Ocjenjivanje"],
+} as const;
 export const academicAdminItems = [
-  "Studijski programi", "Akademske godine", "Kolegiji", "Studenti i upisi",
-  "Dvorane", "Ispitni rokovi", "Upravljanje terminima", "Obavijesti",
+  "Studijski programi",
+  "Akademske godine",
+  "Kolegiji",
+  "Studenti i upisi",
+  "Dvorane",
+  "Ispitni rokovi",
+  "Upravljanje terminima",
+  "Obavijesti",
+  "Studentske evidencije",
 ] as const;
 export const modules = [
   {
@@ -17,15 +54,7 @@ export const modules = [
     description: "Studij, kolegiji, ispitni rokovi i ocjene.",
     icon: "GraduationCap",
     color: "indigo",
-    items: [
-      "Pregled studija",
-      "Osobni podaci",
-      "Kolegiji",
-      "Ispiti",
-      "Ocjene",
-      "ECTS bodovi",
-      "Ocjenjivanje",
-    ],
+    items: [...Object.values(studomatGroups).flat(), "Kolegiji", "Ispiti"],
   },
   {
     slug: "merlin",
@@ -57,6 +86,7 @@ export const modules = [
       "Dvorane",
       "Ispitni rokovi",
       "Obavijesti",
+      "Studentske evidencije",
     ],
   },
   {
@@ -95,7 +125,13 @@ export const modules = [
     description: "Ustanove, ovlasti i konfiguracija platforme.",
     icon: "ShieldCheck",
     color: "rose",
-    items: ["Pregled sustava", "Ustanove", "Korisnici", "Moduli", ...academicAdminItems],
+    items: [
+      "Pregled sustava",
+      "Ustanove",
+      "Korisnici",
+      "Moduli",
+      ...academicAdminItems,
+    ],
   },
 ] as const;
 export type ModuleSlug = (typeof modules)[number]["slug"];

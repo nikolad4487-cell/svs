@@ -46,3 +46,10 @@ button {
 ::selection {
   background: #bfdbfe;
 }
+
+@media print {
+  aside, nav, header, form, button, .print\:hidden { display: none !important; }
+  main { padding: 0 !important; }
+  body { background: white !important; color: black !important; }
+  article { break-inside: avoid; }
+}

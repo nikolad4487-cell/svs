@@ -22,7 +22,9 @@
     "db:bundle": "node scripts/build-setup.mjs",
     "test:migrations": "node scripts/check-migrations.mjs",
     "import:ematica": "node scripts/import-ematica.mjs",
-    "test:ematica": "node scripts/test-import-ematica.mjs"
+    "test:ematica": "node scripts/test-import-ematica.mjs",
+    "test:student-services": "node scripts/test-student-services.mjs",
+    "test:student-cohort": "node scripts/test-student-cohort.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",

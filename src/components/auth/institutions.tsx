@@ -39,6 +39,9 @@ export async function Institutions({
     headquarters: string;
     contact_email: string | null;
     email_domains: string[];
+    registrar_contact?: string;
+    student_instructions?: string;
+    identity_portal_url?: string;
   }) => (
     <>
       <Field
@@ -70,11 +73,39 @@ export async function Institutions({
         />
         <p className="mt-2 text-sm text-slate-500">
           Unesite do 20 domena bez @ i protokola, odvojenih zarezom, primjerice
-          fakultet.example, studenti.fakultet.example. Poddomene se dodaju zasebno.
-          Bez domena novi pozivi i registracije nisu dopušteni. Potrebni su
-          administratorski poziv i potvrda e-pošte. Postojeća članstva ostaju aktivna.
+          fakultet.example, studenti.fakultet.example. Poddomene se dodaju
+          zasebno. Bez domena novi pozivi i registracije nisu dopušteni.
+          Potrebni su administratorski poziv i potvrda e-pošte. Postojeća
+          članstva ostaju aktivna.
         </p>
       </div>
+      <label className="block text-sm font-medium">
+        Kontakt referade (telefon, adresa, radno vrijeme)
+        <textarea
+          className={inputClass}
+          name="registrar_contact"
+          defaultValue={institution?.registrar_contact || ""}
+          maxLength={2000}
+          rows={3}
+        />
+      </label>
+      <label className="block text-sm font-medium">
+        Upute studentima
+        <textarea
+          className={inputClass}
+          name="student_instructions"
+          defaultValue={institution?.student_instructions || ""}
+          maxLength={5000}
+          rows={4}
+        />
+      </label>
+      <Field
+        label="HTTPS poveznica na račun ustanove / identitetski portal"
+        name="identity_portal_url"
+        defaultValue={institution?.identity_portal_url || ""}
+        required={false}
+        maxLength={2000}
+      />
       <Field
         label="Kontakt e-adresa"
         name="contact_email"
@@ -86,11 +117,25 @@ export async function Institutions({
   );
   return (
     <div className="space-y-8">
-      {system && account.superadmin && <CredentialPrint loginUrl={url("auth")} />}
-      {(account.superadmin || account.memberships.some(m => ["institution_admin", "registrar"].includes(m.role))) && <p className="rounded-lg bg-blue-50 p-4 text-sm text-blue-900">
-        Kolegijima, studijskim programima, upisima, ispitima i rasporedom upravljate u
-        {" "}<a className="font-semibold underline" href={`${url(system ? "admin" : "isvu")}${url(system ? "admin" : "isvu").includes("?") ? "&" : "?"}view=${encodeURIComponent("Studijski programi")}`}>Administraciji studija</a>.
-      </p>}
+      {system && account.superadmin && (
+        <CredentialPrint loginUrl={url("auth")} />
+      )}
+      {(account.superadmin ||
+        account.memberships.some((m) =>
+          ["institution_admin", "registrar"].includes(m.role),
+        )) && (
+        <p className="rounded-lg bg-blue-50 p-4 text-sm text-blue-900">
+          Kolegijima, studijskim programima, upisima, ispitima i rasporedom
+          upravljate u{" "}
+          <a
+            className="font-semibold underline"
+            href={`${url(system ? "admin" : "isvu")}${url(system ? "admin" : "isvu").includes("?") ? "&" : "?"}view=${encodeURIComponent("Studijski programi")}`}
+          >
+            Administraciji studija
+          </a>
+          .
+        </p>
+      )}
       {status && (
         <p
           role="status"
@@ -162,7 +207,14 @@ export async function Institutions({
                   </span>
                 ))}
             </div>
-            {manager && <a className="mt-4 inline-block font-semibold text-blue-700" href={`${url(system ? "admin" : "isvu")}${url(system ? "admin" : "isvu").includes("?") ? "&" : "?"}view=${encodeURIComponent("Kolegiji")}&institution=${encodeURIComponent(i.id)}`}>Upravljaj kolegijima i studijem →</a>}
+            {manager && (
+              <a
+                className="mt-4 inline-block font-semibold text-blue-700"
+                href={`${url(system ? "admin" : "isvu")}${url(system ? "admin" : "isvu").includes("?") ? "&" : "?"}view=${encodeURIComponent("Kolegiji")}&institution=${encodeURIComponent(i.id)}`}
+              >
+                Upravljaj kolegijima i studijem →
+              </a>
+            )}
             {manager && (
               <>
                 <details className="mt-5">
@@ -294,7 +346,11 @@ export async function Institutions({
                             : new Date(v.expires_at) < new Date()
                               ? "Istekao"
                               : "Na čekanju"}
-                          {account.superadmin && !v.accepted_at && new Date(v.expires_at) > new Date() && <PendingCredentials inviteId={v.id} />}
+                          {account.superadmin &&
+                            !v.accepted_at &&
+                            new Date(v.expires_at) > new Date() && (
+                              <PendingCredentials inviteId={v.id} />
+                            )}
                         </li>
                       ))}
                   </ul>

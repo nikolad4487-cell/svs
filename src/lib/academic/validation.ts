@@ -41,11 +41,15 @@ export const schemas = {
     })
     .refine((v) => v.starts_on < v.ends_on),
   course: z.object({
+    lecture_hours: z.coerce.number().int().min(0).max(1000).default(0),
+    exercise_hours: z.coerce.number().int().min(0).max(1000).default(0),
+    elective_group: z.string().max(200).default(""),
+    teaching_plan: z.string().max(5000).default(""),
     program_id: uuid,
     semester_id: uuid,
     name,
     code,
-    ects: z.coerce.number().min(0.5).max(30).multipleOf(0.5),
+    ects: z.coerce.number().min(0).max(30).multipleOf(0.5),
   }),
   study: z.object({
     student_id: uuid,

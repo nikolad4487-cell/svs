@@ -1,12 +1,13 @@
 import "server-only";
 import { requireIdentity } from "../auth/access";
 import { notFound } from "next/navigation";
+import type { StudentService, StudentReport } from "./student-services";
 import type * as M from "./model";
 export async function academicData(institutionId?: string) {
   const account = await requireIdentity();
   const institutions = await account.db
     .from("institutions")
-    .select("id,name,code")
+    .select("*")
     .order("name");
   if (institutions.error) throw new Error("Ustanove nisu dostupne.");
   const available = institutions.data as M.Institution[];
@@ -88,6 +89,31 @@ export async function academicData(institutionId?: string) {
     if (profile.error) throw new Error("Imena korisnika nisu dostupna.");
     profiles.push(...profile.data);
   }
+  const optionalTable = async <T>(name: string) => {
+    const rows: T[] = [];
+    for (let offset = 0; ; offset += 500) {
+      const result = await account.db
+        .from(name)
+        .select("*")
+        .eq("institution_id", id)
+        .order("id")
+        .range(offset, offset + 499);
+      if (result.error) return { data: null, error: result.error };
+      rows.push(...(result.data as T[]));
+      if (result.data.length < 500) return { data: rows, error: null };
+    }
+  };
+  const [serviceRows, reportRows] = await Promise.all([
+    optionalTable<StudentService>("student_services"),
+    optionalTable<StudentReport>("student_reports"),
+  ]);
+  const servicesReady = !serviceRows.error && !reportRows.error;
+  if (
+    [serviceRows.error, reportRows.error].some(
+      (e) => e && !["PGRST205", "42P01"].includes(e.code),
+    )
+  )
+    throw new Error("Studentske evidencije nisu dostupne.");
   const manager =
     account.superadmin ||
     account.memberships.some(
@@ -100,6 +126,9 @@ export async function academicData(institutionId?: string) {
   );
   return {
     account,
+    servicesReady,
+    services: (serviceRows.data || []) as StudentService[],
+    reports: (reportRows.data || []) as StudentReport[],
     institution,
     institutions: available,
     manager,

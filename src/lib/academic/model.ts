@@ -1,4 +1,11 @@
-export type Institution = { id: string; name: string; code: string };
+export type Institution = {
+  id: string;
+  name: string;
+  code: string;
+  registrar_contact?: string;
+  student_instructions?: string;
+  identity_portal_url?: string;
+};
 export type Program = {
   id: string;
   institution_id: string;
@@ -30,6 +37,10 @@ export type Course = {
   name: string;
   code: string;
   ects: number;
+  lecture_hours?: number;
+  exercise_hours?: number;
+  elective_group?: string;
+  teaching_plan?: string;
 };
 export type Study = {
   id: string;
