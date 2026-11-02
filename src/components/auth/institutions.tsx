@@ -1,3 +1,4 @@
+import { PendingCredentials } from "./pending-credentials";
 import { CredentialPrint } from "./credential-print";
 import { requestContext } from "@/lib/auth/request";
 import { requireIdentity } from "@/lib/auth/access";
@@ -288,6 +289,7 @@ export async function Institutions({
                             : new Date(v.expires_at) < new Date()
                               ? "Istekao"
                               : "Na čekanju"}
+                          {account.superadmin && !v.accepted_at && new Date(v.expires_at) > new Date() && <PendingCredentials inviteId={v.id} />}
                         </li>
                       ))}
                   </ul>
