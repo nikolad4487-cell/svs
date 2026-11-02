@@ -46,13 +46,15 @@ for (const schoolYear of new Set(mappings.map(m => m.school_year_id))) {
 const plans = planImport(enrollments, mappings, sourceUrl.origin);
 const readiness = await target.rpc('password_change_session_is_active');
 if (readiness.error) throw new Error('Primijenite SVS migraciju 202611020002_import_passwords.sql prije uvoza.');
+const institutionNames = new Map();
 for (const m of mappings) {
   const [institution, program, year] = await Promise.all([
-    target.from('institutions').select('active,email_domains').eq('id',m.institution_id).single(),
+    target.from('institutions').select('name,active,email_domains').eq('id',m.institution_id).single(),
     target.from('study_programs').select('id').eq('id',m.svs_program_id).eq('institution_id',m.institution_id).single(),
     target.from('academic_years').select('id').eq('id',m.academic_year_id).eq('institution_id',m.institution_id).single(),
   ]);
   if (institution.error || program.error || year.error || !institution.data.active || !institution.data.email_domains.includes(m.domain)) throw new Error('Neispravno SVS mapiranje ili domena nije dopuštena u aktivnoj ustanovi.');
+  institutionNames.set(m.institution_id, institution.data.name);
 }
 const users = [];
 for (let page=1;;page++) {
@@ -96,7 +98,7 @@ try {
     if (!user) {
       const password = randomBytes(24).toString('base64url');
       // Save before the remote call so a network failure cannot lose a newly created password.
-      writeSync(output, JSON.stringify({status:'candidate',email:p.email,password})+'\n');
+      writeSync(output, JSON.stringify({status:'candidate',email:p.email,password,full_name:p.full_name,institution:institutionNames.get(p.mapping.institution_id)})+'\n');
       fsyncSync(output);
       const pending = await target.from('registration_invites').select('id').eq('institution_id',p.mapping.institution_id).eq('email',p.email).eq('role','student').is('accepted_at',null).maybeSingle();
       if (pending.error) throw new Error('Provjera administratorskog poziva nije uspjela.');

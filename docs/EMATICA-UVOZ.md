@@ -50,3 +50,10 @@ Ponovni uvoz prepoznaje vezu u zaštićenom Auth `app_metadata`, ne mijenja lozi
 ## Provjere
 
 `npm test` provjerava normalizaciju imena, stabilna različita korisnička imena, odabir aktivnih upisa i odbijanje nejasnog mapiranja. `npm run test:ematica` koristi simulirani izvor sa stvarnim formatom e-Matice te stvarnu lokalnu SVS bazu i Auth: provjerava pregled, izradu računa, datoteku 0600, blokadu podataka do promjene lozinke, članstvo/upis i ponovni uvoz bez promjene lozinke. Potrebni su pripremljeni lokalni testni servisi, akademski fixture podaci i izgrađena aplikacija pokrenuta na portu 3002 (ili `AUTH_TEST_PORT`). Test provjerava i HTTP preusmjeravanje na promjenu lozinke, zabranu izmjene profila prije promjene te opoziv starih sesija. To nije potvrda pristupa udaljenoj e-Matici.
+
+
+## Ispis podataka za prvu prijavu
+
+U aplikaciji otvorite **Administracija sustava → Ispis podataka za prvu prijavu**, odaberite `.jsonl` datoteku iz parametra `--credentials` dovršenog uvoza i kliknite **Ispiši / Spremi kao PDF**. Svaki potvrđeno izrađen račun dobiva zaseban A4 list, s imenom, ustanovom, adresom prijave, korisničkim imenom i inicijalnom lozinkom. Stariji izvozi bez imena/ustanove također su podržani. Nepotvrđeni `candidate` zapisi se ne ispisuju. Datoteka ostaje u pregledniku; ne šalje se aplikacijskom poslužitelju niti se sprema u localStorage.
+
+Lozinka se preuzima iz izvornog izvoza i ispis ne mijenja račun ni lozinku. Ako je korisnik već promijenio inicijalnu lozinku, stari ispis je više ne može zamijeniti. Sustav ne može pročitati trenutne lozinke iz Supabasea. Gumb **Ukloni podatke iz pregleda** uklanja učitane podatke iz prikaza; ne briše izvornu datoteku ni spremljeni PDF. Listove uručite pojedinačno odgovarajućim korisnicima. Korisniku je promjena inicijalne lozinke obvezna pri prvom pristupu.

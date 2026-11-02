@@ -1,3 +1,5 @@
+import { CredentialPrint } from "./credential-print";
+import { requestContext } from "@/lib/auth/request";
 import { requireIdentity } from "@/lib/auth/access";
 import { roles, roleNames } from "@/lib/auth/policy";
 import { Field, Submit, inputClass } from "./forms";
@@ -8,6 +10,7 @@ export async function Institutions({
   system?: boolean;
   status?: string;
 }) {
+  const { url } = await requestContext();
   const account = await requireIdentity(system ? "admin" : undefined);
   const { data: institutions, error } = await account.db
     .from("institutions")
@@ -82,6 +85,7 @@ export async function Institutions({
   );
   return (
     <div className="space-y-8">
+      {system && account.superadmin && <CredentialPrint loginUrl={url("auth")} />}
       {status && (
         <p
           role="status"
