@@ -20,7 +20,9 @@
     "db:seed-academic": "node scripts/seed-academic.mjs",
     "test:academic": "node scripts/test-academic.mjs",
     "db:bundle": "node scripts/build-setup.mjs",
-    "test:migrations": "node scripts/check-migrations.mjs"
+    "test:migrations": "node scripts/check-migrations.mjs",
+    "import:ematica": "node scripts/import-ematica.mjs",
+    "test:ematica": "node scripts/test-import-ematica.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",

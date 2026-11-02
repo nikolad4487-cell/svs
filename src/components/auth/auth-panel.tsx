@@ -15,6 +15,7 @@ const statuses: Record<string, string> = {
   "signed-out": "Odjavljeni ste.",
   "password-changed": "Lozinka je promijenjena. Ponovno se prijavite.",
   saved: "Promjene su spremljene.",
+  "temporary-password": "Prije pristupa studiju promijenite dodijeljenu privremenu lozinku.",
   verified: "E-adresa je potvrđena. Postavite novu lozinku.",
 };
 export function ConfigNotice() {
@@ -43,7 +44,7 @@ export async function AuthPanel({
   const account = await identity();
   const url = await navigation();
   const target = safeModule(next);
-  const selected = ["signup", "reset", "password", "account"].includes(mode)
+  const selected = account?.user.app_metadata?.svs_password_change_required === true ? "password" : ["signup", "reset", "password", "account"].includes(mode)
     ? mode
     : "login";
   const authLink = (view: string) => {
@@ -171,7 +172,7 @@ export async function AuthPanel({
       </h2>
       <p className="mt-3 text-sm leading-6 text-slate-500">
         {selected === "signup"
-          ? "Registrirati se mogu samo adrese koje je pozvao administrator ustanove. Potvrda e-pošte je obavezna."
+          ? "Registrirati se mogu samo pozvane adrese s dopuštene domene ustanove. Potvrda e-pošte je obavezna."
           : "Koristite svoj akademski korisnički račun."}
       </p>
       {statuses[status] && (

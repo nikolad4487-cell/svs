@@ -96,3 +96,15 @@ Svi POST endpointi provjeravaju točan Origin (uključujući poddomenu, protokol
 Ako mijenjate domenu, promijenite DNS/TLS, `BASE_DOMAIN`, Supabase Site URL/redirectove i e-mail predloške te ponovno objavite aplikaciju. Stari cookie neće vrijediti na novoj domeni; korisnici se trebaju ponovno prijaviti.
 
 Provjera prije produkcije: stvarni SMTP i isporuka poruka, browser SSO i cookie pravila na konačnom HTTPS DNS-u, produkcijski RLS i politika privatnosti/zadržavanja podataka. Lokalna provjera nije potvrda da je vanjski projekt konfiguriran ili da je aplikacija objavljena.
+
+## Dopuštene domene e-pošte po ustanovi
+
+U administraciji sustava ili u upravljanju vlastitom ustanovom unesite **Dopuštene domene e-pošte**. Podržano je do 20 domena odvojenih zarezom, razmakom ili točkom-zarezom. Unosi se samo hostname, bez `@`, protokola ili wildcarda; velika slova se normaliziraju. Internacionalne domene unesite u punycode obliku. Poddomene dodajte zasebno. Nema unaprijed ugrađenih stvarnih fakultetskih domena.
+
+Registracija zahtijeva adresu s dopuštene domene, neistekli administratorski poziv za tu adresu i potvrdu e-pošte. Sama domena ne dodjeljuje članstvo ni ulogu. Provjera se izvršava i u bazi pri stvaranju poziva, u Auth hooku, pri potvrdi adrese te pri prihvaćanju naknadnog poziva. Članstvo za pojedinu ustanovu ne aktivira se ako je njena domena u međuvremenu uklonjena. Promjena domene ne opoziva postojeća članstva; opoziv je zasebna administratorska radnja.
+
+**Nadogradnja postojećeg projekta:** primijenite `supabase/migrations/202611020001_email_domains.sql` nakon prethodnih migracija, zatim unesite domene za svaku ustanovu. Migracija namjerno ostavlja prazne popise: do konfiguracije novi pozivi i registracije su blokirani, a postojeći korisnici zadržavaju članstva. Ne pokrećite cijeli `setup.sql` na postojećoj bazi. Za novi projekt regenerirani `supabase/setup.sql` već sadrži ovu migraciju. Auth hook `public.before_user_created` i dalje mora biti uključen; njegova se funkcija nadograđuje bez promjene naziva.
+
+Domene za prijavu nisu DNS domene na kojima se aplikacija poslužuje i ne mijenjaju `BASE_DOMAIN` ni Vercel postavke. Ove postavke same ne stvaraju poštanske sandučiće.
+
+Lokalne demo ustanove u `supabase/seed.sql` izričito koriste `example.test`. Za nadogradnju već postojeće lokalne demo baze postavite tu domenu samo tim testnim ustanovama prije integracijskih testova. Dodatna provjera novih pravila: `node scripts/test-email-domains.mjs`; test radi u transakciji i na kraju vraća sve svoje promjene.

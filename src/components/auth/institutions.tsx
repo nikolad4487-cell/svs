@@ -34,6 +34,7 @@ export async function Institutions({
     code: string;
     headquarters: string;
     contact_email: string | null;
+    email_domains: string[];
   }) => (
     <>
       <Field
@@ -55,6 +56,21 @@ export async function Institutions({
         required={false}
         maxLength={200}
       />
+      <div>
+        <Field
+          label="Dopuštene domene e-pošte"
+          name="email_domains"
+          defaultValue={institution?.email_domains?.join(", ") || ""}
+          required={false}
+          maxLength={6000}
+        />
+        <p className="mt-2 text-sm text-slate-500">
+          Unesite do 20 domena bez @ i protokola, odvojenih zarezom, primjerice
+          fakultet.example, studenti.fakultet.example. Poddomene se dodaju zasebno.
+          Bez domena novi pozivi i registracije nisu dopušteni. Potrebni su
+          administratorski poziv i potvrda e-pošte. Postojeća članstva ostaju aktivna.
+        </p>
+      </div>
       <Field
         label="Kontakt e-adresa"
         name="contact_email"
@@ -73,7 +89,7 @@ export async function Institutions({
         >
           {status === "saved"
             ? "Promjene su spremljene."
-            : "Podaci nisu spremljeni. Provjerite obrazac, ovlasti i jedinstvenu kraticu."}
+            : "Podaci nisu spremljeni. Provjerite obrazac, ovlasti, jedinstvenu kraticu i dopuštene domene e-pošte."}
         </p>
       )}
       <div>

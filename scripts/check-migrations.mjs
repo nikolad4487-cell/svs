@@ -32,7 +32,7 @@ if (sql("postgres", `select 1 from pg_database where datname='${name}'`).trim())
   throw new Error("Existing check database preserved.");
 sql("postgres", `create database ${name}`);
 try {
-  // Real Auth schema from the official service, without app trigger installed by phase two.
+  // Real Auth schema from the official service, without application triggers that refer to public functions.
   const auth = execFileSync(
     "docker",
     [
@@ -45,7 +45,7 @@ try {
       "postgres",
     ],
     { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
-  ).replace(/^CREATE TRIGGER on_auth_user_sync[^\n]*\n/gm, "");
+  ).replace(/^CREATE TRIGGER (?:on_auth_user_sync|import_password_changed)[^\n]*\n/gm, "");
   sql(name, auth);
   sql(name, readFileSync("supabase/setup.sql", "utf8"));
   const tables = Number(

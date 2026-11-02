@@ -41,6 +41,19 @@ for (const [db, key] of [
   });
   assert.ifError(result.error);
 }
+await check("institution domains are editable only by authorized administrators", async () => {
+  const allowed = await admin.from("institutions").update({ email_domains: ["example.test"] }).eq("id", a).select();
+  assert.ifError(allowed.error);
+  assert.equal(allowed.data.length, 1);
+  for (const [db, id] of [[student, a], [admin, b]]) {
+    const denied = await db.from("institutions").update({ email_domains: ["evil.example"] }).eq("id", id).select();
+    assert.ok(denied.error || denied.data.length === 0);
+  }
+  const invalid = await admin.from("institutions").update({ email_domains: ["*.example.test"] }).eq("id", a);
+  assert.ok(invalid.error);
+  const invite = await admin.from("registration_invites").insert({ institution_id: a, email: "blocked@other.example", role: "student", created_by: users.admin.id });
+  assert.ok(invite.error);
+});
 await check(
   "students see their institution only, including ID tampering",
   async () => {
@@ -456,6 +469,7 @@ await check(
         cookies: adminCookies,
         data: {
           name: "HTTP test ustanova",
+          email_domains: "Faculty.Example, students.faculty.example",
           code,
           headquarters: "Zagreb",
           contact_email: "",
@@ -468,6 +482,9 @@ await check(
           .data.length,
         1,
       );
+      const saved = await superadmin.from("institutions").select("email_domains").eq("code", code).single();
+      assert.ifError(saved.error);
+      assert.deepEqual(saved.data.email_domains, ["faculty.example", "students.faculty.example"]);
       const page = await request(adminHost, "/", { cookies: adminCookies });
       assert.ok(page.body.includes("Dodaj visoko učilište"));
     } finally {

@@ -44,8 +44,10 @@ export async function POST(
         })
         .safeParse(Object.fromEntries(form));
       if (!input.success) return authRedirect("invalid", "login", next);
-      const { error } = await db.auth.signInWithPassword(input.data);
+      const { data, error } = await db.auth.signInWithPassword(input.data);
       if (error) return authRedirect("invalid", "login", next);
+      if (data.user?.app_metadata?.svs_password_change_required === true)
+        return authRedirect("temporary-password", "password", next);
       const acceptance = await db.rpc("accept_invitations");
       if (acceptance.error) {
         await db.auth.signOut({ scope: "local" });
@@ -86,7 +88,7 @@ export async function POST(
       });
       return authRedirect("check-email", "reset", next);
     }
-    const account = await requireIdentity();
+    const account = await requireIdentity(undefined, true);
     if (action === "password") {
       const password = z
         .string()

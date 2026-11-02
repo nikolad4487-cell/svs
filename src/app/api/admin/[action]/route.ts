@@ -3,9 +3,11 @@ import { z } from "zod";
 import { assertSameOrigin, requestContext } from "@/lib/auth/request";
 import { requireIdentity } from "@/lib/auth/access";
 import { roles } from "@/lib/auth/policy";
+import { emailDomainsInput } from "@/lib/auth/email-domains";
 const institutionSchema = z.object({
   name: z.string().trim().min(2).max(200),
   code: z.string().regex(/^[A-Z0-9-]{2,20}$/),
+  email_domains: emailDomainsInput.default([]),
   headquarters: z.string().trim().max(200),
   contact_email: z
     .union([z.email().max(254), z.literal("")])
