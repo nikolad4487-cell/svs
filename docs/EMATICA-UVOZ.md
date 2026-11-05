@@ -1,69 +1,67 @@
-# Uvoz iz vlastite e-Matice
+# Provjereni prijenos upisa iz e-Matice u ISVU
 
-Serverski administratorski alat koristi stvarnu shemu repozitorija `nikolad4487-cell/eskolehr-ematica`: `student_school_enrollments` s `status=ACTIVE`, povezane `schools.education_level=HIGHER` i `registry_students`. Ne uvozi liste želja ni samu prihvaćenu prijavu prije stvarnog aktivnog upisa. Iz e-Matice čita samo identifikatore, ime i prezime; ne prenosi OIB, adrese, postojeće lozinke ni PIN-ove. Izvor se ne mijenja.
+## Što je izvor
 
-Ovo je ručno pokretan serverski uvoz, a ne automatska sinkronizacija ili novi gumb u administratorskom sučelju. Produkcijski projekti još moraju biti povezani. Adresa web-aplikacije `e-matica.skolehr.xyz` nije adresa Supabase API-ja: nju provjerite u e-Matica Vercel varijabli `VITE_SUPABASE_URL` ili u Supabase postavkama projekta.
+Izvor je zajednički Supabase projekt e-Matice/e-Dnevnika. Modul `fakulteti.skolehr.xyz` sprema kandidaturu i prihvaćen izbor; postupak **Provedi upis prihvaćenih** kreira aktivni `student_school_enrollments` u odabranom učilištu/programu. Prijenos u ISVU provjerava oba zapisa. Sama lista prioriteta, status ACCEPTED bez provedenog upisa ili ručni ACTIVE zapis bez odgovarajuće kandidature nisu dovoljni.
 
-## Priprema
+U pregledanoj shemi mature postoje `matura_registrations`, `matura_study_applications` i uvjeti programa, ali nema strukturiranog konačnog rezultata iz kojeg bi se pouzdano zaključio prolaz svih potrebnih ispita. Stranica za nastavnike je `https://ednevnik.skolehr.xyz/teacher/matura`. Prijava mature se nikad ne računa kao položena matura: dok izvor ne dobije jednoznačne potvrđene rezultate, glavni administrator provjerava dokument i evidentira oznaku dokaza. Završetak srednje škole može se potvrditi izvornim `student_year_end_summaries.status=GRADUATED` za istog učenika i izvornu školu ili dokumentiranom administratorskom provjerom.
 
-1. U SVS primijenite nedostajuće migracije redom, uključujući `202611020001_email_domains.sql` i `202611020002_import_passwords.sql`. Za novi projekt koristite regenerirani `supabase/setup.sql` jednom. Nemojte pokretati puni installer na postojećoj bazi.
-2. U SVS kreirajte ustanove, studijske programe i akademske godine te dopuštene domene ustanova. Ne zaključujemo identitet fakulteta prema sličnom nazivu: potrebno je izričito mapiranje identifikatora.
-3. Na sigurnom serverskom izvršitelju postavite `EMATICA_SUPABASE_URL`, `EMATICA_SUPABASE_SECRET_KEY`, `SVS_SUPABASE_URL`, `SVS_SUPABASE_SECRET_KEY`. URL-ovi su javni; oba ključa su administratorski Supabase secret/service-role ključevi. Nikad ih ne stavljajte u `NEXT_PUBLIC_*`, `VITE_*`, Git, chat ili preglednik. Ključevi moraju imati pristup relevantnim tablicama, a SVS ključ i Auth Admin API-ju. Za proxy pohranu tajni ograničite svaki ključ na njegov točan Supabase hostname. Izvršitelj mora imati mrežni pristup tim dvama hostnameovima. Nema novih ključeva za unos u frontend e-Matice.
-4. Pripremite JSON mapiranje, primjerice `/workspace/ematica-mapping.json`, s jednim zapisom po kombinaciji izvornog fakulteta, programa i školske godine:
+Izvor se samo čita. Ne kopiraju se prethodne lozinke, PIN-ovi, OIB, datum rođenja ili adrese.
 
-```json
-[
-  {
-    "school_id": "ID-FAKULTETA-U-EMATICI",
-    "program_id": "00000000-0000-4000-8000-000000000001",
-    "school_year_id": "00000000-0000-4000-8000-000000000002",
-    "institution_id": "00000000-0000-4000-8000-000000000003",
-    "svs_program_id": "00000000-0000-4000-8000-000000000004",
-    "academic_year_id": "00000000-0000-4000-8000-000000000005",
-    "domain": "studenti.fakultet.example",
-    "study_year": 1
-  }
-]
-```
+## Aktivacija
 
-Zamijenite sve primjere stvarnim identifikatorima i domenom. `school_id` je tekstualni identifikator; ostali identifikatori su UUID. Alat dohvaća samo navedene fakultete i izvorne godine. Za njihove aktivne upise traži točno jedno mapiranje; nedostajuće ili dvostruko mapiranje zaustavlja cijeli pregled prije spremanja. Upisani programi, godine i domene moraju pripadati ciljnoj ustanovi.
+1. Na SVS projektu primijenite nedostajuće migracije redom, uključujući `202611020002_import_passwords.sql` i `202611030001_verified_admissions.sql`. Za novi projekt `supabase/setup.sql` sadrži puni installer; ne pokrećite ga na već instaliranoj bazi.
+2. Postavite ustanove, dopuštene domene, studijske programe i akademske godine u ISVU-u.
+3. U serverskim postavkama aplikacije (Vercel, ako je tamo objavljena) postavite `EMATICA_SUPABASE_URL`, `EMATICA_SUPABASE_SECRET_KEY`, `SVS_SUPABASE_URL` i `SVS_SUPABASE_SECRET_KEY`. Ključevi su serverski secret/service-role ključevi odgovarajućih zasebnih projekata, nikad `NEXT_PUBLIC_*` ili `VITE_*`. Postavke u cloud razvojnom okruženju ne prenose se automatski u Vercel. Za proxy pohranu tajni svaki ključ smije se slati samo na točan hostname njegova projekta.
+4. Ponovno objavite aplikaciju nakon dodavanja serverskih varijabli. Objavljivanje aplikacije ne provodi SQL migracije i ne prenosi učenike.
 
-## Izvršenje
+## Administratorski postupak bez JSON mapiranja
 
-Iz `/workspace/svs`, nakon `npm ci`:
+U **Administracija sustava → Uvoz upisa** glavni administrator:
+
+1. Klikne **Dohvati ponudu i mapiranja**. To čita nazive/identifikatore izvornih programa i godina te postojeća ISVU mapiranja; ne stvara korisnike.
+2. Poveže izvorni fakultet/program, godinu kandidature i godinu provedenog upisa s točnom ISVU ustanovom/programom/godinom. Odabire dopuštenu domenu korisničkih imena. Godina kandidature i upisa mogu biti različite ako je izvorna Provedba upisa koristila drugu godinu.
+3. Navede odluku/pravilo upisa. Matura je po zadanim postavkama obvezna; može se izuzeti samo uz stvarnu dokumentiranu osnovu programa.
+4. Klikne **Provjeri upise bez spremanja**. Svaki kandidat ima popis razloga koji blokiraju prijenos. Pregled ne stvara Auth račune, pozive ni upise.
+5. Uz kandidata evidentira provjeru mature i uvjeta programa, uz oznaku vjerodostojnog dokumenta. Ako izvor nema dokaz završetka škole, mora provjeriti i njega. Osoba i vrijeme provjere bilježe se automatski; student ili administrator pojedine ustanove ne mogu odobriti ovaj globalni prijenos.
+6. Odabere spremne kandidate i klikne **Preuzmi odabrane potvrđene upise** (najviše pet po zahtjevu). Poslužitelj ponovno čita izvor i provjere prije prijenosa, bez povjerenja u prethodni pregled ili podatke iz preglednika.
+7. Odmah ispiše ili preuzme nove pristupne podatke. Svaki novi student dobiva zaseban A4 list. U slučaju djelomičnog neuspjeha sačuvajte i već izdane pristupne podatke pa provjerite status.
+
+Mapiranja se mogu urediti ili isključiti. Promjena pravila poništava primjenjivost starih provjera: administrator mora ponovno potvrditi dokumente uz novu reviziju. Promjena izvornog učenika ili prihvaćenog izbora također onemogućuje uporabu stare provjere. Identitet mapiranja (izvorni/odredišni program i godine) ne može se mijenjati nakon što postoje pokušaji prijenosa; napravite novo mapiranje za novu kombinaciju. Već preneseni računi ne opozivaju se automatski nakon promjene izvora ili pravila.
+
+## Računi, lozinke i ponavljanje
+
+Korisničko ime je `ime.prezime.<stabilni-sufiks>@domena`. Izvorni identitet i odredišna ustanova služe za povezivanje postojećeg računa. Ne preuzima se nepovezan račun istog korisničkog imena, ne duplicira se postojeći upis i ne mijenja se postojeća lozinka. Različite ustanove dobivaju odvojene račune. Ovo ne stvara e-mail sandučiće i ne šalje e-poštu.
+
+Za novi račun generira se zasebna nasumična inicijalna lozinka; aplikacija i RLS blokiraju studijske podatke do njezine promjene. Početni podaci iz administratorskog pregleda ostaju samo u pregledniku i u datoteci koju preuzme administrator, ne u bazi aplikacije ili konzoli. Pristupne podatke uručite samo odgovarajućem studentu, nakon provjere identiteta.
+
+Prijenos dobiva rezervaciju u `admission_import_jobs`: paralelni zahtjev za isti upis ne može izdati novu lozinku. Dovršen zahtjev se preskače; neuspjeli se može nastaviti nakon pregleda. Rezervacija `running` ne poništava se automatski nakon prekida procesa; prvo treba administratorski provjeriti Auth račun i status posla. Ne brišite naslijepo postojeće račune niti pokrećite paralelne prijenose.
+
+Nije moguće transakcijski obuhvatiti dva Supabase projekta i odgovor pregledniku. Ako se veza prekine nakon stvaranja računa, nova lozinka možda nije stigla do administratora. Ponovljeni postupak ne mijenja tu lozinku: najprije treba provjeriti postojeći račun i organizirati kontrolirani oporavak pristupa. Ako račun već postoji, rezultat neće izmišljati niti ponovno prikazivati njegovu staru lozinku.
+
+## CLI za isti provjereni postupak
+
+Stari `--config` uvoz samo na temelju ACTIVE zapisa je uklonjen. Koristi se spremljeno mapiranje i iste provjere kao u aplikaciji:
 
 ```sh
-# Samo pregled: ne stvara račune, pozive, članstva ni upise.
-npm run import:ematica -- --config /workspace/ematica-mapping.json
-# Administratorski odobren uvoz; datoteka mora biti nova i izvan repozitorija.
-npm run import:ematica -- --config /workspace/ematica-mapping.json --apply --credentials /workspace/novi-svs-racuni.jsonl
+# Pregled bez spremanja, iz /workspace/svs:
+npm run import:ematica -- --mapping UUID-MAPIRANJA
+# Administratorski prijenos spremnih kandidata:
+npm run import:ematica -- --mapping UUID-MAPIRANJA --apply --credentials /workspace/novi-racuni.jsonl
 ```
 
-Korisničko ime je oblika `ime.prezime.<stabilni-sufiks>@domena`. Sufiks iz izvornog identifikatora razlikuje učenike istog imena. Jedan izvorni učenik u jednoj ciljnoj ustanovi dobiva jedan račun i može imati više upisa; druga ustanova dobiva zaseban račun s vlastitom domenom. Promjena imena ili domene koja bi preimenovala postojeći račun traži ručnu provjeru. Tuđi postojeći račun s istom adresom nikad se automatski ne preuzima.
+Potrebne su iste četiri serverske varijable. Datoteka mora biti nova i izvan repozitorija; izrađuje se s dozvolama 0600. CLI zapisuje `candidate` prije stvaranja računa i `created` nakon potvrde Auth API-ja. Sam `candidate` ne dokazuje uspjeh. Zadržite izlaznu datoteku i kod djelomičnog neuspjeha; ponavljanje stvara novi izlazni dokument, bez mijenjanja postojećih lozinki.
 
-Za novi račun alat stvara administratorski poziv za ulogu student i generira novu nasumičnu lozinku. Aktivacija identiteta je privilegirana administratorska radnja temeljena na provjerenom izvornom upisu; ne šalje se lažna potvrda e-pošte i ne tvrdi se da korisnik posjeduje novi sandučić. Alat ne stvara e-mail sandučiće. Privremena lozinka omogućuje samo promjenu lozinke; aplikacija i DB RLS blokiraju studijske podatke do promjene. Promjena kroz aplikaciju opoziva postojeće sesije.
+## Ispis i pozivi na čekanju
 
-Lozinke se ne ispisuju u konzolu ni spremaju u bazu aplikacije. Izlazna JSONL datoteka ima dozvole 0600: zapis `candidate` sadrži generiranu lozinku i zapisuje se prije udaljenog poziva, a zapis `created` potvrđuje stvoren račun. Sam `candidate` ne dokazuje da je račun stvoren. Administrator mora podatke dostaviti sigurnim kanalom nakon provjere identiteta, zatim ukloniti datoteku kada više nije potrebna. Ne dijelite zajednički popis sa studentima.
+Izvoz `.jsonl` može se ponovno učitati u **Administracija sustava → Ispis podataka za prvu prijavu** i ispisati u zasebnim listovima. Nepotvrđeni pokušaji se ne ispisuju. Ispis stare inicijalne lozinke ne vraća lozinku koju je korisnik već promijenio.
 
-Ponovni uvoz prepoznaje vezu u zaštićenom Auth `app_metadata`, ne mijenja lozinke i ne duplicira postojeći upis. Ne mijenja postojeći status ili godinu studija. Uvoz ne briše račune, ne opoziva članstva i ne obrađuje ispisane studente. Nije jedna transakcija preko dvaju projekata: pri prekidu zadržite izlaznu datoteku i ponovite pregled pa uvoz s novom izlaznom putanjom. Djelomično stvoren račun može se dopuniti članstvom/upisom bez promjene lozinke. Nemojte pokretati više uvoza istodobno.
+Uz neprihvaćen važeći registracijski poziv postoji i odvojeni postupak **Izradi početne podatke i ispiši**, uz izričitu administratorsku potvrdu identiteta. Njega omogućuje migracija `202611020003_pending_credentials.sql`; on ne zamjenjuje provjere za uvoz studenata iz drugog sustava i ne resetira već potvrđene račune.
 
 ## Provjere
 
-`npm test` provjerava normalizaciju imena, stabilna različita korisnička imena, odabir aktivnih upisa i odbijanje nejasnog mapiranja. `npm run test:ematica` koristi simulirani izvor sa stvarnim formatom e-Matice te stvarnu lokalnu SVS bazu i Auth: provjerava pregled, izradu računa, datoteku 0600, blokadu podataka do promjene lozinke, članstvo/upis i ponovni uvoz bez promjene lozinke. Potrebni su pripremljeni lokalni testni servisi, akademski fixture podaci i izgrađena aplikacija pokrenuta na portu 3002 (ili `AUTH_TEST_PORT`). Test provjerava i HTTP preusmjeravanje na promjenu lozinke, zabranu izmjene profila prije promjene te opoziv starih sesija. To nije potvrda pristupa udaljenoj e-Matici.
+`npm test` provjerava prihvaćeni izbor, stvarni upis, završetak škole, obveznu maturu ili dokumentirano izuzeće te vezu provjere s učenikom, izborom i revizijom mapiranja.
 
+`npm run test:migrations` provjerava čistu instalaciju i RLS svih 26 aplikacijskih tablica.
 
-## Ispis podataka za prvu prijavu
-
-U aplikaciji otvorite **Administracija sustava → Ispis podataka za prvu prijavu**, odaberite `.jsonl` datoteku iz parametra `--credentials` dovršenog uvoza i kliknite **Ispiši / Spremi kao PDF**. Svaki potvrđeno izrađen račun dobiva zaseban A4 list, s imenom, ustanovom, adresom prijave, korisničkim imenom i inicijalnom lozinkom. Stariji izvozi bez imena/ustanove također su podržani. Nepotvrđeni `candidate` zapisi se ne ispisuju. Datoteka ostaje u pregledniku; ne šalje se aplikacijskom poslužitelju niti se sprema u localStorage.
-
-Lozinka se preuzima iz izvornog izvoza i ispis ne mijenja račun ni lozinku. Ako je korisnik već promijenio inicijalnu lozinku, stari ispis je više ne može zamijeniti. Sustav ne može pročitati trenutne lozinke iz Supabasea. Gumb **Ukloni podatke iz pregleda** uklanja učitane podatke iz prikaza; ne briše izvornu datoteku ni spremljeni PDF. Listove uručite pojedinačno odgovarajućim korisnicima. Korisniku je promjena inicijalne lozinke obvezna pri prvom pristupu.
-
-## Korisnici s pozivom „Na čekanju”
-
-Glavni administrator može u **Administracija sustava → ustanova → Registracijski pozivi** uz važeći neprihvaćeni poziv odabrati **Izradi početne podatke i ispiši**. Prethodno mora označiti da je provjerio identitet korisnika i da želi aktivirati račun bez e-pošte. Ako račun još ne postoji, stvara se; ako postoji bez potvrđene e-adrese, njegova se stara lozinka zamjenjuje novom inicijalnom. Korisnik s već potvrđenom adresom ne može se resetirati ovim postupkom, čak ni ako ima drugi poziv na čekanju. Ne šalje se e-pošta. Uloga se preuzima iz administratorskog poziva, ne iz preglednika.
-
-Nakon izdavanja kliknite **Ispiši / Spremi kao PDF** ili **Preuzmi za ponovni ispis**. Pristupni podaci dostupni su u tom pregledu i u preuzetoj datoteci; prije napuštanja stranice spremite ih ili ispišite. Ponovno slanje zahtjeva ne generira drugu lozinku. Pri mrežnom prekidu nakon rezervacije izdavanja potrebno je prvo provjeriti stanje računa; rezervacija se ne poništava automatski kako izgubljeni odgovor ne bi uzrokovao neželjenu promjenu lozinke.
-
-Za aktivaciju ove mogućnosti u SVS bazi primijenite `202611020002_import_passwords.sql` i zatim `202611020003_pending_credentials.sql` ako već nisu primijenjene. U **Vercel serverske Environment Variables** dodajte `SVS_SUPABASE_SECRET_KEY` (Secret/Sensitive, iz SVS projekta) i ponovno objavite aplikaciju. To nije isto što i postavljanje ključa samo u ovom cloud okruženju. Ključ ne smije imati prefiks `NEXT_PUBLIC_`. Ako je postavljen i `SVS_SUPABASE_URL`, mora odgovarati `NEXT_PUBLIC_SUPABASE_URL`. Glavni administrator dobiva jasnu poruku ako nedostaje migracija ili serverski ključ.
-
-Lokalna provjera: nakon pripreme lokalne baze i produkcijske izgradnje, pokrenite aplikaciju na portu 3004 s `SVS_SUPABASE_URL` i `SVS_SUPABASE_SECRET_KEY` iz lokalnog testnog profila, zatim `node scripts/test-pending-credentials.mjs`. Ne koristite produkcijske ključeve za ovaj test.
+`npm run test:ematica`, uz pripremljen lokalni profil i izgrađenu aplikaciju, pokreće vlastiti lokalni Next server na portu 3007 (ili `ADMISSION_TEST_PORT`). Simulira izvornu shemu e-Matice i koristi stvarni lokalni Supabase Auth/PostgreSQL. Provjerava pregled bez upisa, dokumentirane provjere, promjenu izvora nakon pregleda, paralelne zahtjeve, početne lozinke, ponavljanje bez promjene lozinke, CLI zaštitu i ovlasti. Ne prenosi produkcijske učenike niti mijenja izvor.

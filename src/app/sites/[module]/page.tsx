@@ -4,6 +4,7 @@ import { canAccessModule } from "@/lib/auth/policy";
 import { supabaseConfig } from "@/lib/supabase/config";
 import { AuthPanel, ConfigNotice } from "@/components/auth/auth-panel";
 import { AcademicWorkspace } from "@/components/academic/workspace";
+import { AdmissionImport } from "@/components/auth/admission-import";
 import { Institutions } from "@/components/auth/institutions";
 import { notFound } from "next/navigation";
 import {
@@ -162,6 +163,8 @@ export default async function Module({
                   Nemate potrebnu ulogu za ovaj modul. Podaci nisu učitani.
                 </p>
               </div>
+            ) : module === "admin" && active === "Uvoz upisa" ? (
+              <AdmissionImport />
             ) : module === "admin" &&
               !academicAdminItems.some((item) => item === active) ? (
               <Institutions system status={status} />

@@ -127,6 +127,7 @@ export const modules = [
     color: "rose",
     items: [
       "Pregled sustava",
+      "Uvoz upisa",
       "Ustanove",
       "Korisnici",
       "Moduli",

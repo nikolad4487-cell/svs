@@ -14,6 +14,8 @@ LMS i poslovni zahtjevi referade slijede u idućim fazama. Modul e-učenja nije 
 
 **Prošireni Studomat:** odvojeni pregledi ispita, osobni godišnji podaci i postavke obavijesti, detalji predmeta i plan nastave, statistike i agregat generacije, dodatni ECTS, prehrana, školarine, participacije, boravci, kategorije, prisustvo i evidencija potvrda. Nove podatke vodi administrator/referada u Studentskim evidencijama. [Upute i migracija](docs/FAZA-4-STUDOMAT.md).
 
+**Provjereni prijenos studenata:** u Administraciji sustava → Uvoz upisa administrator povezuje programe/godine, pregledava kandidate bez spremanja i preuzima samo prihvaćene, provedene upise s provjerenim dokumentima. Prijava mature nije dokaz prolaza. [Postupak i potrebne migracije](docs/EMATICA-UVOZ.md).
+
 ## Pokretanje
 
 Node.js 24 i npm:
