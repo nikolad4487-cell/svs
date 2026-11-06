@@ -16,6 +16,11 @@ import {
 } from "./shared";
 import { Submit, inputClass } from "@/components/auth/forms";
 import { AcademicAdmin } from "./admin";
+import { ExamWorkflow } from "./exam-workflow";
+import { examStateNames } from "@/lib/academic/exam-workflow";
+import { enrollmentAllowsExams } from "@/lib/academic/enrollment-completion";
+import { EnrollmentCompletion } from "./enrollment-completion";
+import { GradeHistory } from "./grade-history";
 export function ExamList({
   data,
   view,
@@ -44,7 +49,7 @@ export function ExamList({
     const passed = data.grades.some(
       (g) =>
         g.student_id === data.account.user.id &&
-        g.grade > 1 &&
+        (g.grade ?? 0) > 1 &&
         data.courses.find(
           (c) => c.id === data.exams.find((x) => x.id === g.exam_id)?.course_id,
         )?.code === data.courses.find((c) => c.id === e.course_id)?.code,
@@ -54,11 +59,16 @@ export function ExamList({
         !registered &&
         !graded &&
         !passed &&
+        (!e.workflow_status || e.workflow_status === "open") &&
         Date.parse(e.registration_deadline) >= Date.now()
       );
     if (view === "Odjava ispita")
       return (
-        registered && !graded && Date.parse(e.withdrawal_deadline) >= Date.now()
+        registered &&
+        !graded &&
+        (!e.workflow_status ||
+          ["open", "registration_closed"].includes(e.workflow_status)) &&
+        Date.parse(e.withdrawal_deadline) >= Date.now()
       );
     if (view === "Ispiti u tijeku") return registered && !graded;
     if (view === "Pregled ispita") return registered || graded;
@@ -89,7 +99,7 @@ export function ExamList({
             const passed = data.grades.some(
               (g) =>
                 g.student_id === data.account.user.id &&
-                g.grade > 1 &&
+                (g.grade ?? 0) > 1 &&
                 data.courses.find(
                   (c) =>
                     c.id ===
@@ -99,7 +109,23 @@ export function ExamList({
             );
             const can =
               own.has(e.course_id) &&
+              (!e.workflow_status ||
+                (registered
+                  ? ["open", "registration_closed"].includes(e.workflow_status)
+                  : e.workflow_status === "open")) &&
               !grade &&
+              (registered ||
+                enrollmentAllowsExams(
+                  data.studies.find(
+                    (s) =>
+                      s.id ===
+                      data.enrollments.find(
+                        (x) =>
+                          x.course_id === e.course_id &&
+                          x.student_id === data.account.user.id,
+                      )?.study_id,
+                  ),
+                )) &&
               (!passed || registered) &&
               Date.now() <=
                 Date.parse(
@@ -121,12 +147,16 @@ export function ExamList({
                 {hrDate(e.withdrawal_deadline)}
               </span>,
               grade
-                ? `Ocjena ${grade.grade}`
+                ? grade.outcome === "absent"
+                  ? "Nije pristupio/la"
+                  : `Ocjena ${grade.grade}`
                 : registered
                   ? "Prijavljen"
                   : reg
                     ? "Odjavljen"
-                    : "Nije prijavljen",
+                    : e.workflow_status
+                      ? examStateNames[e.workflow_status]
+                      : "Nije prijavljen",
               can ? (
                 <form
                   key="register"
@@ -144,6 +174,19 @@ export function ExamList({
                     {registered ? "Odjavi ispit" : "Prijavi ispit"}
                   </Submit>
                 </form>
+              ) : own.has(e.course_id) &&
+                !enrollmentAllowsExams(
+                  data.studies.find(
+                    (s) =>
+                      s.id ===
+                      data.enrollments.find(
+                        (x) =>
+                          x.course_id === e.course_id &&
+                          x.student_id === data.account.user.id,
+                      )?.study_id,
+                  ),
+                ) ? (
+                "Upis čeka provjeru referade"
               ) : (
                 "—"
               ),
@@ -194,42 +237,66 @@ function Grading({ data, view }: { data: AcademicData; view: string }) {
                 <small>{hrDate(exam.starts_at)}</small>
               </span>,
               person(data, r.student_id),
-              <form
-                key="grade"
-                action="/api/academic/grade"
-                method="post"
-                className="min-w-60 space-y-3"
-              >
-                <AcademicHidden data={data} module="studomat" view={view} />
-                <input type="hidden" name="exam_id" value={r.exam_id} />
-                <input type="hidden" name="student_id" value={r.student_id} />
-                <label className="text-xs">
-                  Ocjena
-                  <select
-                    name="grade"
-                    defaultValue={String(grade?.grade || "")}
-                    required
-                    className={inputClass}
-                  >
-                    <option value="">Odaberite ocjenu</option>
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <option key={n} value={n}>
-                        {n}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="block text-xs">
-                  Povratna informacija
-                  <textarea
-                    className={inputClass}
-                    name="feedback"
-                    defaultValue={grade?.feedback || ""}
-                    maxLength={2000}
-                  />
-                </label>
-                <Submit>Spremi ocjenu</Submit>
-              </form>,
+              exam.workflow_status === "locked" ? (
+                <span key="locked">
+                  Zaključano ·{" "}
+                  {grade?.outcome === "absent"
+                    ? "Nije pristupio/la"
+                    : grade
+                      ? `Ocjena ${grade.grade}`
+                      : "—"}
+                </span>
+              ) : exam.workflow_status &&
+                exam.workflow_status !== "grading" &&
+                !exam.legacy_workflow ? (
+                <span key="pending">
+                  Najprije pokrenite obradu rezultata roka.
+                </span>
+              ) : (
+                <form
+                  key="grade"
+                  action="/api/academic/grade"
+                  method="post"
+                  className="min-w-60 space-y-3"
+                >
+                  <AcademicHidden data={data} module="studomat" view={view} />
+                  <input type="hidden" name="exam_id" value={r.exam_id} />
+                  <input type="hidden" name="student_id" value={r.student_id} />
+                  <label className="text-xs">
+                    Ocjena
+                    <select
+                      name="grade"
+                      defaultValue={
+                        grade?.outcome === "absent"
+                          ? "absent"
+                          : String(grade?.grade || "")
+                      }
+                      required
+                      className={inputClass}
+                    >
+                      <option value="">Odaberite ocjenu</option>
+                      {data.examWorkflowReady && (
+                        <option value="absent">Nije pristupio/la</option>
+                      )}
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block text-xs">
+                    Povratna informacija
+                    <textarea
+                      className={inputClass}
+                      name="feedback"
+                      defaultValue={grade?.feedback || ""}
+                      maxLength={2000}
+                    />
+                  </label>
+                  <Submit>Spremi ocjenu</Submit>
+                </form>
+              ),
             ];
           })}
       />
@@ -248,6 +315,8 @@ export async function Studomat({
   academicYear?: string;
 }) {
   const ownId = data.account.user.id;
+  if (view === "Dovršenost upisa")
+    return <EnrollmentCompletion data={data} module="studomat" view={view} />;
   const ownStudies = data.studies.filter((s) => s.student_id === ownId);
   const ownCourses = data.enrollments.filter((e) => e.student_id === ownId);
   const ownGrades = data.grades.filter((g) => g.student_id === ownId);
@@ -353,7 +422,7 @@ export async function Studomat({
                   data.exams.find((e) => e.id === g.exam_id)?.starts_at ||
                     g.graded_at,
                 ),
-                g.grade,
+                g.outcome === "absent" ? "Nije pristupio/la" : g.grade,
                 g.feedback || "—",
               ])}
             />
@@ -425,7 +494,11 @@ export async function Studomat({
   }
   if (view === "Ocjenjivanje")
     return data.manager || data.isTeacher ? (
-      <Grading data={data} view={view} />
+      <div className="space-y-10">
+        <Grading data={data} view={view} />
+        <ExamWorkflow data={data} module="studomat" view={view} />
+        <GradeHistory data={data} />
+      </div>
     ) : (
       <Empty>Nemate ovlasti za ocjenjivanje.</Empty>
     );
@@ -442,6 +515,7 @@ export async function Studomat({
     return (
       <div className="space-y-10">
         <ExamList data={data} view={view} />
+        {view === "Pregled ispita" && <GradeHistory data={data} ownOnly />}
         {(data.manager || data.isTeacher) && (
           <AcademicAdmin
             data={data}
@@ -482,8 +556,8 @@ export async function Studomat({
               return [
                 course?.name || "Kolegij",
                 exam ? hrDate(exam.starts_at) : "—",
-                g.grade,
-                g.grade > 1 ? String(course?.ects || 0) : "0",
+                g.outcome === "absent" ? "Nije pristupio/la" : g.grade,
+                (g.grade ?? 0) > 1 ? String(course?.ects || 0) : "0",
                 g.feedback || "—",
               ];
             })}

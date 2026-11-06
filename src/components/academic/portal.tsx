@@ -175,7 +175,7 @@ export function Portal({
                 data,
                 data.exams.find((e) => e.id === g.exam_id)?.course_id || "",
               ),
-              g.grade,
+              g.outcome === "absent" ? "Nije pristupio/la" : g.grade,
               hrDate(g.graded_at),
             ])}
           />

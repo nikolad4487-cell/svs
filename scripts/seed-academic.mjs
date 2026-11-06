@@ -84,6 +84,8 @@ await upsert("student_studies", [
     study_year: 1,
     student_number: "TEST000001",
     status: "active",
+    // Deliberate legacy-compatibility fixtures; new workflow is covered separately.
+    completion_status: "legacy_unverified",
   },
   {
     id: id(52),
@@ -94,6 +96,8 @@ await upsert("student_studies", [
     study_year: 1,
     student_number: "TEST000002",
     status: "active",
+    // Deliberate legacy-compatibility fixtures; new workflow is covered separately.
+    completion_status: "legacy_unverified",
   },
 ]);
 await upsert("course_enrollments", [
@@ -152,6 +156,8 @@ await upsert("exams", [
     registration_deadline: after(8),
     withdrawal_deadline: after(9),
     capacity: 20,
+    workflow_status: "open",
+    legacy_workflow: true,
   },
   {
     id: id(72),
@@ -162,6 +168,8 @@ await upsert("exams", [
     registration_deadline: after(8),
     withdrawal_deadline: after(9),
     capacity: 20,
+    workflow_status: "open",
+    legacy_workflow: true,
   },
   {
     id: id(73),
@@ -172,6 +180,8 @@ await upsert("exams", [
     registration_deadline: after(-4),
     withdrawal_deadline: after(-3),
     capacity: 20,
+    workflow_status: "open",
+    legacy_workflow: true,
   },
 ]);
 await upsert("exam_registrations", [

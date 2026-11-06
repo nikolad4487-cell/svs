@@ -572,4 +572,358 @@ begin
  return new;
 end; $$;
 
+-- SOURCE: 202611060002_exam_workflow.sql
+-- Additive workflow. Existing terms retain their historical entry behaviour.
+alter table public.exams add column workflow_status text not null default 'open'
+ check(workflow_status in ('draft','open','registration_closed','in_progress','grading','locked'));
+alter table public.exams add column legacy_workflow boolean not null default true;
+alter table public.exams alter column workflow_status set default 'draft';
+alter table public.exams alter column legacy_workflow set default false;
+alter table public.grades alter column grade drop not null;
+alter table public.grades add column outcome text not null default 'graded';
+alter table public.grades add constraint grade_outcome_valid check(
+ (outcome='graded' and grade is not null and grade between 1 and 5)
+ or (outcome='absent' and grade is null));
+
+create table public.exam_workflow_events (
+ id uuid primary key default gen_random_uuid(),
+ institution_id uuid not null,
+ exam_id uuid not null,
+ actor_id uuid not null references public.profiles(id),
+ previous_status text not null,
+ next_status text not null,
+ reason text not null check(length(btrim(reason)) between 10 and 1000),
+ occurred_at timestamptz not null default now(),
+ foreign key(institution_id,exam_id) references public.exams(institution_id,id)
+);
+create index exam_workflow_events_term on public.exam_workflow_events(exam_id,occurred_at);
+alter table public.exam_workflow_events enable row level security;
+revoke all on public.exam_workflow_events from public,anon,authenticated;
+grant select on public.exam_workflow_events to authenticated;
+create policy exam_events_read on public.exam_workflow_events for select to authenticated
+ using(public.exam_staff(institution_id,exam_id));
+
+-- Lifecycle fields are changed exclusively through the authorized transition RPC.
+revoke insert,update on public.exams from authenticated;
+grant insert(institution_id,course_id,room_id,starts_at,registration_deadline,withdrawal_deadline,capacity,id),
+ update(course_id,room_id,starts_at,registration_deadline,withdrawal_deadline,capacity)
+ on public.exams to authenticated;
+
+create function public.exam_lock_guard() returns trigger language plpgsql security definer set search_path='' as $$
+begin
+ if old.workflow_status='locked' then
+  if TG_OP='DELETE' then raise exception 'Zaključani rok nije dopušteno izbrisati.'; end if;
+  if (to_jsonb(new)-'workflow_status'-'legacy_workflow') is distinct from (to_jsonb(old)-'workflow_status'-'legacy_workflow')
+   then raise exception 'Najprije otključajte ispitni rok uz obrazloženje.'; end if;
+ end if;
+ if TG_OP='DELETE' then return old; end if;
+ return new;
+end; $$;
+create trigger exam_lock_guard before update or delete on public.exams
+ for each row execute function public.exam_lock_guard();
+
+create function public.transition_exam(target uuid, expected_status text, next_status text, reason text)
+ returns void language plpgsql security definer set search_path='' as $$
+declare e public.exams;
+begin
+ select * into e from public.exams where id=target for update;
+ if not found or not public.course_staff(e.institution_id,e.course_id)
+  then raise exception 'Nemate pravo upravljanja rokom.' using errcode='42501'; end if;
+ if e.workflow_status<>expected_status then raise exception 'Stanje roka je promijenjeno. Osvježite prikaz.'; end if;
+ if reason is null or length(btrim(reason)) not between 10 and 1000 then raise exception 'Navedite obrazloženje od 10 do 1000 znakova.'; end if;
+ if e.workflow_status='locked' then
+  if next_status<>'grading' or not public.academic_manager(e.institution_id)
+   then raise exception 'Otključavanje je dopušteno samo administratoru ili referadi.' using errcode='42501'; end if;
+ elsif not (
+  (e.workflow_status='draft' and next_status='open') or
+  (e.workflow_status='open' and next_status='registration_closed') or
+  (e.workflow_status='registration_closed' and next_status='in_progress') or
+  (e.workflow_status='in_progress' and next_status='grading') or
+  (e.workflow_status='grading' and next_status='locked'))
+  then raise exception 'Nedopušten prijelaz stanja roka.'; end if;
+ if next_status='open' and e.registration_deadline<now() then raise exception 'Rok prijave je istekao. Uredite termin prije otvaranja.'; end if;
+ if next_status in ('in_progress','grading','locked') and e.starts_at>now() then raise exception 'Ispit još nije održan.'; end if;
+ if next_status='locked' and exists(
+  select 1 from public.exam_registrations r where r.exam_id=e.id and r.status='registered'
+  and not exists(select 1 from public.grades g where g.exam_id=e.id and g.student_id=r.student_id))
+  then raise exception 'Za sve važeće prijave treba evidentirati ocjenu ili nedolazak.'; end if;
+ update public.exams set workflow_status=next_status,legacy_workflow=false where id=e.id;
+ insert into public.exam_workflow_events(institution_id,exam_id,actor_id,previous_status,next_status,reason)
+ values(e.institution_id,e.id,auth.uid(),e.workflow_status,next_status,btrim(reason));
+end; $$;
+
+-- Serialize against transition_exam, including writes through service clients.
+create function public.exam_result_guard() returns trigger language plpgsql security definer set search_path='' as $$
+declare e public.exams; exam uuid;
+begin
+ if TG_OP='DELETE' then exam=old.exam_id; else exam=new.exam_id; end if;
+ if TG_OP='UPDATE' and (new.exam_id<>old.exam_id or new.student_id<>old.student_id or new.institution_id<>old.institution_id)
+  then raise exception 'Identitet rezultata ne može se mijenjati.'; end if;
+ select * into e from public.exams where id=exam for update;
+ if e.workflow_status='locked' then raise exception 'Ispitni rok je zaključan.'; end if;
+ if not (e.workflow_status='grading' or (e.legacy_workflow and e.workflow_status='open'))
+  then raise exception 'Rok mora biti u obradi rezultata.'; end if;
+ if e.starts_at>now() then raise exception 'Ispit još nije održan.'; end if;
+ if TG_OP='DELETE' then return old; end if;
+ if not exists(select 1 from public.exam_registrations r where r.exam_id=e.id and r.student_id=new.student_id and r.status='registered')
+  then raise exception 'Student nije prijavljen na ispit.'; end if;
+ return new;
+end; $$;
+create trigger exam_result_guard before insert or update or delete on public.grades
+ for each row execute function public.exam_result_guard();
+
+create or replace function public.register_exam(target uuid,cancel boolean default false) returns void language plpgsql security definer set search_path='' as $$
+declare e public.exams; existing_status text;
+begin
+ perform 1 from public.profiles where id=auth.uid() for update;
+ select * into e from public.exams where id=target for update;
+ if not found or not public.enrolled(e.course_id) then raise exception 'Nemate pravo pristupa ispitu.' using errcode='42501'; end if;
+ if (not cancel and e.workflow_status<>'open') or (cancel and e.workflow_status not in ('open','registration_closed'))
+  then raise exception 'Stanje roka ne dopušta prijavu ili odjavu.'; end if;
+ if exists(select 1 from public.grades where exam_id=e.id and student_id=auth.uid()) then raise exception 'Ispit je već obrađen.'; end if;
+ if cancel then
+  if now()>e.withdrawal_deadline then raise exception 'Rok za odjavu je istekao.'; end if;
+  update public.exam_registrations set status='cancelled' where exam_id=e.id and student_id=auth.uid() and status='registered';
+ else
+  if now()>e.registration_deadline then raise exception 'Rok za prijavu je istekao.'; end if;
+  if exists(select 1 from public.grades g join public.exams x on x.id=g.exam_id join public.courses c on c.id=x.course_id join public.courses own on own.id=e.course_id where g.student_id=auth.uid() and g.grade>1 and c.institution_id=e.institution_id and c.code=own.code) then raise exception 'Kolegij je već položen.'; end if;
+  select status into existing_status from public.exam_registrations where exam_id=e.id and student_id=auth.uid();
+  if existing_status='registered' then return; end if;
+  if (select count(*) from public.exam_registrations where exam_id=e.id and status='registered')>=e.capacity then raise exception 'Ispitni rok je popunjen.'; end if;
+  insert into public.exam_registrations(institution_id,exam_id,student_id) values(e.institution_id,e.id,auth.uid()) on conflict(institution_id,exam_id,student_id) do update set status='registered',registered_at=now();
+ end if;
+end; $$;
+
+create or replace function public.record_grade(target uuid,student uuid,result integer,note text default '') returns void language plpgsql security definer set search_path='' as $$
+declare e public.exams;
+begin
+ perform 1 from public.profiles where id=student for update;
+ select * into e from public.exams where id=target for update;
+ if not found or not public.course_staff(e.institution_id,e.course_id) then raise exception 'Nemate pravo ocjenjivanja.' using errcode='42501'; end if;
+ if result is null or result not between 1 and 5 then raise exception 'Ocjena mora biti od 1 do 5.'; end if;
+ if e.starts_at>now() then raise exception 'Ispit još nije održan.'; end if;
+ if not exists(select 1 from public.exam_registrations r where r.exam_id=e.id and r.student_id=student and r.status='registered') then raise exception 'Student nije prijavljen na ispit.'; end if;
+ insert into public.grades(institution_id,exam_id,student_id,grade,outcome,feedback,graded_by) values(e.institution_id,e.id,student,result,'graded',note,auth.uid()) on conflict(institution_id,exam_id,student_id) do update set grade=result,outcome='graded',feedback=note,graded_by=auth.uid(),graded_at=now();
+ if result>1 then
+  update public.exam_registrations r set status='cancelled' from public.exams other_exam,public.courses other_course,public.courses own_course where r.exam_id=other_exam.id and other_exam.course_id=other_course.id and own_course.id=e.course_id and other_course.institution_id=e.institution_id and other_course.code=own_course.code and r.student_id=student and r.status='registered' and other_exam.starts_at>now() and other_exam.id<>e.id and other_exam.workflow_status<>'locked';
+ end if;
+end; $$;
+
+create function public.record_exam_absence(target uuid,student uuid,note text default '') returns void language plpgsql security definer set search_path='' as $$
+declare e public.exams;
+begin
+ perform 1 from public.profiles where id=student for update;
+ select * into e from public.exams where id=target for update;
+ if not found or not public.course_staff(e.institution_id,e.course_id) then raise exception 'Nemate pravo obrade rezultata.' using errcode='42501'; end if;
+ insert into public.grades(institution_id,exam_id,student_id,grade,outcome,feedback,graded_by)
+ values(e.institution_id,e.id,student,null,'absent',note,auth.uid())
+ on conflict(institution_id,exam_id,student_id) do update set grade=null,outcome='absent',feedback=note,graded_by=auth.uid(),graded_at=now();
+end; $$;
+
+revoke execute on function public.exam_lock_guard(),public.exam_result_guard() from public,anon,authenticated;
+revoke execute on function public.transition_exam(uuid,text,text,text),public.record_exam_absence(uuid,uuid,text) from public,anon;
+grant execute on function public.transition_exam(uuid,text,text,text),public.record_exam_absence(uuid,uuid,text) to authenticated;
+
+-- SOURCE: 202611060003_enrollment_completion.sql
+-- Administrative completion is distinct from active/completed/paused study status.
+alter table public.student_studies
+ add column completion_status text not null default 'legacy_unverified'
+ check(completion_status in ('legacy_unverified','draft','pending_verification','completed','cancelled')),
+ add column identity_verified boolean not null default false,
+ add column documents_verified boolean not null default false,
+ add column curriculum_verified boolean not null default false,
+ add column financing_verified boolean not null default false,
+ add column completion_revision integer not null default 0,
+ add column completed_by uuid references public.profiles(id),
+ add column completed_at timestamptz;
+alter table public.student_studies alter column completion_status set default 'draft';
+alter table public.student_studies add constraint completion_evidence check(
+ completion_status<>'completed' or (identity_verified and documents_verified and curriculum_verified and financing_verified and completed_by is not null and completed_at is not null));
+
+create table public.enrollment_completion_events (
+ id uuid primary key default gen_random_uuid(),
+ institution_id uuid not null,
+ study_id uuid not null,
+ student_id uuid not null,
+ actor_id uuid not null references public.profiles(id),
+ previous_status text not null,
+ next_status text not null,
+ identity_verified boolean not null,
+ documents_verified boolean not null,
+ curriculum_verified boolean not null,
+ financing_verified boolean not null,
+ reason text not null check(length(btrim(reason)) between 10 and 1000),
+ occurred_at timestamptz not null default now(),
+ foreign key(institution_id,study_id,student_id) references public.student_studies(institution_id,id,student_id)
+);
+create index enrollment_completion_events_study on public.enrollment_completion_events(study_id,occurred_at);
+alter table public.enrollment_completion_events enable row level security;
+revoke all on public.enrollment_completion_events from public,anon,authenticated;
+grant select on public.enrollment_completion_events to authenticated;
+create policy enrollment_events_read on public.enrollment_completion_events for select to authenticated
+ using(public.academic_manager(institution_id));
+revoke insert,update on public.student_studies from authenticated;
+grant insert(id,institution_id,student_id,program_id,academic_year_id,study_year,student_number,status),
+ update(student_id,program_id,academic_year_id,study_year,student_number,status) on public.student_studies to authenticated;
+
+create function public.enrollment_completion_guard() returns trigger language plpgsql security definer set search_path='' as $$
+declare s public.student_studies;
+begin
+ if TG_TABLE_NAME='student_studies' then
+  if TG_OP='DELETE' then
+   if old.completion_status='completed' then raise exception 'Dovršeni upis nije dopušteno izbrisati.'; end if;
+   return old;
+  end if;
+  perform 1 from public.profiles where id=new.student_id for update;
+  if TG_OP='UPDATE' and old.completion_status='completed' and
+   row(new.student_id,new.program_id,new.academic_year_id,new.study_year,new.student_number)
+   is distinct from row(old.student_id,old.program_id,old.academic_year_id,old.study_year,old.student_number)
+   then raise exception 'Najprije ponovno otvorite provjeru upisa.'; end if;
+  if TG_OP='INSERT' or (TG_OP='UPDATE' and row(new.student_id,new.program_id,new.academic_year_id) is distinct from row(old.student_id,old.program_id,old.academic_year_id)) then
+   if exists(select 1 from public.student_studies previous
+    join public.academic_years previous_year on previous_year.id=previous.academic_year_id
+    join public.academic_years next_year on next_year.id=new.academic_year_id
+    where previous.student_id=new.student_id and previous.institution_id=new.institution_id and previous.program_id=new.program_id
+    and previous_year.starts_on<next_year.starts_on and previous.completion_status not in ('completed','cancelled'))
+    then raise exception 'Prethodni upis nije administrativno dovršen.'; end if;
+  end if;
+  return new;
+ end if;
+ -- Lock all affected study rows in a stable order when moving a course enrollment.
+ if TG_OP<>'INSERT' then
+  perform 1 from public.profiles where id=old.student_id for update;
+ end if;
+ if TG_OP<>'DELETE' then
+  perform 1 from public.profiles where id=new.student_id for update;
+ end if;
+ for s in select * from public.student_studies where
+  id=case when TG_OP='DELETE' then old.study_id else new.study_id end
+  or (TG_OP='UPDATE' and id=old.study_id) order by id for update
+ loop
+  if s.completion_status in ('completed','cancelled') then raise exception 'Najprije ponovno otvorite provjeru upisa.'; end if;
+ end loop;
+ if TG_OP='DELETE' then return old; end if;
+ return new;
+end; $$;
+create trigger enrollment_completion_guard before insert or update or delete on public.student_studies
+ for each row execute function public.enrollment_completion_guard();
+create trigger enrollment_completion_guard before insert or update or delete on public.course_enrollments
+ for each row execute function public.enrollment_completion_guard();
+
+create function public.complete_enrollment(target uuid,expected_revision integer,next_status text,
+ identity_checked boolean,documents_checked boolean,curriculum_checked boolean,financing_checked boolean,reason text)
+ returns void language plpgsql security definer set search_path='' as $$
+declare s public.student_studies;
+begin
+ select * into s from public.student_studies where id=target;
+ if not found or not public.academic_manager(s.institution_id) then raise exception 'Nemate pravo provjere upisa.' using errcode='42501'; end if;
+ perform 1 from public.profiles where id=s.student_id for update;
+ select * into s from public.student_studies where id=target for update;
+ if s.completion_revision<>expected_revision then raise exception 'Upis je promijenjen. Osvježite prikaz.'; end if;
+ if reason is null or length(btrim(reason)) not between 10 and 1000 then raise exception 'Navedite obrazloženje od 10 do 1000 znakova.'; end if;
+ if not ((s.completion_status in ('legacy_unverified','draft','completed','cancelled') and next_status='pending_verification')
+  or (s.completion_status='pending_verification' and next_status in ('pending_verification','completed','cancelled'))
+  or (s.completion_status='draft' and next_status='cancelled')) then raise exception 'Nedopušten prijelaz stanja upisa.'; end if;
+ if next_status='completed' then
+  if s.status<>'active' then raise exception 'Za dovršenje je potreban aktivan studij.'; end if;
+  if not(coalesce(identity_checked,false) and coalesce(documents_checked,false) and coalesce(curriculum_checked,false) and coalesce(financing_checked,false))
+   then raise exception 'Provjerite identitet, dokumente, predmetnik i financiranje.'; end if;
+  if not exists(select 1 from public.course_enrollments where study_id=s.id)
+   then raise exception 'Upis nema nijedan kolegij. Najprije sastavite upisni list.'; end if;
+ end if;
+ update public.student_studies set completion_status=next_status,
+  identity_verified=coalesce(identity_checked,false),documents_verified=coalesce(documents_checked,false),
+  curriculum_verified=coalesce(curriculum_checked,false),financing_verified=coalesce(financing_checked,false),
+  completed_by=case when next_status='completed' then auth.uid() else null end,
+  completed_at=case when next_status='completed' then now() else null end,
+  completion_revision=s.completion_revision+1 where id=s.id;
+ insert into public.enrollment_completion_events(institution_id,study_id,student_id,actor_id,previous_status,next_status,
+ identity_verified,documents_verified,curriculum_verified,financing_verified,reason)
+ values(s.institution_id,s.id,s.student_id,auth.uid(),s.completion_status,next_status,
+ coalesce(identity_checked,false),coalesce(documents_checked,false),coalesce(curriculum_checked,false),coalesce(financing_checked,false),btrim(reason));
+end; $$;
+
+-- Historical enrollments keep their previous exam access until explicitly reviewed.
+-- They are NOT displayed or recorded as completed and cannot be used to open a later year.
+create function public.exam_enrollment_complete(target uuid) returns boolean language sql stable security definer set search_path='' as $$
+ select exists(select 1 from public.course_enrollments e join public.student_studies s on s.id=e.study_id
+ where e.course_id=target and e.student_id=auth.uid() and s.status='active' and s.completion_status in ('completed','legacy_unverified'));
+$$;
+revoke execute on function public.enrollment_completion_guard() from public,anon,authenticated;
+revoke execute on function public.complete_enrollment(uuid,integer,text,boolean,boolean,boolean,boolean,text),public.exam_enrollment_complete(uuid) from public,anon;
+grant execute on function public.complete_enrollment(uuid,integer,text,boolean,boolean,boolean,boolean,text),public.exam_enrollment_complete(uuid) to authenticated;
+
+create or replace function public.register_exam(target uuid,cancel boolean default false) returns void language plpgsql security definer set search_path='' as $$
+declare e public.exams; existing_status text;
+begin
+ perform 1 from public.profiles where id=auth.uid() for update;
+ select * into e from public.exams where id=target for update;
+ if not found or not public.enrolled(e.course_id) then raise exception 'Nemate pravo pristupa ispitu.' using errcode='42501'; end if;
+ if (not cancel and e.workflow_status<>'open') or (cancel and e.workflow_status not in ('open','registration_closed'))
+  then raise exception 'Stanje roka ne dopušta prijavu ili odjavu.'; end if;
+ if not cancel and not public.exam_enrollment_complete(e.course_id) then raise exception 'Upis nije administrativno dovršen. Obratite se referadi.'; end if;
+ if exists(select 1 from public.grades where exam_id=e.id and student_id=auth.uid()) then raise exception 'Ispit je već obrađen.'; end if;
+ if cancel then
+  if now()>e.withdrawal_deadline then raise exception 'Rok za odjavu je istekao.'; end if;
+  update public.exam_registrations set status='cancelled' where exam_id=e.id and student_id=auth.uid() and status='registered';
+ else
+  if now()>e.registration_deadline then raise exception 'Rok za prijavu je istekao.'; end if;
+  if exists(select 1 from public.grades g join public.exams x on x.id=g.exam_id join public.courses c on c.id=x.course_id join public.courses own on own.id=e.course_id where g.student_id=auth.uid() and g.grade>1 and c.institution_id=e.institution_id and c.code=own.code) then raise exception 'Kolegij je već položen.'; end if;
+  select status into existing_status from public.exam_registrations where exam_id=e.id and student_id=auth.uid();
+  if existing_status='registered' then return; end if;
+  if (select count(*) from public.exam_registrations where exam_id=e.id and status='registered')>=e.capacity then raise exception 'Ispitni rok je popunjen.'; end if;
+  insert into public.exam_registrations(institution_id,exam_id,student_id) values(e.institution_id,e.id,auth.uid()) on conflict(institution_id,exam_id,student_id) do update set status='registered',registered_at=now();
+ end if;
+end; $$;
+
+-- SOURCE: 202611060004_grade_history.sql
+-- Restricted domain history; never place grades or feedback in the general audit log.
+create table public.exam_grade_events (
+ id uuid primary key default gen_random_uuid(),
+ institution_id uuid not null,
+ exam_id uuid not null,
+ student_id uuid not null references public.profiles(id),
+ actor_id uuid not null references public.profiles(id),
+ action text not null check(action in ('BASELINE','INSERT','UPDATE','DELETE')),
+ previous_grade integer check(previous_grade between 1 and 5),
+ next_grade integer check(next_grade between 1 and 5),
+ previous_outcome text check(previous_outcome in ('graded','absent')),
+ next_outcome text check(next_outcome in ('graded','absent')),
+ workflow_event_id uuid references public.exam_workflow_events(id),
+ occurred_at timestamptz not null default now(),
+ foreign key(institution_id,exam_id) references public.exams(institution_id,id)
+);
+create index exam_grade_events_student on public.exam_grade_events(institution_id,student_id,occurred_at);
+alter table public.exam_grade_events enable row level security;
+revoke all on public.exam_grade_events from public,anon,authenticated;
+grant select on public.exam_grade_events to authenticated;
+create policy grade_events_read on public.exam_grade_events for select to authenticated
+ using((student_id=auth.uid() and public.has_role(institution_id)) or public.exam_staff(institution_id,exam_id));
+-- This records only the known current state, without inventing earlier revisions.
+insert into public.exam_grade_events(institution_id,exam_id,student_id,actor_id,action,next_grade,next_outcome,occurred_at)
+ select institution_id,exam_id,student_id,graded_by,'BASELINE',grade,outcome,graded_at from public.grades;
+create function public.record_exam_grade_event() returns trigger language plpgsql security definer set search_path='' as $$
+declare g public.grades; linked_event uuid;
+begin
+ if TG_OP='DELETE' then g=old; else g=new; end if;
+ select id into linked_event from public.exam_workflow_events where exam_id=g.exam_id order by occurred_at desc,id desc limit 1;
+ insert into public.exam_grade_events(institution_id,exam_id,student_id,actor_id,action,
+ previous_grade,next_grade,previous_outcome,next_outcome,workflow_event_id)
+ values(g.institution_id,g.exam_id,g.student_id,coalesce(auth.uid(),g.graded_by),TG_OP,
+ case when TG_OP<>'INSERT' then old.grade end,case when TG_OP<>'DELETE' then new.grade end,
+ case when TG_OP<>'INSERT' then old.outcome end,case when TG_OP<>'DELETE' then new.outcome end,linked_event);
+ if TG_OP='DELETE' then return old; end if;
+ return new;
+end; $$;
+create trigger exam_grade_history after insert or update or delete on public.grades
+ for each row execute function public.record_exam_grade_event();
+revoke execute on function public.record_exam_grade_event() from public,anon,authenticated;
+
+-- Unpublished drafts are visible to authorized staff only, including direct API reads.
+drop policy exams_read on public.exams;
+create policy exams_read on public.exams for select to authenticated using(
+ public.course_staff(institution_id,course_id)
+ or (workflow_status<>'draft' and public.enrolled(course_id))
+ or (public.has_role(institution_id) and exists(select 1 from public.exam_registrations r where r.exam_id=exams.id and r.student_id=auth.uid())));
+
 commit;

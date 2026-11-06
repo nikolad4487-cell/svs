@@ -1,5 +1,7 @@
 # ISVU · Informacijski sustav visokih ustanova
 
+**Vlastita neovisna aplikacija:** nije službeni ISVU, Studomat, Merlin, AAI@EduHr ni ISSP i nema službenu certifikaciju ili automatsku povezanost s tim sustavima.
+
 Modularna hrvatska platforma visokog obrazovanja: Next.js 16 App Router, TypeScript, Tailwind CSS 4, shadcn/ui, Lucide i Supabase Auth/PostgreSQL. Kompatibilna s Vercelom.
 
 ## Implementirano
@@ -15,6 +17,8 @@ LMS i poslovni zahtjevi referade slijede u idućim fazama. Modul e-učenja nije 
 **Prošireni Studomat:** odvojeni pregledi ispita, osobni godišnji podaci i postavke obavijesti, detalji predmeta i plan nastave, statistike i agregat generacije, dodatni ECTS, prehrana, školarine, participacije, boravci, kategorije, prisustvo i evidencija potvrda. Nove podatke vodi administrator/referada u Studentskim evidencijama. [Upute i migracija](docs/FAZA-4-STUDOMAT.md).
 
 **Prvi upis studenata:** u Administraciji sustava → Uvoz upisa administrator prvo bira ISVU učilište, studij i godinu, zatim učenike sa završenom srednjom školom iz e-Matice te nakon provjere mature i uvjeta provodi prvi upis. Izvorni fakultet ili prethodni fakultetski upis nisu potrebni. Odvojena kartica služi za preuzimanje upisa koji su već provedeni u izvornom sustavu. [Postupak i potrebne migracije](docs/EMATICA-UVOZ.md).
+
+**Provjera upisa i ispitni postupak:** kontrolna lista referade, nacrt i dovršenost godišnjeg upisa, blokade novih prijava ispita i iduće godine, stanja ispitnih rokova, zaključavanje i ovlašteno otključavanje uz razlog, zaseban nedolazak te ograničena povijest ispravaka rezultata. [Upute i tri nove migracije](docs/POSTUPCI-UPISA-I-ISPITA.md). [Stanje velike nadogradnje](IMPLEMENTATION_PROGRESS.md) i [izvori](docs/SOURCES.md).
 
 ## Pokretanje
 
@@ -58,7 +62,7 @@ Testovi Auth/SSO-a koriste stvarne Supabase Auth/PostgREST servise, provjeru ulo
 
 ## Vercel
 
-Uvezite GitHub repozitorij `nikolad4487-cell/svs`, grana `main`. `vercel.json` određuje framework, `npm ci` i `npm run build`. U Environment Variables postavite Supabase URL i javni publishable ključ prema `.env.example`; service-role ključ nije potreban aplikaciji. Nakon migracije i uključivanja Auth hooka uključite pozvanu registraciju. Ponovno objavite nakon promjene varijabli.
+Uvezite GitHub repozitorij `nikolad4487-cell/svs`, grana `main`. `vercel.json` određuje framework, `npm ci` i `npm run build`. U Environment Variables postavite Supabase URL i javni publishable ključ prema `.env.example`; za osnovnu prijavu nije potreban administratorski ključ. Izdavanje početnih pristupnih podataka i uvoz upisa koriste zaseban serverski `SVS_SUPABASE_SECRET_KEY`, a čitanje vlastite e-Matice `EMATICA_SUPABASE_URL` i `EMATICA_SUPABASE_SECRET_KEY`, prema dokumentaciji uvoza. Tajni ključevi nikad ne nose prefiks `NEXT_PUBLIC_`. Nakon migracije i uključivanja Auth hooka uključite pozvanu registraciju. Ponovno objavite nakon promjene varijabli.
 
 [Uvezi projekt u Vercel](https://vercel.com/new/import?s=https%3A%2F%2Fgithub.com%2Fnikolad4487-cell%2Fsvs)
 
@@ -76,4 +80,4 @@ Pri promjeni domene ažurirajte DNS/TLS, `BASE_DOMAIN`, Auth redirect adrese i e
 
 Objava, konfiguracija produkcijskog Supabasea i SMTP zahtijevaju pristup vašim računima. Prolazak lokalnih provjera ne znači da su vanjske usluge povezane ili produkcija objavljena.
 
-Za novi Supabase projekt pokrenite jednom `supabase/setup.sql` u SQL Editoru. Za već instaliranu fazu 2 koristite samo `supabase/migrations/202610300002_academic.sql`. Gotova javna adresa korisnika: https://svs-zeta-three.vercel.app; Supabase callback: https://svs-zeta-three.vercel.app/api/auth/callback.
+Za novi Supabase projekt pokrenite jednom `supabase/setup.sql` u SQL Editoru. Za postojeći projekt primijenite samo nedostajuće datoteke iz `supabase/migrations/` kronološkim redom; nemojte ponovno pokretati cijeli installer. Gotova javna adresa korisnika: https://svs-zeta-three.vercel.app; Supabase callback: https://svs-zeta-three.vercel.app/api/auth/callback.

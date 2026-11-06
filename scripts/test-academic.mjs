@@ -62,15 +62,13 @@ await check(
     assert.ok(r.error || r.data.length === 0);
     assert.ok(
       (
-        await db.student
-          .from("grades")
-          .insert({
-            institution_id: f.a,
-            exam_id: f.pastExam,
-            student_id: users.student.id,
-            grade: 5,
-            graded_by: users.student.id,
-          })
+        await db.student.from("grades").insert({
+          institution_id: f.a,
+          exam_id: f.pastExam,
+          student_id: users.student.id,
+          grade: 5,
+          graded_by: users.student.id,
+        })
       ).error,
     );
     assert.ok(
@@ -87,16 +85,14 @@ await check(
 await check(
   "composite foreign keys reject cross-institution academic links",
   async () => {
-    const r = await db.admin
-      .from("courses")
-      .insert({
-        institution_id: f.a,
-        program_id: f.programB,
-        semester_id: f.semesterA,
-        name: "Invalid linkage",
-        code: `BAD-${Date.now()}`,
-        ects: 5,
-      });
+    const r = await db.admin.from("courses").insert({
+      institution_id: f.a,
+      program_id: f.programB,
+      semester_id: f.semesterA,
+      name: "Invalid linkage",
+      code: `BAD-${Date.now()}`,
+      ects: 5,
+    });
     assert.ok(r.error);
   },
 );
@@ -195,13 +191,11 @@ await check(
     );
     assert.ok(
       (
-        await db.student
-          .from("exam_registrations")
-          .insert({
-            institution_id: f.b,
-            exam_id: f.examB,
-            student_id: users.student.id,
-          })
+        await db.student.from("exam_registrations").insert({
+          institution_id: f.b,
+          exam_id: f.examB,
+          student_id: users.student.id,
+        })
       ).error,
     );
   },
@@ -279,44 +273,57 @@ await check(
     try {
       assert.ifError(
         (
-          await service
-            .from("memberships")
-            .upsert({
-              institution_id: f.a,
-              user_id: users.student2.id,
-              role: "student",
-            })
+          await service.from("memberships").upsert({
+            institution_id: f.a,
+            user_id: users.student2.id,
+            role: "student",
+          })
         ).error,
       );
       assert.ifError(
         (
-          await service
-            .from("student_studies")
-            .insert({
-              id: studyId,
-              institution_id: f.a,
-              student_id: users.student2.id,
-              program_id: f.programA,
-              academic_year_id: f.yearA,
-              study_year: 1,
-              student_number: "CAPACITY-TEST",
-              status: "active",
-            })
+          await service.from("student_studies").insert({
+            id: studyId,
+            institution_id: f.a,
+            student_id: users.student2.id,
+            program_id: f.programA,
+            academic_year_id: f.yearA,
+            study_year: 1,
+            student_number: "CAPACITY-TEST",
+            status: "active",
+          })
         ).error,
       );
       assert.ifError(
         (
-          await service
-            .from("course_enrollments")
-            .insert({
-              id: enrollmentId,
-              institution_id: f.a,
-              study_id: studyId,
-              course_id: f.courseA,
-              student_id: users.student2.id,
-            })
+          await service.from("course_enrollments").insert({
+            id: enrollmentId,
+            institution_id: f.a,
+            study_id: studyId,
+            course_id: f.courseA,
+            student_id: users.student2.id,
+          })
         ).error,
       );
+      for (const [expected_revision, next_status] of [
+        [0, "pending_verification"],
+        [1, "completed"],
+      ]) {
+        assert.ifError(
+          (
+            await db.admin.rpc("complete_enrollment", {
+              target: studyId,
+              expected_revision,
+              next_status,
+              identity_checked: true,
+              documents_checked: true,
+              curriculum_checked: true,
+              financing_checked: true,
+              reason: "Sintetska priprema testa istodobne prijave ispita",
+            })
+          ).error,
+        );
+      }
       const original = (
         await service.from("exams").select("*").eq("id", f.examA).single()
       ).data;
@@ -355,16 +362,33 @@ await check(
     } finally {
       await service.from("exam_registrations").delete().eq("exam_id", examId);
       await service.from("exams").delete().eq("id", examId);
+      const localStudy = await service
+        .from("student_studies")
+        .select("completion_status,completion_revision")
+        .eq("id", studyId)
+        .maybeSingle();
+      if (localStudy.data?.completion_status === "completed")
+        await db.admin.rpc("complete_enrollment", {
+          target: studyId,
+          expected_revision: localStudy.data.completion_revision,
+          next_status: "pending_verification",
+          identity_checked: true,
+          documents_checked: true,
+          curriculum_checked: true,
+          financing_checked: true,
+          reason: "Završetak testa isključivo sintetskih upisa",
+        });
+      await service
+        .from("enrollment_completion_events")
+        .delete()
+        .eq("study_id", studyId);
       await service.from("course_enrollments").delete().eq("id", enrollmentId);
       await service.from("student_studies").delete().eq("id", studyId);
-      await service
-        .from("memberships")
-        .delete()
-        .match({
-          institution_id: f.a,
-          user_id: users.student2.id,
-          role: "student",
-        });
+      await service.from("memberships").delete().match({
+        institution_id: f.a,
+        user_id: users.student2.id,
+        role: "student",
+      });
       assert.ifError(
         (
           await db.nastavnik.rpc("record_grade", {

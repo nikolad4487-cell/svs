@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { assertSameOrigin, requestContext } from "@/lib/auth/request";
 import { academicMutation } from "@/lib/academic/service";
 import { safeModule } from "@/lib/auth/policy";
+import { workflowErrorStatus } from "@/lib/academic/exam-workflow";
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ action: string }> },
@@ -20,7 +21,10 @@ export async function POST(
     const view = form.get("return_view");
     if (typeof view === "string" && view.length <= 80)
       target.searchParams.set("view", view);
-    target.searchParams.set("status", error ? "academic-error" : "saved");
+    target.searchParams.set(
+      "status",
+      error ? workflowErrorStatus(error.message) : "saved",
+    );
     return NextResponse.redirect(target, 303);
   } catch {
     return NextResponse.json(

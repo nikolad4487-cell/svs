@@ -7,14 +7,14 @@ export function studentProgress(
 ) {
   const passed = new Map<string, { grade: number; ects: number }>();
   const own = grades
-    .filter((g) => g.student_id === student && g.grade > 1)
+    .filter((g) => g.student_id === student && (g.grade ?? 0) > 1)
     .sort((a, b) => b.graded_at.localeCompare(a.graded_at));
   for (const g of own) {
     const c = courses.find(
       (c) => c.id === exams.find((e) => e.id === g.exam_id)?.course_id,
     );
     if (c && !passed.has(c.code))
-      passed.set(c.code, { grade: g.grade, ects: Number(c.ects) });
+      passed.set(c.code, { grade: g.grade!, ects: Number(c.ects) });
   }
   const values = [...passed.values()],
     earned = values.reduce((s, p) => s + p.ects, 0);

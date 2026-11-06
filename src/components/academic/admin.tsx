@@ -132,10 +132,25 @@ function resources(data: AcademicData): Resource[] {
         { name: "name", label: "Naziv" },
         { name: "code", label: "Šifra" },
         { name: "ects", label: "ECTS bodovi", type: "number", step: "0.5" },
-        { name: "lecture_hours", label: "Sati predavanja", type: "number", optional: true },
-        { name: "exercise_hours", label: "Sati vježbi", type: "number", optional: true },
+        {
+          name: "lecture_hours",
+          label: "Sati predavanja",
+          type: "number",
+          optional: true,
+        },
+        {
+          name: "exercise_hours",
+          label: "Sati vježbi",
+          type: "number",
+          optional: true,
+        },
         { name: "elective_group", label: "Izborna grupa", optional: true },
-        { name: "teaching_plan", label: "Plan nastave", type: "textarea", optional: true },
+        {
+          name: "teaching_plan",
+          label: "Plan nastave",
+          type: "textarea",
+          optional: true,
+        },
       ],
       records: data.courses,
     },
@@ -405,20 +420,24 @@ export function AcademicAdmin({
                       return hrDate(String(value));
                     return String(value);
                   }),
-                  <details key={String(record.id)}>
-                    <summary className="cursor-pointer text-blue-700">
-                      Uredi
-                    </summary>
-                    <div className="mt-4 min-w-72">
-                      <RecordForm
-                        resource={resource}
-                        data={data}
-                        module={module}
-                        view={view}
-                        record={record}
-                      />
-                    </div>
-                  </details>,
+                  record.workflow_status === "locked" ? (
+                    "Zaključano"
+                  ) : (
+                    <details key={String(record.id)}>
+                      <summary className="cursor-pointer text-blue-700">
+                        Uredi
+                      </summary>
+                      <div className="mt-4 min-w-72">
+                        <RecordForm
+                          resource={resource}
+                          data={data}
+                          module={module}
+                          view={view}
+                          record={record}
+                        />
+                      </div>
+                    </details>
+                  ),
                 ])}
               />
             </Section>

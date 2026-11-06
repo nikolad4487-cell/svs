@@ -14,6 +14,7 @@ export const studomatGroups = {
     "Moj račun ustanove",
   ],
   "Podaci o studiranju": [
+    "Dovršenost upisa",
     "Pregled podataka o studiranju",
     "Upisane godine i predmeti",
     "Aktivni predmeti",

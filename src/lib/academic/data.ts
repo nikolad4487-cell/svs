@@ -3,6 +3,8 @@ import { requireIdentity } from "../auth/access";
 import { notFound } from "next/navigation";
 import type { StudentService, StudentReport } from "./student-services";
 import type * as M from "./model";
+import type { ExamState } from "./exam-workflow";
+import type { CompletionState } from "./enrollment-completion";
 export async function academicData(institutionId?: string) {
   const account = await requireIdentity();
   const institutions = await account.db
@@ -124,7 +126,52 @@ export async function academicData(institutionId?: string) {
   const isTeacher = account.memberships.some(
     (m) => m.institution_id === id && m.role === "teacher",
   );
+  const workflow = await optionalTable<{
+    id: string;
+    exam_id: string;
+    actor_id: string;
+    previous_status: ExamState;
+    next_status: ExamState;
+    reason: string;
+    occurred_at: string;
+  }>("exam_workflow_events");
+  if (workflow.error && !["PGRST205", "42P01"].includes(workflow.error.code))
+    throw new Error("Povijest ispitnih rokova nije dostupna.");
+  const completion = await optionalTable<{
+    id: string;
+    study_id: string;
+    actor_id: string;
+    previous_status: CompletionState;
+    next_status: CompletionState;
+    reason: string;
+    occurred_at: string;
+  }>("enrollment_completion_events");
+  if (
+    completion.error &&
+    !["PGRST205", "42P01"].includes(completion.error.code)
+  )
+    throw new Error("Povijest provjera upisa nije dostupna.");
+  const history = await optionalTable<{
+    id: string;
+    exam_id: string;
+    student_id: string;
+    actor_id: string;
+    action: string;
+    previous_grade: number | null;
+    next_grade: number | null;
+    previous_outcome: string | null;
+    next_outcome: string | null;
+    occurred_at: string;
+  }>("exam_grade_events");
+  if (history.error && !["PGRST205", "42P01"].includes(history.error.code))
+    throw new Error("Povijest rezultata nije dostupna.");
   return {
+    gradeHistoryReady: !history.error,
+    gradeEvents: history.data || [],
+    enrollmentCompletionReady: !completion.error,
+    enrollmentEvents: completion.data || [],
+    examWorkflowReady: !workflow.error,
+    examEvents: workflow.data || [],
     account,
     servicesReady,
     services: (serviceRows.data || []) as StudentService[],

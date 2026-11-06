@@ -43,6 +43,14 @@ export type Course = {
   teaching_plan?: string;
 };
 export type Study = {
+  completion_status?: import("./enrollment-completion").CompletionState;
+  identity_verified?: boolean;
+  documents_verified?: boolean;
+  curriculum_verified?: boolean;
+  financing_verified?: boolean;
+  completion_revision?: number;
+  completed_at?: string | null;
+  completed_by?: string | null;
   id: string;
   institution_id: string;
   student_id: string;
@@ -97,6 +105,8 @@ export type Schedule = {
   ends_at: string;
 };
 export type Exam = {
+  workflow_status?: import("./exam-workflow").ExamState;
+  legacy_workflow?: boolean;
   id: string;
   institution_id: string;
   course_id: string;
@@ -119,7 +129,8 @@ export type Grade = {
   institution_id: string;
   exam_id: string;
   student_id: string;
-  grade: number;
+  grade: number | null;
+  outcome?: "graded" | "absent";
   feedback: string;
   graded_by: string;
   graded_at: string;

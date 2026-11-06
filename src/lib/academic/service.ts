@@ -2,6 +2,7 @@ import "server-only";
 import { z } from "zod";
 import { requireIdentity } from "../auth/access";
 import { schemas, tables, type AcademicAction } from "./validation";
+import { examStates } from "./exam-workflow";
 export async function academicMutation(action: string, form: FormData) {
   const account = await requireIdentity();
   const institution_id = z.uuid().parse(form.get("institution_id"));
@@ -12,6 +13,61 @@ export async function academicMutation(action: string, form: FormData) {
         m.institution_id === institution_id &&
         ["institution_admin", "registrar"].includes(m.role),
     );
+  if (action === "exam-state") {
+    const input = z
+      .object({
+        exam_id: z.uuid(),
+        expected_status: z.enum(examStates),
+        next_status: z.enum(examStates),
+        reason: z.string().trim().min(10).max(1000),
+      })
+      .parse(Object.fromEntries(form));
+    const exam = await account.db
+      .from("exams")
+      .select("id")
+      .eq("institution_id", institution_id)
+      .eq("id", input.exam_id)
+      .single();
+    if (!exam.data) throw new Error("forbidden");
+    return (
+      await account.db.rpc("transition_exam", {
+        target: input.exam_id,
+        expected_status: input.expected_status,
+        next_status: input.next_status,
+        reason: input.reason,
+      })
+    ).error;
+  }
+  if (action === "complete-enrollment") {
+    if (!manager) throw new Error("forbidden");
+    const input = z
+      .object({
+        study_id: z.uuid(),
+        expected_revision: z.coerce.number().int().min(0),
+        next_status: z.enum(["pending_verification", "completed", "cancelled"]),
+        reason: z.string().trim().min(10).max(1000),
+      })
+      .parse(Object.fromEntries(form));
+    const study = await account.db
+      .from("student_studies")
+      .select("id")
+      .eq("id", input.study_id)
+      .eq("institution_id", institution_id)
+      .single();
+    if (!study.data) throw new Error("forbidden");
+    return (
+      await account.db.rpc("complete_enrollment", {
+        target: input.study_id,
+        expected_revision: input.expected_revision,
+        next_status: input.next_status,
+        identity_checked: form.get("identity_checked") === "on",
+        documents_checked: form.get("documents_checked") === "on",
+        curriculum_checked: form.get("curriculum_checked") === "on",
+        financing_checked: form.get("financing_checked") === "on",
+        reason: input.reason,
+      })
+    ).error;
+  }
   if (action === "register-exam") {
     const exam_id = z.uuid().parse(form.get("exam_id"));
     const { data: exam, error: lookup } = await account.db
@@ -32,7 +88,10 @@ export async function academicMutation(action: string, form: FormData) {
       .object({
         exam_id: z.uuid(),
         student_id: z.uuid(),
-        grade: z.coerce.number().int().min(1).max(5),
+        grade: z.union([
+          z.literal("absent"),
+          z.coerce.number().int().min(1).max(5),
+        ]),
         feedback: z.string().max(2000),
       })
       .parse(Object.fromEntries(form));
@@ -54,12 +113,15 @@ export async function academicMutation(action: string, form: FormData) {
       if (!teaching.data) throw new Error("forbidden");
     }
     return (
-      await account.db.rpc("record_grade", {
-        target: input.exam_id,
-        student: input.student_id,
-        result: input.grade,
-        note: input.feedback,
-      })
+      await account.db.rpc(
+        input.grade === "absent" ? "record_exam_absence" : "record_grade",
+        {
+          target: input.exam_id,
+          student: input.student_id,
+          ...(input.grade === "absent" ? {} : { result: input.grade }),
+          note: input.feedback,
+        },
+      )
     ).error;
   }
   if (!Object.hasOwn(tables, action)) throw new Error("not-found");

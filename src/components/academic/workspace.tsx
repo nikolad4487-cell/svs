@@ -8,6 +8,9 @@ import { Studomat } from "./studomat";
 import { Timetable } from "./schedule";
 import { StudentServicesAdmin } from "./student-services";
 import { AcademicAdmin } from "./admin";
+import { ExamWorkflow } from "./exam-workflow";
+import { workflowErrors } from "@/lib/academic/exam-workflow";
+import { EnrollmentCompletion } from "./enrollment-completion";
 export async function AcademicWorkspace({
   module,
   view,
@@ -59,9 +62,13 @@ export async function AcademicWorkspace({
           role="alert"
           className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
         >
-          Promjena nije spremljena. Provjerite unesene vrijednosti, studenta,
-          povezanost programa, akademske godine i kolegija, rokove prijave,
-          kapacitet te moguće preklapanje termina.
+          {workflowErrors[status] || (
+            <>
+              Promjena nije spremljena. Provjerite unesene vrijednosti,
+              studenta, povezanost programa, akademske godine i kolegija, rokove
+              prijave, kapacitet te moguće preklapanje termina.
+            </>
+          )}
         </p>
       )}
       {status === "saved" && (
@@ -86,12 +93,20 @@ export async function AcademicWorkspace({
       ) : view === "Studentske evidencije" ? (
         <StudentServicesAdmin data={data} module={module} />
       ) : (
-        <AcademicAdmin
-          data={data}
-          module={module}
-          view={view}
-          actions={sections[view] || ["program"]}
-        />
+        <div className="space-y-10">
+          <AcademicAdmin
+            data={data}
+            module={module}
+            view={view}
+            actions={sections[view] || ["program"]}
+          />
+          {view === "Ispitni rokovi" && (data.manager || data.isTeacher) && (
+            <ExamWorkflow data={data} module={module} view={view} />
+          )}
+          {view === "Studenti i upisi" && data.manager && (
+            <EnrollmentCompletion data={data} module={module} view={view} />
+          )}
+        </div>
       )}
     </div>
   );

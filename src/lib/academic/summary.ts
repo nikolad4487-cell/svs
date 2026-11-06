@@ -7,7 +7,7 @@ export function earnedCredits(
 ) {
   const credits = new Map<string, number>();
   for (const grade of grades.filter(
-    (g) => g.student_id === studentId && g.grade > 1,
+    (g) => g.student_id === studentId && (g.grade ?? 0) > 1,
   )) {
     const exam = exams.find((e) => e.id === grade.exam_id);
     const course = courses.find((c) => c.id === exam?.course_id);
