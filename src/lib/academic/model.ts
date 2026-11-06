@@ -1,4 +1,5 @@
 export type Institution = {
+  email_domains?: string[];
   id: string;
   name: string;
   code: string;

@@ -39,6 +39,13 @@ const mappingSchema = z.object({
   requirements_reference: z.string().trim().min(3).max(500),
   enabled: z.boolean(),
 });
+async function allFinished<T extends readonly unknown[]>(
+  tasks: T,
+): Promise<{ -readonly [K in keyof T]: Awaited<T[K]> }> {
+  // Finish independent reads before returning an error; no source request outlives this catalogue response.
+  await Promise.allSettled(tasks);
+  return Promise.all(tasks);
+}
 function sourceClient() {
   const config = sourceConfiguration(process.env);
   return {
@@ -55,8 +62,21 @@ export async function POST(
   let authorized = false;
   try {
     await assertSameOrigin();
-    const account = await requireIdentity("admin");
-    if (!account.superadmin) throw new Error("Forbidden");
+    const account = await requireIdentity("referada");
+    const staffIds = [
+      ...new Set(
+        account.memberships
+          .filter((m) => ["institution_admin", "registrar"].includes(m.role))
+          .map((m) => m.institution_id),
+      ),
+    ];
+    if (!account.superadmin && !staffIds.length) throw new Error("Forbidden");
+    const staffScope = account.superadmin
+      ? "id.not.is.null"
+      : `institution_id.in.(${staffIds.join(",")})`;
+    const institutionScope = account.superadmin
+      ? "id.not.is.null"
+      : `id.in.(${staffIds.join(",")})`;
     authorized = true;
     if (Number(req.headers.get("content-length") || 0) > 20000)
       throw new Error("size");
@@ -66,12 +86,13 @@ export async function POST(
       NextResponse.json(data, { status, headers });
     if (action === "target-catalog") {
       const [mappings, institutions, targetPrograms, targetYears] =
-        await Promise.all([
+        await allFinished([
           allRows(
             () =>
               account.db
                 .from("admission_import_mappings")
                 .select("*")
+                .or(staffScope)
                 .eq("mode", "first")
                 .order("id"),
             "ISVU: upisni postupci",
@@ -82,6 +103,7 @@ export async function POST(
               account.db
                 .from("institutions")
                 .select("id,name,email_domains")
+                .or(institutionScope)
                 .order("id"),
             "ISVU: učilišta",
             "target",
@@ -91,6 +113,7 @@ export async function POST(
               account.db
                 .from("study_programs")
                 .select("id,institution_id,name")
+                .or(staffScope)
                 .order("id"),
             "ISVU: programi",
             "target",
@@ -100,6 +123,7 @@ export async function POST(
               account.db
                 .from("academic_years")
                 .select("id,institution_id,name")
+                .or(staffScope)
                 .order("id"),
             "ISVU: godine",
             "target",
@@ -227,7 +251,7 @@ export async function POST(
         institutions,
         targetPrograms,
         targetYears,
-      ] = await Promise.all([
+      ] = await allFinished([
         (async () => {
           // Shared e-Dnevnik databases may predate the programs→schools FK.
           // Match explicit IDs instead of relying on an embedded relation.
@@ -274,6 +298,7 @@ export async function POST(
             account.db
               .from("admission_import_mappings")
               .select("*")
+              .or(staffScope)
               .eq("mode", "recorded")
               .order("id"),
           "SVS: mapiranja upisa",
@@ -284,6 +309,7 @@ export async function POST(
             account.db
               .from("institutions")
               .select("id,name,email_domains")
+              .or(institutionScope)
               .order("id"),
           "SVS: ustanove",
           "target",
@@ -293,6 +319,7 @@ export async function POST(
             account.db
               .from("study_programs")
               .select("id,institution_id,name")
+              .or(staffScope)
               .order("id"),
           "SVS: studijski programi",
           "target",
@@ -302,6 +329,7 @@ export async function POST(
             account.db
               .from("academic_years")
               .select("id,institution_id,name")
+              .or(staffScope)
               .order("id"),
           "SVS: akademske godine",
           "target",
@@ -418,7 +446,7 @@ export async function POST(
     if (!authorized) {
       status = 403;
       message =
-        "Za ovaj postupak prijavite se kao glavni administrator sustava.";
+        "Za ovaj postupak potrebna je prijava referade ili administratora ustanove.";
     } else if (
       error instanceof AdmissionConfigurationError ||
       error instanceof AdmissionReadError

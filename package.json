@@ -26,7 +26,8 @@
     "test:student-services": "node scripts/test-student-services.mjs",
     "test:student-cohort": "node scripts/test-student-cohort.mjs",
     "test:exam-workflow": "node scripts/test-exam-workflow.mjs",
-    "test:enrollment-completion": "node scripts/test-enrollment-completion.mjs"
+    "test:enrollment-completion": "node scripts/test-enrollment-completion.mjs",
+    "test:registrar": "node scripts/test-registrar.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",

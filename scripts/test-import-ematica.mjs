@@ -259,27 +259,79 @@ try {
   assert.equal((await call("target-catalog", {})).status, 200);
   assert.equal(sourceReads, before);
   if (process.env.ADMISSION_PLAYWRIGHT_MODULE) {
-    const {chromium}=await import(process.env.ADMISSION_PLAYWRIGHT_MODULE);
-    const browser=await chromium.launch({executablePath:"/usr/bin/chromium",headless:true,args:["--no-sandbox"]});
+    const { chromium } = await import(process.env.ADMISSION_PLAYWRIGHT_MODULE);
+    const browser = await chromium.launch({
+      executablePath: "/usr/bin/chromium",
+      headless: true,
+      args: ["--no-sandbox"],
+    });
     try {
-      const page=await browser.newPage({viewport:{width:1440,height:1000}});
+      const page = await browser.newPage({
+        viewport: { width: 1440, height: 1000 },
+      });
       await page.goto(`http://${host}/?module=auth&next=admin`);
-      await page.locator('input[name="email"]').fill(users.superadmin.email);await page.locator('input[name="password"]').fill(users.superadmin.password);
-      await Promise.all([page.waitForURL(/module=admin/),page.getByRole("button",{name:"Prijavi se",exact:true}).click()]);
+      await page.locator('input[name="email"]').fill(users.superadmin.email);
+      await page
+        .locator('input[name="password"]')
+        .fill(users.superadmin.password);
+      await Promise.all([
+        page.waitForURL(/module=admin/),
+        page.getByRole("button", { name: "Prijavi se", exact: true }).click(),
+      ]);
       await page.goto(`http://${host}/?module=admin&view=Uvoz%20upisa`);
-      await page.getByRole("heading",{name:"Prvi upis učenika na fakultet",exact:true}).waitFor();
-      await page.getByRole("button",{name:"Učitaj učilišta i studije iz ISVU-a",exact:true}).click();
-      await page.getByLabel("Učilište",{exact:true}).selectOption(fixtures.a);
-      await page.getByLabel("Studijski program",{exact:true}).selectOption(fixtures.programA);
-      await page.getByLabel("Akademska godina upisa",{exact:true}).selectOption(fixtures.yearA);
-      await page.getByLabel("Domena novih korisničkih imena",{exact:true}).selectOption("example.test");
-      await page.locator('input[name="requirements_reference"]').fill("Prvi upis - browser");
-      assert.equal(await page.getByText("Izvorni fakultet / program",{exact:true}).count(),0);
-      assert.equal(await page.locator('form').filter({has:page.locator('input[name="requirements_reference"]')}).evaluate(f=>f.checkValidity()),true);
-      await page.setViewportSize({width:390,height:844});
-      assert.equal(await page.locator('body').evaluate(el=>el.scrollWidth>window.innerWidth),false);
-      console.log("First-enrollment browser passed: target-first form available without a source faculty or functioning source catalogue; valid form and mobile width.");
-    } finally {await browser.close();}
+      await page
+        .getByRole("heading", {
+          name: "Prvi upis učenika na fakultet",
+          exact: true,
+        })
+        .waitFor();
+      await page
+        .getByRole("button", {
+          name: "Učitaj učilišta i studije iz ISVU-a",
+          exact: true,
+        })
+        .click();
+      await page
+        .getByLabel("Učilište", { exact: true })
+        .selectOption(fixtures.a);
+      await page
+        .getByLabel("Studijski program", { exact: true })
+        .selectOption(fixtures.programA);
+      await page
+        .getByLabel("Akademska godina upisa", { exact: true })
+        .selectOption(fixtures.yearA);
+      await page
+        .getByLabel("Domena novih korisničkih imena", { exact: true })
+        .selectOption("example.test");
+      await page
+        .locator('input[name="requirements_reference"]')
+        .fill("Prvi upis - browser");
+      assert.equal(
+        await page
+          .getByText("Izvorni fakultet / program", { exact: true })
+          .count(),
+        0,
+      );
+      assert.equal(
+        await page
+          .locator("form")
+          .filter({ has: page.locator('input[name="requirements_reference"]') })
+          .evaluate((f) => f.checkValidity()),
+        true,
+      );
+      await page.setViewportSize({ width: 390, height: 844 });
+      assert.equal(
+        await page
+          .locator("body")
+          .evaluate((el) => el.scrollWidth > window.innerWidth),
+        false,
+      );
+      console.log(
+        "First-enrollment browser passed: target-first form available without a source faculty or functioning source catalogue; valid form and mobile width.",
+      );
+    } finally {
+      await browser.close();
+    }
   }
   const firstSaved = await call("first-mapping", {
     institution_id: fixtures.a,
@@ -605,10 +657,13 @@ try {
   const ordinaryCookie = (ordinary.headers["set-cookie"] || [])
     .map((v) => v.split(";")[0])
     .join("; ");
-  assert.equal(
-    (await request("/api/admissions/catalog", {}, ordinaryCookie)).status,
-    403,
+  const staffCatalog = await request(
+    "/api/admissions/target-catalog",
+    {},
+    ordinaryCookie,
   );
+  assert.equal(staffCatalog.status, 200);
+  assert.ok(staffCatalog.data.institutions.every((i) => i.id === fixtures.a));
   const actor = createClient(c.API_URL, c.ANON_KEY, {
     auth: { persistSession: false },
   });
@@ -620,14 +675,13 @@ try {
       })
     ).error,
   );
-  assert.ok(
-    (
-      await actor.rpc("claim_admission_import", {
-        mapping,
-        candidate: candidateId,
-      })
-    ).error,
-  );
+  const staffRepeat = await actor.rpc("claim_admission_import", {
+    mapping,
+    candidate: candidateId,
+  });
+  assert.ifError(staffRepeat.error);
+  assert.equal(staffRepeat.data, null); // Own completed job cannot be issued again.
+
   assert.equal(
     (
       await call("mapping", {

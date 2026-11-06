@@ -10,6 +10,8 @@ import { StudentServicesAdmin } from "./student-services";
 import { AcademicAdmin } from "./admin";
 import { ExamWorkflow } from "./exam-workflow";
 import { workflowErrors } from "@/lib/academic/exam-workflow";
+import { RegistrarWorkspace } from "./registrar-workspace";
+import { registrarErrors } from "@/lib/academic/registrar";
 import { EnrollmentCompletion } from "./enrollment-completion";
 export async function AcademicWorkspace({
   module,
@@ -19,6 +21,7 @@ export async function AcademicWorkspace({
   date,
   courseId,
   academicYear,
+  studentId,
 }: {
   module: ModuleSlug;
   view: string;
@@ -27,6 +30,7 @@ export async function AcademicWorkspace({
   date?: string;
   courseId?: string;
   academicYear?: string;
+  studentId?: string;
 }) {
   const data = await academicData(institution);
   if (!data)
@@ -62,7 +66,7 @@ export async function AcademicWorkspace({
           role="alert"
           className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
         >
-          {workflowErrors[status] || (
+          {workflowErrors[status] || registrarErrors[status] || (
             <>
               Promjena nije spremljena. Provjerite unesene vrijednosti,
               studenta, povezanost programa, akademske godine i kolegija, rokove
@@ -79,7 +83,9 @@ export async function AcademicWorkspace({
           Promjena je spremljena.
         </p>
       )}
-      {module === "portal" ? (
+      {module === "referada" ? (
+        <RegistrarWorkspace data={data} view={view} studentId={studentId} />
+      ) : module === "portal" ? (
         <Portal data={data} view={view} status={status} />
       ) : module === "studomat" ? (
         <Studomat

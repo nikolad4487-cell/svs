@@ -20,6 +20,7 @@ import { ExamWorkflow } from "./exam-workflow";
 import { examStateNames } from "@/lib/academic/exam-workflow";
 import { enrollmentAllowsExams } from "@/lib/academic/enrollment-completion";
 import { EnrollmentCompletion } from "./enrollment-completion";
+import { StudentDossier } from "./student-dossier";
 import { GradeHistory } from "./grade-history";
 export function ExamList({
   data,
@@ -315,6 +316,13 @@ export async function Studomat({
   academicYear?: string;
 }) {
   const ownId = data.account.user.id;
+  if (view === "Matični podaci" || view === "Službeni godišnji podaci")
+    return (
+      <StudentDossier
+        data={data}
+        annual={view === "Službeni godišnji podaci"}
+      />
+    );
   if (view === "Dovršenost upisa")
     return <EnrollmentCompletion data={data} module="studomat" view={view} />;
   const ownStudies = data.studies.filter((s) => s.student_id === ownId);

@@ -9,6 +9,8 @@ export const studomatGroups = {
   ],
   "Podaci o studentu": [
     "Osobni podaci",
+    "Matični podaci",
+    "Službeni godišnji podaci",
     "Razina prava na prehranu",
     "E-mail opcije",
     "Moj račun ustanove",
@@ -93,10 +95,18 @@ export const modules = [
   {
     slug: "referada",
     name: "Studentska referada",
-    description: "Zahtjevi, potvrde i podrška tijekom studija.",
+    description: "Upisi svih vrsta, studentski dosjei i službene evidencije.",
     icon: "Files",
     color: "emerald",
-    items: ["Moji zahtjevi", "Potvrde", "Dokumenti"],
+    items: [
+      "Pregled",
+      "Upisni postupci",
+      "Uvoz upisa",
+      "Studenti i dosjei",
+      "Studenti i upisi",
+      "Studentske evidencije",
+      "Grupe studenata",
+    ],
   },
   {
     slug: "raspored",

@@ -343,7 +343,12 @@ export async function StudentServices({
   );
   if (view === "Osobni podaci")
     return (
-      <Section title="Izmjena osobnih podataka">
+      <Section title="Samoprijavljeni osobni podaci">
+        <p className="text-sm text-slate-500">
+          Ovdje unosite vlastite podatke za provjeru. Službene matične i
+          godišnje podatke vodi referada; njihov prikaz dostupan je zasebno u
+          izborniku.
+        </p>
         {chooser}
         <Table
           headings={["Podatak", "Vrijednost"]}

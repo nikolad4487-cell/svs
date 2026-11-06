@@ -12,13 +12,15 @@ Modularna hrvatska platforma visokog obrazovanja: Next.js 16 App Router, TypeScr
 
 **Faza 3:** funkcionalni portal prema ulozi, studijski programi/godine/semestri, upisi i kolegiji, dodjela nastavnika, ispitni rokovi i prijave/odjave, ocjenjivanje i ECTS, grupe, dvorane, tjedni/mjesečni raspored i obavijesti. [Tehničke upute faze 3](docs/FAZA-3.md).
 
-LMS i poslovni zahtjevi referade slijede u idućim fazama. Modul e-učenja nije službeni Merlin/Moodle, a administracija studija nije službeni ISVU. Nema lažne e-pošte: pružatelj još nije povezan. Bez Supabase konfiguracije prikazuje se objašnjenje, a ne lažna prijava.
+LMS i napredni zahtjevi/dokumenti referade slijede u idućim fazama. Modul e-učenja nije službeni Merlin/Moodle, a administracija studija nije službeni ISVU. Nema lažne e-pošte: pružatelj još nije povezan. Bez Supabase konfiguracije prikazuje se objašnjenje, a ne lažna prijava.
 
 **Prošireni Studomat:** odvojeni pregledi ispita, osobni godišnji podaci i postavke obavijesti, detalji predmeta i plan nastave, statistike i agregat generacije, dodatni ECTS, prehrana, školarine, participacije, boravci, kategorije, prisustvo i evidencija potvrda. Nove podatke vodi administrator/referada u Studentskim evidencijama. [Upute i migracija](docs/FAZA-4-STUDOMAT.md).
 
 **Prvi upis studenata:** u Administraciji sustava → Uvoz upisa administrator prvo bira ISVU učilište, studij i godinu, zatim učenike sa završenom srednjom školom iz e-Matice te nakon provjere mature i uvjeta provodi prvi upis. Izvorni fakultet ili prethodni fakultetski upis nisu potrebni. Odvojena kartica služi za preuzimanje upisa koji su već provedeni u izvornom sustavu. [Postupak i potrebne migracije](docs/EMATICA-UVOZ.md).
 
 **Provjera upisa i ispitni postupak:** kontrolna lista referade, nacrt i dovršenost godišnjeg upisa, blokade novih prijava ispita i iduće godine, stanja ispitnih rokova, zaključavanje i ovlašteno otključavanje uz razlog, zaseban nedolazak te ograničena povijest ispravaka rezultata. [Upute i tri nove migracije](docs/POSTUPCI-UPISA-I-ISPITA.md). [Stanje velike nadogradnje](IMPLEMENTATION_PROGRESS.md) i [izvori](docs/SOURCES.md).
+
+**Studentska referada:** sve vrste upisa provodi referada kroz pripremu, provjeru i izradu upisnog lista. Dostupni su dosjei, službeni godišnji podaci, studentski početni pristup bez e-pošte, uvoz, grupe i postojeće studentske evidencije. Studomat prikazuje vlastite službene podatke bez mogućnosti upisa. [Radni postupak i migracija](docs/REFERADA.md) · [Pregled dostavljenih uputa](docs/ISVU-PRILOZI-REFERADA.md).
 
 ## Pokretanje
 

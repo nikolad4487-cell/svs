@@ -24,7 +24,7 @@ export function canAccessModule(
 ) {
   if (superadmin) return true;
   if (module === "admin") return false;
-  if (module === "isvu")
+  if (module === "isvu" || module === "referada")
     return memberships.some((m) =>
       ["institution_admin", "registrar"].includes(m.role),
     );

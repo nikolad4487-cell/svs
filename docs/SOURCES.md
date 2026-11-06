@@ -32,3 +32,7 @@ Njihov sadržaj **nije izravno provjeren u ovom okruženju**: wiki.srce.hr bloki
 - [Prijava na Studomat](https://wiki.srce.hr/spaces/TUT/pages/27689073/Prijava+na+Studomat)
 
 Za svaku naknadno otvorenu prezentaciju zabilježiti stvarno pregledani URL, datum/verziju i relevantni slajd. Ne uvoditi nedokumentirane službene API-je ili univerzalne nacionalne pragove.
+
+## Naknadno dostavljeni izvorni privici
+
+Korisnik je dostavio 21 PDF/PPTX datoteku. Početne wiki upute za upis te matične i godišnje podatke sada su dostupne kao skenirani PDF-ovi; izdvojen je OCR i pregledani ključni odjeljci. To nadopunjuje raniju neslužbenu sintezu. [Inventar, primjena i preostale razlike](ISVU-PRILOZI-REFERADA.md). Izravni mrežni dohvat wiki stranica i potpuna implementacija svih prezentacijskih tema time nisu potvrđeni.

@@ -36,13 +36,23 @@ export default async function Module({
     date?: string;
     course?: string;
     academic_year?: string;
+    student?: string;
   }>;
 }) {
   const { module } = await params;
   const m = modules.find((m) => m.slug === module);
   if (!m) notFound();
-  const { view, mode, status, next, institution, date, course, academic_year } =
-    await searchParams;
+  const {
+    view,
+    mode,
+    status,
+    next,
+    institution,
+    date,
+    course,
+    academic_year,
+    student,
+  } = await searchParams;
   const active = m.items.find((i) => i === view) || m.items[0];
   const url = await navigation();
   const account = await identity();
@@ -55,6 +65,14 @@ export default async function Module({
     module === "auth" ||
     (!!account &&
       canAccessModule(m.slug, account.superadmin, account.memberships));
+  if (
+    institution &&
+    module !== "auth" &&
+    account &&
+    !account.superadmin &&
+    !account.memberships.some((m) => m.institution_id === institution)
+  )
+    notFound();
   const copy: Record<string, string> = {
     portal:
       "Osobni podaci, kolegiji i obavijesti bit će dostupni nakon povezivanja korisničkog računa.",
@@ -168,9 +186,14 @@ export default async function Module({
             ) : module === "admin" &&
               !academicAdminItems.some((item) => item === active) ? (
               <Institutions system status={status} />
-            ) : ["portal", "studomat", "isvu", "raspored", "admin"].includes(
-                module,
-              ) ? (
+            ) : [
+                "portal",
+                "studomat",
+                "isvu",
+                "raspored",
+                "admin",
+                "referada",
+              ].includes(module) ? (
               <AcademicWorkspace
                 module={m.slug}
                 view={active}
@@ -179,6 +202,7 @@ export default async function Module({
                 date={date}
                 courseId={course}
                 academicYear={academic_year}
+                studentId={student}
               />
             ) : (
               <>

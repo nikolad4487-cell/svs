@@ -127,7 +127,9 @@ export async function POST(
         action === "save" || action === "delete"
           ? form.get("return_module") === "admin"
             ? "admin"
-            : "isvu"
+            : form.get("return_module") === "referada"
+              ? "referada"
+              : "isvu"
           : "studomat",
       ),
     );
