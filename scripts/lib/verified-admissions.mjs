@@ -1,11 +1,44 @@
 import { loginName } from "./ematica-import.mjs";
 import { randomBytes } from "node:crypto";
-export async function allRows(query) {
+export class AdmissionReadError extends Error {
+  constructor(resource, scope, code, status) {
+    const safeCode = /^[A-Z0-9_]{1,20}$/.test(String(code)) ? String(code) : "";
+    const schema = [
+      "PGRST200",
+      "PGRST204",
+      "PGRST205",
+      "42P01",
+      "42703",
+    ].includes(safeCode);
+    const auth = [401, 403].includes(status) || safeCode === "42501";
+    const reason = schema
+      ? scope === "target"
+        ? resource.includes("upisni postupci")
+          ? "Primijenite migraciju 202611060001_first_enrollment.sql u ISVU projektu."
+          : "Primijenite migraciju 202611030001_verified_admissions.sql u SVS projektu."
+        : "Izvorna tablica ili stupci ne odgovaraju očekivanoj shemi e-Matice."
+      : auth
+        ? scope === "source"
+          ? "Provjerite serverski EMATICA_SUPABASE_SECRET_KEY i njegov projekt u Vercelu."
+          : "Provjerite administratorske ovlasti i pristup SVS bazi."
+        : "Provjerite Supabase URL i mrežni pristup iz Vercela te ponovite dohvat.";
+    super(
+      `${resource}: dohvat nije uspio. ${reason}${safeCode ? ` (${safeCode})` : ""}`,
+    );
+    this.code = safeCode;
+    this.resource = resource;
+  }
+}
+export async function allRows(
+  query,
+  resource = "Podaci e-Matice",
+  scope = "source",
+) {
   const rows = [];
   for (let offset = 0; ; offset += 200) {
     const r = await query().range(offset, offset + 199);
     if (r.error)
-      throw new Error("Izvorni podaci nisu dostupni. Provjerite vezu i shemu.");
+      throw new AdmissionReadError(resource, scope, r.error.code, r.status);
     rows.push(...r.data);
     if (r.data.length < 200) return rows;
   }
@@ -76,7 +109,117 @@ export function assessAdmission(
     reasons.push("Uvjeti programa još nisu provjereni.");
   return { eligible: reasons.length === 0, reasons, schoolProof };
 }
+export function assessFirstEnrollment(mapping, student, review) {
+  const reasons = [];
+  if (!mapping.enabled) reasons.push("Upisni postupak je isključen.");
+  if (!student?.graduated)
+    reasons.push("Završetak srednje škole još nije evidentiran u e-Matici.");
+  const reviewed = Boolean(
+    review &&
+      review.mapping_id === mapping.id &&
+      review.candidate_id === student?.id &&
+      review.source_student_id === student?.id &&
+      review.source_choice_id == null &&
+      review.mapping_revision === mapping.revision &&
+      review.reviewed_by &&
+      review.evidence_reference?.trim().length >= 3,
+  );
+  if (mapping.matura_required && !(reviewed && review.matura_verified))
+    reasons.push("Potrebno je provjeriti položenu maturu.");
+  if (!(reviewed && review.conditions_verified))
+    reasons.push("Uvjeti studijskog programa još nisu provjereni.");
+  if (!(reviewed && review.admission_approved))
+    reasons.push("Administrator još nije odobrio prvi upis na ovaj studij.");
+  return {
+    eligible: reasons.length === 0,
+    reasons,
+    schoolProof: Boolean(student?.graduated),
+  };
+}
+export async function firstEnrollmentPreview(source, target, mapping) {
+  const schools = await allRows(
+    () =>
+      source
+        .from("schools")
+        .select("id,name")
+        .eq("education_level", "SECONDARY")
+        .order("id"),
+    "e-Matica: srednje škole",
+  );
+  const students = new Map();
+  for (let offset = 0; offset < schools.length; offset += 100) {
+    const ids = schools.slice(offset, offset + 100).map((s) => s.id);
+    const reports = await allRows(() =>
+      source
+        .from("student_year_end_summaries")
+        .select(
+          "id,registry_student_id,school_id,status,registry_students!inner(id,first_name,last_name)",
+        )
+        .in("school_id", ids)
+        .eq("status", "GRADUATED")
+        .order("id"),
+    );
+    const enrollments = await allRows(() =>
+      source
+        .from("student_school_enrollments")
+        .select(
+          "id,student_id,school_id,status,registry_students!inner(id,first_name,last_name)",
+        )
+        .in("school_id", ids)
+        .eq("status", "GRADUATED")
+        .order("id"),
+    );
+    for (const r of [...reports, ...enrollments]) {
+      const student = r.registry_students;
+      if (r.status !== "GRADUATED" || !student || !ids.includes(r.school_id))
+        continue;
+      students.set(student.id, {
+        id: student.id,
+        full_name: `${student.first_name} ${student.last_name}`
+          .trim()
+          .slice(0, 200),
+        school_name:
+          schools.find((s) => s.id === r.school_id)?.name || "Srednja škola",
+        graduated: true,
+      });
+    }
+  }
+  const reviews = await allRows(
+    () =>
+      target
+        .from("admission_import_reviews")
+        .select("*")
+        .eq("mapping_id", mapping.id)
+        .order("id"),
+    "ISVU: provjere prvog upisa",
+    "target",
+  );
+  const jobs = await allRows(
+    () =>
+      target
+        .from("admission_import_jobs")
+        .select("candidate_id,state")
+        .eq("mapping_id", mapping.id)
+        .order("id"),
+    "ISVU: upisi",
+    "target",
+  );
+  return [...students.values()].map((s) => {
+    const review = reviews.find((r) => r.candidate_id === s.id);
+    return {
+      candidate_id: s.id,
+      student_id: s.id,
+      full_name: s.full_name,
+      school_name: s.school_name,
+      ...assessFirstEnrollment(mapping, s, review),
+      review: review || null,
+      job: jobs.find((j) => j.candidate_id === s.id)?.state || null,
+    };
+  });
+}
 export async function admissionPreview(source, target, mapping) {
+  if (mapping.mode === "first")
+    return firstEnrollmentPreview(source, target, mapping);
   const choices = await allRows(() =>
     source
       .from("admission_choices")
@@ -126,19 +269,25 @@ export async function admissionPreview(source, target, mapping) {
       )),
     );
   }
-  const reviews = await allRows(() =>
-    target
-      .from("admission_import_reviews")
-      .select("*")
-      .eq("mapping_id", mapping.id)
-      .order("id"),
+  const reviews = await allRows(
+    () =>
+      target
+        .from("admission_import_reviews")
+        .select("*")
+        .eq("mapping_id", mapping.id)
+        .order("id"),
+    "SVS: provjere ili status prijenosa",
+    "target",
   );
-  const jobs = await allRows(() =>
-    target
-      .from("admission_import_jobs")
-      .select("id,candidate_id,state")
-      .eq("mapping_id", mapping.id)
-      .order("id"),
+  const jobs = await allRows(
+    () =>
+      target
+        .from("admission_import_jobs")
+        .select("id,candidate_id,state")
+        .eq("mapping_id", mapping.id)
+        .order("id"),
+    "SVS: provjere ili status prijenosa",
+    "target",
   );
   return [...new Map(candidates.map((c) => [c.id, c])).values()].map((c) => {
     const choice = choices.find((x) => x.id === c.accepted_choice_id),
@@ -231,13 +380,11 @@ export async function provisionAdmission(
               expires_at: new Date(Date.now() + 7 * 86400000).toISOString(),
             })
             .eq("id", pending.data.id)
-        : await target
-            .from("registration_invites")
-            .insert({
-              institution_id: mapping.institution_id,
-              email,
-              role: "student",
-            });
+        : await target.from("registration_invites").insert({
+            institution_id: mapping.institution_id,
+            email,
+            role: "student",
+          });
       if (inv.error) throw new Error("Poziv nije spremljen.");
       if (onCredential)
         await onCredential({
@@ -277,31 +424,27 @@ export async function provisionAdmission(
       .update({ user_id: user.id })
       .eq("id", job);
     if (tracking.error) throw new Error("Praćenje računa nije spremljeno.");
-    const member = await target
-      .from("memberships")
-      .upsert({
-        institution_id: mapping.institution_id,
-        user_id: user.id,
-        role: "student",
-      });
+    const member = await target.from("memberships").upsert({
+      institution_id: mapping.institution_id,
+      user_id: user.id,
+      role: "student",
+    });
     if (member.error) throw new Error("Članstvo nije spremljeno.");
-    const study = await target
-      .from("student_studies")
-      .upsert(
-        {
-          institution_id: mapping.institution_id,
-          student_id: user.id,
-          program_id: mapping.program_id,
-          academic_year_id: mapping.academic_year_id,
-          study_year: 1,
-          student_number: `EM-${row.student_id.replaceAll("-", "")}`,
-          status: "active",
-        },
-        {
-          onConflict: "institution_id,student_id,program_id,academic_year_id",
-          ignoreDuplicates: true,
-        },
-      );
+    const study = await target.from("student_studies").upsert(
+      {
+        institution_id: mapping.institution_id,
+        student_id: user.id,
+        program_id: mapping.program_id,
+        academic_year_id: mapping.academic_year_id,
+        study_year: 1,
+        student_number: `EM-${row.student_id.replaceAll("-", "")}`,
+        status: "active",
+      },
+      {
+        onConflict: "institution_id,student_id,program_id,academic_year_id",
+        ignoreDuplicates: true,
+      },
+    );
     if (study.error) throw new Error("Upis nije spremljen.");
     const saved = await target
       .from("student_studies")

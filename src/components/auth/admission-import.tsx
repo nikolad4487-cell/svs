@@ -1,4 +1,5 @@
 "use client";
+import { FirstEnrollment } from "./first-enrollment";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { inputClass } from "./forms";
@@ -61,6 +62,30 @@ async function call(action: string, body: unknown) {
   return data;
 }
 export function AdmissionImport() {
+  const [mode, setMode] = useState<"first" | "recorded">("first");
+  return (
+    <div className="space-y-6">
+      <nav aria-label="Vrsta upisa" className="flex flex-wrap gap-3">
+        <Button
+          type="button"
+          variant={mode === "first" ? "default" : "outline"}
+          onClick={() => setMode("first")}
+        >
+          Prvi upis na fakultet
+        </Button>
+        <Button
+          type="button"
+          variant={mode === "recorded" ? "default" : "outline"}
+          onClick={() => setMode("recorded")}
+        >
+          Preuzimanje već provedenih upisa
+        </Button>
+      </nav>
+      {mode === "first" ? <FirstEnrollment /> : <RecordedAdmissionsImport />}
+    </div>
+  );
+}
+function RecordedAdmissionsImport() {
   const [editing, setEditing] = useState<Mapping | null>(null);
   const [catalog, setCatalog] = useState<Catalog | null>(null),
     [mapping, setMapping] = useState(""),
@@ -92,10 +117,15 @@ export function AdmissionImport() {
   const current = catalog?.mappings.find((m) => m.id === mapping);
   return (
     <section className="space-y-6">
-      <h2 className="text-xl font-bold">Provjeri i preuzmi potvrđene upise</h2>
+      <h2 className="text-xl font-bold">
+        Preuzmi već provedene fakultetske upise
+      </h2>
       <p>
-        Izvor se samo čita. Prijenos zahtijeva prihvaćen izbor, stvarno proveden
-        upis i provjeru uvjeta programa. Sama prijava mature nije dokaz prolaza.
+        Ova odvojena opcija služi samo kad je fakultetski upis već proveden u
+        e-Matici. Za upis učenika koji tek dolazi na fakultet odaberite Prvi
+        upis na fakultet. Izvor se samo čita. Prijenos zahtijeva prihvaćen
+        izbor, stvarno proveden upis i provjeru uvjeta programa. Sama prijava
+        mature nije dokaz prolaza.
       </p>
       <Button
         disabled={busy}

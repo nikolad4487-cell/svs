@@ -21,6 +21,9 @@ const student = randomUUID(),
   choiceId = randomUUID(),
   sourceProgram = randomUUID(),
   sourceYear = randomUUID();
+let sourceFailure = false,
+  graduated = false,
+  sourceReads = 0;
 let candidateStatus = "ACCEPTED",
   active = false,
   sourceWrites = 0;
@@ -31,12 +34,23 @@ const source = http.createServer((req, res) => {
     res.end();
     return;
   }
+  sourceReads++;
   const url = new URL(req.url, "http://localhost");
+  if (sourceFailure && url.pathname === "/rest/v1/schools") {
+    res.writeHead(403, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({ code: "42501", message: "PRIVATE_SOURCE_DIAGNOSTIC" }),
+    );
+    return;
+  }
   assert.ok(!url.search.includes("oib"));
   let data;
   switch (url.pathname) {
     case "/rest/v1/schools":
-      data = [{ id: "college", name: "Source college" }];
+      data =
+        url.searchParams.get("education_level") === "eq.SECONDARY"
+          ? [{ id: "secondary", name: "Source secondary" }]
+          : [{ id: "college", name: "Source college" }];
       break;
     case "/rest/v1/programs":
       data = [
@@ -82,21 +96,39 @@ const source = http.createServer((req, res) => {
       ];
       break;
     case "/rest/v1/student_school_enrollments":
-      data = active
-        ? [
-            {
-              id: randomUUID(),
-              student_id: student,
-              school_id: "college",
-              program_id: sourceProgram,
-              school_year_id: sourceYear,
-              status: "ACTIVE",
-            },
-          ]
-        : [];
+      data =
+        url.searchParams.get("status") === "eq.GRADUATED"
+          ? []
+          : active
+            ? [
+                {
+                  id: randomUUID(),
+                  student_id: student,
+                  school_id: "college",
+                  program_id: sourceProgram,
+                  school_year_id: sourceYear,
+                  status: "ACTIVE",
+                },
+              ]
+            : [];
       break;
     case "/rest/v1/student_year_end_summaries":
-      data = [];
+      data =
+        graduated && url.searchParams.has("school_id")
+          ? [
+              {
+                id: randomUUID(),
+                registry_student_id: student,
+                school_id: "secondary",
+                status: "GRADUATED",
+                registry_students: {
+                  id: student,
+                  first_name: "Testni",
+                  last_name: "Prijenos",
+                },
+              },
+            ]
+          : [];
       break;
     default:
       throw new Error("Unexpected source path");
@@ -179,7 +211,7 @@ const request = (path, data, cookies = "", json = true) =>
     req.on("error", reject);
     req.end(body);
   });
-let mapping, userId;
+let mapping, userId, firstMapping, firstUser;
 const temp = mkdtempSync(join(tmpdir(), "verified-import-"));
 try {
   for (let i = 0; i < 80; i++) {
@@ -211,10 +243,139 @@ try {
   if (page.status !== 200)
     console.log(serverErrors.replace(/https:\/\/[^\s]+/g, "[remote URL]"));
   assert.equal(page.status, 200);
-  assert.ok(page.text.includes("Provjeri i preuzmi potvrđene upise"));
+  assert.ok(page.text.includes("Prvi upis učenika na fakultet"));
   const catalog = await call("catalog", {});
   assert.equal(catalog.status, 200);
   assert.equal(catalog.data.programs[0].id, sourceProgram);
+  sourceFailure = true;
+  const deniedSource = await call("catalog", {});
+  assert.equal(deniedSource.status, 503);
+  assert.ok(deniedSource.data.error.includes("EMATICA_SUPABASE_SECRET_KEY"));
+  assert.ok(!deniedSource.text.includes("PRIVATE_SOURCE_DIAGNOSTIC"));
+  sourceFailure = false;
+  // First enrollment preparation must work even when the source has no faculty offer or is unavailable.
+  sourceFailure = true;
+  const before = sourceReads;
+  assert.equal((await call("target-catalog", {})).status, 200);
+  assert.equal(sourceReads, before);
+  if (process.env.ADMISSION_PLAYWRIGHT_MODULE) {
+    const {chromium}=await import(process.env.ADMISSION_PLAYWRIGHT_MODULE);
+    const browser=await chromium.launch({executablePath:"/usr/bin/chromium",headless:true,args:["--no-sandbox"]});
+    try {
+      const page=await browser.newPage({viewport:{width:1440,height:1000}});
+      await page.goto(`http://${host}/?module=auth&next=admin`);
+      await page.locator('input[name="email"]').fill(users.superadmin.email);await page.locator('input[name="password"]').fill(users.superadmin.password);
+      await Promise.all([page.waitForURL(/module=admin/),page.getByRole("button",{name:"Prijavi se",exact:true}).click()]);
+      await page.goto(`http://${host}/?module=admin&view=Uvoz%20upisa`);
+      await page.getByRole("heading",{name:"Prvi upis učenika na fakultet",exact:true}).waitFor();
+      await page.getByRole("button",{name:"Učitaj učilišta i studije iz ISVU-a",exact:true}).click();
+      await page.getByLabel("Učilište",{exact:true}).selectOption(fixtures.a);
+      await page.getByLabel("Studijski program",{exact:true}).selectOption(fixtures.programA);
+      await page.getByLabel("Akademska godina upisa",{exact:true}).selectOption(fixtures.yearA);
+      await page.getByLabel("Domena novih korisničkih imena",{exact:true}).selectOption("example.test");
+      await page.locator('input[name="requirements_reference"]').fill("Prvi upis - browser");
+      assert.equal(await page.getByText("Izvorni fakultet / program",{exact:true}).count(),0);
+      assert.equal(await page.locator('form').filter({has:page.locator('input[name="requirements_reference"]')}).evaluate(f=>f.checkValidity()),true);
+      await page.setViewportSize({width:390,height:844});
+      assert.equal(await page.locator('body').evaluate(el=>el.scrollWidth>window.innerWidth),false);
+      console.log("First-enrollment browser passed: target-first form available without a source faculty or functioning source catalogue; valid form and mobile width.");
+    } finally {await browser.close();}
+  }
+  const firstSaved = await call("first-mapping", {
+    institution_id: fixtures.a,
+    program_id: fixtures.programA,
+    academic_year_id: fixtures.yearA,
+    domain: "example.test",
+    matura_required: true,
+    requirements_reference: "Prvi upis - test",
+    enabled: true,
+  });
+  assert.equal(firstSaved.status, 200);
+  firstMapping = firstSaved.data.id;
+  assert.equal(sourceReads, before);
+  const stored = await service
+    .from("admission_import_mappings")
+    .select("source_program_id,mode")
+    .eq("id", firstMapping)
+    .single();
+  assert.equal(stored.data.source_program_id, null);
+  assert.equal(stored.data.mode, "first");
+  sourceFailure = false;
+  candidateStatus = "DRAFT";
+  active = false;
+  const empty = await call("preview", { mapping_id: firstMapping });
+  assert.equal(empty.status, 200);
+  assert.equal(empty.data.rows.length, 0);
+  const firstReview = {
+    mapping_id: firstMapping,
+    candidate_id: student,
+    graduation_verified: false,
+    matura_verified: true,
+    conditions_verified: true,
+    admission_approved: true,
+    evidence_reference: "UPIS-TEST",
+  };
+  assert.equal((await call("review", firstReview)).status, 409);
+  graduated = true;
+  const firstPreview = await call("preview", { mapping_id: firstMapping });
+  assert.equal(firstPreview.data.rows.length, 1);
+  assert.equal(firstPreview.data.rows[0].eligible, false);
+  assert.equal(
+    (await call("review", { ...firstReview, admission_approved: false }))
+      .status,
+    200,
+  );
+  assert.equal(
+    (await call("apply", { mapping_id: firstMapping, candidates: [student] }))
+      .status,
+    409,
+  );
+  assert.equal((await call("review", firstReview)).status, 200);
+  const firstResult = await call("apply", {
+    mapping_id: firstMapping,
+    candidates: [student],
+  });
+  assert.equal(firstResult.status, 200);
+  assert.equal(firstResult.data.results[0].status, "completed");
+  firstUser = firstResult.data.results[0].user_id;
+  assert.ok(firstResult.data.results[0].credentials.password);
+  assert.equal(
+    (
+      await service
+        .from("student_studies")
+        .select("id")
+        .eq("student_id", firstUser)
+    ).data.length,
+    1,
+  );
+  const again = await call("apply", {
+    mapping_id: firstMapping,
+    candidates: [student],
+  });
+  assert.equal(again.data.results[0].status, "already_completed");
+  assert.ok(!again.data.results[0].credentials);
+  // Clean first enrollment fixtures before testing the separate existing-enrollment workflow with the same source pupil.
+  await service
+    .from("admission_import_jobs")
+    .delete()
+    .eq("mapping_id", firstMapping);
+  await service
+    .from("admission_import_reviews")
+    .delete()
+    .eq("mapping_id", firstMapping);
+  await service
+    .from("admission_import_mappings")
+    .delete()
+    .eq("id", firstMapping);
+  firstMapping = null;
+  await service.from("student_studies").delete().eq("student_id", firstUser);
+  await service.auth.admin.deleteUser(firstUser);
+  firstUser = null;
+  graduated = false;
+  candidateStatus = "ACCEPTED";
+  console.log(
+    "First enrollment passed: target-only configuration without source reads, no source faculty/program, graduation gate, explicit first-admission approval, account/study creation and idempotent repeat.",
+  );
   const saved = await call("mapping", {
     institution_id: fixtures.a,
     program_id: fixtures.programA,
@@ -257,6 +418,12 @@ try {
         page.getByRole("button", { name: "Prijavi se", exact: true }).click(),
       ]);
       await page.goto(`http://${host}/?module=admin&view=Uvoz%20upisa`);
+      await page
+        .getByRole("button", {
+          name: "Preuzimanje već provedenih upisa",
+          exact: true,
+        })
+        .click();
       await page
         .getByRole("button", {
           name: "Dohvati ponudu i mapiranja",
@@ -504,6 +671,24 @@ try {
     "Verified admissions passed: mapping, preview without writes, performed enrollment, evidence review, changed source rejection, parallel claim, initial credentials, forced password change, idempotent repeat, CLI gate, permissions and read-only source.",
   );
 } finally {
+  if (firstMapping) {
+    await service
+      .from("admission_import_jobs")
+      .delete()
+      .eq("mapping_id", firstMapping);
+    await service
+      .from("admission_import_reviews")
+      .delete()
+      .eq("mapping_id", firstMapping);
+    await service
+      .from("admission_import_mappings")
+      .delete()
+      .eq("id", firstMapping);
+  }
+  if (firstUser) {
+    await service.from("student_studies").delete().eq("student_id", firstUser);
+    await service.auth.admin.deleteUser(firstUser);
+  }
   if (mapping) {
     await service
       .from("admission_import_jobs")

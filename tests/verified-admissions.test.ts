@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { assessAdmission } from "../scripts/lib/verified-admissions.mjs";
+import {
+  assessAdmission,
+  assessFirstEnrollment,
+} from "../scripts/lib/verified-admissions.mjs";
 const mapping = {
   id: "m",
   enabled: true,
@@ -191,5 +194,64 @@ test("graduation proof is scoped to the source pupil and school; matura exemptio
       { ...review, matura_verified: false },
     ).eligible,
     true,
+  );
+});
+
+test("first enrollment does not require a source university or prior university enrollment", () => {
+  const mapping = {
+    id: "first",
+    mode: "first",
+    revision: 1,
+    enabled: true,
+    matura_required: true,
+    source_school_id: null,
+    source_program_id: null,
+    source_year_id: null,
+    candidate_year_id: null,
+  };
+  const student = { id: "pupil", graduated: true };
+  const review = {
+    mapping_id: "first",
+    candidate_id: "pupil",
+    source_student_id: "pupil",
+    source_choice_id: null,
+    mapping_revision: 1,
+    reviewed_by: "admin",
+    evidence_reference: "UPIS-1",
+    matura_verified: true,
+    conditions_verified: true,
+    admission_approved: true,
+  };
+  assert.equal(assessFirstEnrollment(mapping, student, review).eligible, true);
+  assert.equal(
+    assessFirstEnrollment(mapping, { ...student, graduated: false }, review)
+      .eligible,
+    false,
+  );
+  assert.equal(
+    assessFirstEnrollment(mapping, student, {
+      ...review,
+      admission_approved: false,
+    }).eligible,
+    false,
+  );
+  assert.equal(
+    assessFirstEnrollment(mapping, student, {
+      ...review,
+      matura_verified: false,
+    }).eligible,
+    false,
+  );
+  assert.equal(
+    assessFirstEnrollment(mapping, student, {
+      ...review,
+      source_student_id: "other",
+    }).eligible,
+    false,
+  );
+  assert.equal(
+    assessFirstEnrollment(mapping, student, { ...review, mapping_revision: 0 })
+      .eligible,
+    false,
   );
 });

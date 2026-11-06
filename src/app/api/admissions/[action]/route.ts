@@ -4,14 +4,28 @@ import { z } from "zod";
 import { requireIdentity } from "@/lib/auth/access";
 import { assertSameOrigin, requestContext } from "@/lib/auth/request";
 import { supabaseConfig } from "@/lib/supabase/config";
+import {
+  sourceConfiguration,
+  AdmissionConfigurationError,
+} from "@/lib/admissions/config";
 import { emailDomain } from "@/lib/auth/email-domains";
 import {
+  AdmissionReadError,
   admissionPreview,
   allRows,
   provisionAdmission,
 } from "../../../../../scripts/lib/verified-admissions.mjs";
 export const maxDuration = 60;
 const headers = { "Cache-Control": "private, no-store", Pragma: "no-cache" };
+const firstMappingSchema = z.object({
+  institution_id: z.uuid(),
+  program_id: z.uuid(),
+  academic_year_id: z.uuid(),
+  domain: emailDomain,
+  matura_required: z.boolean(),
+  requirements_reference: z.string().trim().min(3).max(500),
+  enabled: z.boolean().default(true),
+});
 const mappingSchema = z.object({
   institution_id: z.uuid(),
   program_id: z.uuid(),
@@ -26,36 +40,103 @@ const mappingSchema = z.object({
   enabled: z.boolean(),
 });
 function sourceClient() {
-  const url = process.env.EMATICA_SUPABASE_URL,
-    key = process.env.EMATICA_SUPABASE_SECRET_KEY;
-  if (!url || !key) throw new Error("Source configuration missing");
-  const u = new URL(url);
-  if (
-    u.protocol !== "https:" &&
-    !["localhost", "127.0.0.1"].includes(u.hostname)
-  )
-    throw new Error("Source requires HTTPS");
+  const config = sourceConfiguration(process.env);
   return {
-    source: createClient(u.origin, key, {
+    source: createClient(config.origin, config.key, {
       auth: { persistSession: false, autoRefreshToken: false },
     }),
-    origin: u.origin,
+    origin: config.origin,
   };
 }
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ action: string }> },
 ) {
+  let authorized = false;
   try {
     await assertSameOrigin();
     const account = await requireIdentity("admin");
     if (!account.superadmin) throw new Error("Forbidden");
+    authorized = true;
     if (Number(req.headers.get("content-length") || 0) > 20000)
       throw new Error("size");
     const { action } = await params;
     const body = await req.json();
     const respond = (data: unknown, status = 200) =>
       NextResponse.json(data, { status, headers });
+    if (action === "target-catalog") {
+      const [mappings, institutions, targetPrograms, targetYears] =
+        await Promise.all([
+          allRows(
+            () =>
+              account.db
+                .from("admission_import_mappings")
+                .select("*")
+                .eq("mode", "first")
+                .order("id"),
+            "ISVU: upisni postupci",
+            "target",
+          ),
+          allRows(
+            () =>
+              account.db
+                .from("institutions")
+                .select("id,name,email_domains")
+                .order("id"),
+            "ISVU: učilišta",
+            "target",
+          ),
+          allRows(
+            () =>
+              account.db
+                .from("study_programs")
+                .select("id,institution_id,name")
+                .order("id"),
+            "ISVU: programi",
+            "target",
+          ),
+          allRows(
+            () =>
+              account.db
+                .from("academic_years")
+                .select("id,institution_id,name")
+                .order("id"),
+            "ISVU: godine",
+            "target",
+          ),
+        ]);
+      return respond({ mappings, institutions, targetPrograms, targetYears });
+    }
+    if (action === "first-mapping") {
+      const input = {
+        ...firstMappingSchema.parse(body),
+        mode: "first",
+        source_school_id: null,
+        source_program_id: null,
+        source_year_id: null,
+        candidate_year_id: null,
+      };
+      const result = body.id
+        ? await account.db
+            .from("admission_import_mappings")
+            .update(input)
+            .eq("id", z.uuid().parse(body.id))
+            .eq("mode", "first")
+            .select("id")
+        : await account.db
+            .from("admission_import_mappings")
+            .insert(input)
+            .select("id");
+      if (result.error || !result.data?.length)
+        return respond(
+          {
+            error:
+              "Upisni postupak nije spremljen. Provjerite pripadnost programa/godine učilištu, dopuštenu domenu i postoji li već postupak za taj studij i godinu. Potrebna je migracija 202611060001_first_enrollment.sql.",
+          },
+          400,
+        );
+      return respond({ saved: true, id: result.data[0].id });
+    }
     if (action === "mapping") {
       const input = mappingSchema.parse(body);
       const result = body.id
@@ -63,10 +144,11 @@ export async function POST(
             .from("admission_import_mappings")
             .update(input)
             .eq("id", z.uuid().parse(body.id))
+            .eq("mode", "recorded")
             .select("id")
         : await account.db
             .from("admission_import_mappings")
-            .insert(input)
+            .insert({ ...input, mode: "recorded" })
             .select("id");
       if (result.error || !result.data?.length)
         return respond(
@@ -87,27 +169,48 @@ export async function POST(
           matura_verified: z.boolean(),
           conditions_verified: z.boolean(),
           evidence_reference: z.string().trim().min(3).max(1000),
+          admission_approved: z.boolean().default(false),
         })
         .parse(body);
       const m = await account.db
         .from("admission_import_mappings")
-        .select("institution_id")
+        .select("*")
         .eq("id", input.mapping_id)
         .single();
       if (m.error) throw new Error("mapping");
       const { source } = sourceClient();
-      const candidate = await source
-        .from("admission_candidates")
-        .select("id,registry_student_id,accepted_choice_id")
-        .eq("id", input.candidate_id)
-        .single();
-      if (candidate.error || !candidate.data.accepted_choice_id)
-        throw new Error("candidate");
+      let sourceStudentId: string, sourceChoiceId: string | null;
+      if (m.data.mode === "first") {
+        const ready = await admissionPreview(source, account.db, m.data);
+        const student = ready.find(
+          (r) => r.candidate_id === input.candidate_id,
+        );
+        if (!student?.schoolProof)
+          return respond(
+            {
+              error:
+                "Završetak srednje škole za tog učenika još nije evidentiran u e-Matici.",
+            },
+            409,
+          );
+        sourceStudentId = student.student_id;
+        sourceChoiceId = null;
+      } else {
+        const candidate = await source
+          .from("admission_candidates")
+          .select("id,registry_student_id,accepted_choice_id")
+          .eq("id", input.candidate_id)
+          .single();
+        if (candidate.error || !candidate.data.accepted_choice_id)
+          throw new Error("candidate");
+        sourceStudentId = candidate.data.registry_student_id;
+        sourceChoiceId = candidate.data.accepted_choice_id;
+      }
       const r = await account.db.from("admission_import_reviews").upsert(
         {
           ...input,
-          source_student_id: candidate.data.registry_student_id,
-          source_choice_id: candidate.data.accepted_choice_id,
+          source_student_id: sourceStudentId,
+          source_choice_id: sourceChoiceId,
           institution_id: m.data.institution_id,
         },
         { onConflict: "mapping_id,candidate_id" },
@@ -128,22 +231,26 @@ export async function POST(
         (async () => {
           // Shared e-Dnevnik databases may predate the programs→schools FK.
           // Match explicit IDs instead of relying on an embedded relation.
-          const schools = await allRows(() =>
-            source
-              .from("schools")
-              .select("id,name")
-              .eq("education_level", "HIGHER")
-              .order("id"),
+          const schools = await allRows(
+            () =>
+              source
+                .from("schools")
+                .select("id,name")
+                .eq("education_level", "HIGHER")
+                .order("id"),
+            "e-Matica: visoka učilišta",
           );
           const programmes = [];
           for (let offset = 0; offset < schools.length; offset += 100) {
             const ids = schools.slice(offset, offset + 100).map((s) => s.id);
-            const rows = await allRows(() =>
-              source
-                .from("programs")
-                .select("id,name,school_id")
-                .in("school_id", ids)
-                .order("id"),
+            const rows = await allRows(
+              () =>
+                source
+                  .from("programs")
+                  .select("id,name,school_id")
+                  .in("school_id", ids)
+                  .order("id"),
+              "e-Matica: studijski programi",
             );
             programmes.push(
               ...rows.map((p) => ({
@@ -158,29 +265,46 @@ export async function POST(
           }
           return programmes;
         })(),
-        allRows(() =>
-          source.from("school_years").select("id,label").order("id"),
+        allRows(
+          () => source.from("school_years").select("id,label").order("id"),
+          "e-Matica: školske godine",
         ),
-        allRows(() =>
-          account.db.from("admission_import_mappings").select("*").order("id"),
+        allRows(
+          () =>
+            account.db
+              .from("admission_import_mappings")
+              .select("*")
+              .eq("mode", "recorded")
+              .order("id"),
+          "SVS: mapiranja upisa",
+          "target",
         ),
-        allRows(() =>
-          account.db
-            .from("institutions")
-            .select("id,name,email_domains")
-            .order("id"),
+        allRows(
+          () =>
+            account.db
+              .from("institutions")
+              .select("id,name,email_domains")
+              .order("id"),
+          "SVS: ustanove",
+          "target",
         ),
-        allRows(() =>
-          account.db
-            .from("study_programs")
-            .select("id,institution_id,name")
-            .order("id"),
+        allRows(
+          () =>
+            account.db
+              .from("study_programs")
+              .select("id,institution_id,name")
+              .order("id"),
+          "SVS: studijski programi",
+          "target",
         ),
-        allRows(() =>
-          account.db
-            .from("academic_years")
-            .select("id,institution_id,name")
-            .order("id"),
+        allRows(
+          () =>
+            account.db
+              .from("academic_years")
+              .select("id,institution_id,name")
+              .order("id"),
+          "SVS: akademske godine",
+          "target",
         ),
       ]);
       return respond({
@@ -287,13 +411,23 @@ export async function POST(
       return respond({ results, loginUrl: url("auth") });
     }
     return respond({ error: "Nije pronađeno." }, 404);
-  } catch {
-    return NextResponse.json(
-      {
-        error:
-          "Postupak nije dostupan. Provjerite ovlasti, izvorne serverske varijable i migraciju 202611030001_verified_admissions.sql. Podaci izvornog sustava nisu mijenjani.",
-      },
-      { status: 403, headers },
-    );
+  } catch (error) {
+    let status = 503;
+    let message =
+      "Dohvat nije uspio. Provjerite serversku konfiguraciju izvora u Vercelu i pokušajte ponovno. Izvorni podaci nisu mijenjani.";
+    if (!authorized) {
+      status = 403;
+      message =
+        "Za ovaj postupak prijavite se kao glavni administrator sustava.";
+    } else if (
+      error instanceof AdmissionConfigurationError ||
+      error instanceof AdmissionReadError
+    )
+      message = error.message;
+    else if (error instanceof z.ZodError || error instanceof SyntaxError) {
+      status = 400;
+      message = "Zahtjev nije ispravan. Provjerite unesene vrijednosti.";
+    }
+    return NextResponse.json({ error: message }, { status, headers });
   }
 }

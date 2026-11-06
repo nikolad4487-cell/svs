@@ -1,4 +1,22 @@
-# Provjereni prijenos upisa iz e-Matice u ISVU
+# Prvi upis učenika i preuzimanje postojećih upisa u ISVU
+
+## Prvi upis na fakultet — glavni postupak
+
+U **Administracija sustava → Uvoz upisa** zadano se otvara **Prvi upis na fakultet**. Ovdje administrator provodi prvi upis učenika u ISVU. To nije prijelaz između fakulteta i ne traži prethodni fakultetski upis u e-Matici.
+
+1. Kliknite **Učitaj učilišta i studije iz ISVU-a**. Ovaj korak čita samo ISVU; radi i bez ponude fakulteta, programa ili godina u e-Matici te bez dostupnog izvornog ključa.
+2. Odaberite ISVU učilište, njegov studijski program, akademsku godinu i dopuštenu domenu novih korisničkih imena. Unesite naziv postupka / pravilo upisa i spremite postupak. Možete ga pripremiti prije početka mature i upisnih rokova.
+3. Odaberite spremljeni postupak i kliknite **Dohvati završene učenike iz e-Matice**. Tek ovaj korak zahtijeva izvorni Supabase URL i serverski ključ.
+4. Prikazuju se učenici sa završenom srednjom školom: zapis `GRADUATED` u godišnjem izvještaju ili upisu srednje škole. Osnovne škole i sama prijava mature ne zadovoljavaju taj uvjet. Ako završetak škole još nije evidentiran, popis je prazan uz objašnjenje; konfiguracija ISVU postupka ostaje dostupna.
+5. Administrator provjerava potrebnu maturu i uvjete ciljnog programa, navodi dokaz/odluku te izričito odobrava prvi upis. Podatak o položenoj maturi ne izmišlja se iz prijave ispita. Eventualno izuzeće od mature mora biti utemeljeno u pravilima programa.
+6. Odabere spremne učenike i klikne **Upiši odabrane učenike u ISVU**. Ovdje nastaju ISVU račun, studentsko članstvo i upis studija; nije potreban izvorni fakultet, izvorni fakultetski program ili prethodno provedeni fakultetski upis.
+7. Ispiše ili preuzme početne pristupne podatke. Ponovljeni zahtjev ne stvara novi upis i ne mijenja postojeću lozinku. Kolegiji se zatim dodjeljuju u Administracija studija → Studenti i upisi.
+
+Potrebna je dodatna migracija **`202611060001_first_enrollment.sql`**, nakon prethodnih migracija. Ona čuva postojeća povezivanja kao postupak `recorded` i dodaje način `first`, s odlukom prvog upisa. Ne mijenja postojeće studente, lozinke ili izvorne podatke. Učitavanje početnih ISVU podataka ne ovisi o vanjskim fakultetskim podacima.
+
+## Odvojeno preuzimanje već provedenih upisa
+
+Druga kartica **Preuzimanje već provedenih upisa** namijenjena je samo slučajevima u kojima fakultetski upis već postoji u e-Matici. Nije preduvjet prvog upisa i njezini prazni izvorni izbornici ne blokiraju prvi postupak. Sljedeći odjeljci opisuju taj odvojeni način.
 
 ## Što je izvor
 
@@ -17,7 +35,7 @@ Izvor se samo čita. Ne kopiraju se prethodne lozinke, PIN-ovi, OIB, datum rođe
 
 ## Administratorski postupak bez JSON mapiranja
 
-U **Administracija sustava → Uvoz upisa** glavni administrator:
+U **Administracija sustava → Uvoz upisa → Preuzimanje već provedenih upisa** glavni administrator:
 
 1. Klikne **Dohvati ponudu i mapiranja**. To čita nazive/identifikatore izvornih programa i godina te postojeća ISVU mapiranja; ne stvara korisnike.
 2. Poveže izvorni fakultet/program, godinu kandidature i godinu provedenog upisa s točnom ISVU ustanovom/programom/godinom. Odabire dopuštenu domenu korisničkih imena. Godina kandidature i upisa mogu biti različite ako je izvorna Provedba upisa koristila drugu godinu.
@@ -64,4 +82,20 @@ Uz neprihvaćen važeći registracijski poziv postoji i odvojeni postupak **Izra
 
 `npm run test:migrations` provjerava čistu instalaciju i RLS svih 26 aplikacijskih tablica.
 
+`npm run test:ematica` također provjerava prvi upis: pripremu ISVU postupka bez izvornog kataloga, prazan popis prije evidentiranja završetka škole, odobrenje administratora, izradu prvog upisa i ponavljanje bez dupliciranja. Preglednički se provjerava da zadani obrazac nema izvorni fakultet/program i da se može popuniti i kada izvorni katalog nije dostupan.
+
 `npm run test:ematica`, uz pripremljen lokalni profil i izgrađenu aplikaciju, pokreće vlastiti lokalni Next server na portu 3007 (ili `ADMISSION_TEST_PORT`). Simulira izvornu shemu e-Matice i koristi stvarni lokalni Supabase Auth/PostgreSQL. Provjerava pregled bez upisa, dokumentirane provjere, promjenu izvora nakon pregleda, paralelne zahtjeve, početne lozinke, ponavljanje bez promjene lozinke, CLI zaštitu i ovlasti. Ne prenosi produkcijske učenike niti mijenja izvor.
+
+
+## Ako dohvat ponude ne radi na Vercelu
+
+Razvojno cloud okruženje i Vercel imaju odvojene serverske varijable. U **Vercel → Settings → Environment Variables → Production** provjerite:
+
+- `EMATICA_SUPABASE_URL`: `https://hkqlbeetlvrplaeubncc.supabase.co`.
+- `EMATICA_SUPABASE_SECRET_KEY`: serverski ključ izvornog e-Matica/e-Dnevnik projekta, spremljen kao Sensitive.
+- `SVS_SUPABASE_URL`: `https://wjxmyxxwqspwswfwjpdn.supabase.co`.
+- `SVS_SUPABASE_SECRET_KEY`: serverski ključ odredišnog SVS projekta, spremljen kao Sensitive.
+
+Nakon dodavanja ili izmjene varijabli napravite **Redeploy**. Ključeve nemojte slati u chat. Za sam katalog potreban je izvorni ključ; odredišni serverski ključ potreban je za stvaranje računa pri prijenosu. Aplikacijska prijava i čitanje odredišnih mapiranja koriste postojeću sesiju glavnog administratora.
+
+Nedostajuće varijable sada se navode imenom. Greška pojedinog dohvata prikazuje naziv izvora/tablice i siguran kod baze; sirovi odgovori, ključevi i učenički podaci ne prenose se u poruku greške. Nedostatak SVS sheme razlikuje se od nedostatka ovlasti u izvornom projektu.
