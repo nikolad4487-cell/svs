@@ -25,7 +25,7 @@ Nakon omogućavanja pristupa potrebno je zabilježiti povezane stranice i prezen
 | Studentske evidencije | Prehrana, dodatni ECTS, školarine, lokalna formula participacije, boravci, kategorije, prisustvo i potvrde | Službeni modeli, formule, obvezna polja i vanjske integracije; postojeća jednostavna formula ne smatra se službenom |
 | Potvrde | Evidencija ustanove i informativni ispis | Vrste i izdavanje dokumenata; digitalni potpis i službena ovjera nisu implementirani |
 | Referada | Studentske evidencije postoje, ali zasebni modul zahtjeva/potvrda/dokumenata nema puni tijek obrade | Potrebni predmeti, statusi, radnje i odgovornosti prema pregledanim uputama |
-| E-učenje | Izbornici i informativna stranica | Nema funkcionalnog LMS-a; ne smije se zamijeniti službenim Merlinom ili pretpostaviti obuhvat ISVU uputa |
+| E-učenje | Vlastiti kolegijski materijali, zadaci, predaje, rokovi, bodovi i povratne informacije | Kvizovi, izravno učitavanje datoteka i Moodle adapter nisu izvedeni; nije službeni Merlin. Vidi MERLIN.md |
 | Pošta | Informativna stranica i preference obavijesti | Nema povezanih sandučića niti slanja studentskih obavijesti; nije dovoljno dodati samo prikaz |
 
 ## Evidencija nadogradnji nakon pregleda

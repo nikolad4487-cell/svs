@@ -45,7 +45,10 @@ try {
       "postgres",
     ],
     { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
-  ).replace(/^CREATE TRIGGER (?:on_auth_user_sync|import_password_changed)[^\n]*\n/gm, "");
+  ).replace(
+    /^CREATE TRIGGER (?:on_auth_user_sync|import_password_changed)[^\n]*\n/gm,
+    "",
+  );
   sql(name, auth);
   sql(name, readFileSync("supabase/setup.sql", "utf8"));
   const tables = Number(
@@ -54,9 +57,9 @@ try {
       "select count(*) from pg_tables where schemaname='public' and rowsecurity",
     ),
   );
-  if (tables !== 33) throw new Error(`Expected 33 RLS tables, got ${tables}`);
+  if (tables !== 36) throw new Error(`Expected 36 RLS tables, got ${tables}`);
   console.log(
-    "Fresh SQL installer verified on PostgreSQL with real Auth schema; all 33 application tables have RLS.",
+    "Fresh SQL installer verified on PostgreSQL with real Auth schema; all 36 application tables have RLS.",
   );
 } finally {
   sql("postgres", `drop database ${name}`);

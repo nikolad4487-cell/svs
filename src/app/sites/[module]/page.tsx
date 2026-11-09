@@ -10,6 +10,7 @@ import { Institutions } from "@/components/auth/institutions";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ExternalService } from "@/components/external-service";
+import { LearningWorkspace } from "@/components/learning/workspace";
 import { modules, academicAdminItems, studomatGroups } from "@/lib/modules";
 import { navigation } from "@/lib/context";
 import { Brand } from "@/components/brand";
@@ -126,7 +127,7 @@ export default async function Module({
             : m.items.map((item) => (
                 <a
                   key={item}
-                  href={`${url(m.slug)}${url(m.slug).includes("?") ? "&" : "?"}view=${encodeURIComponent(item)}${institution ? `&institution=${encodeURIComponent(institution)}` : ""}`}
+                  href={`${url(m.slug)}${url(m.slug).includes("?") ? "&" : "?"}view=${encodeURIComponent(item)}${institution ? `&institution=${encodeURIComponent(institution)}` : ""}${module === "merlin" && course ? `&course=${encodeURIComponent(course)}` : ""}`}
                   aria-current={active === item ? "page" : undefined}
                   className={`mb-2 block rounded-lg px-3 py-3 text-sm ${active === item ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-500 hover:bg-slate-50"}`}
                 >
@@ -210,7 +211,13 @@ export default async function Module({
                 studentId={student}
                 faculty={faculty}
               />
-            ) : module === "merlin" || module === "webmail" ? (
+            ) : module === "merlin" ? (
+              <LearningWorkspace
+                courseId={course}
+                view={active}
+                status={status}
+              />
+            ) : module === "webmail" ? (
               <ExternalService
                 module={module}
                 administrator={!!account?.superadmin}

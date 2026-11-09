@@ -22,7 +22,7 @@ Ranije poddomene `portal`, `isvu`, `admin` i `webmail` na vlastitoj produkcijsko
 
 ## Pošta i e-učenje
 
-Merlin zasad nema izvedene nastavne materijale, zadatke i kvizove. Stranica prikazuje stvarno stanje povezivanja. Ako postoji zaseban Moodle ili drugi LMS, opcionalna Vercel varijabla `MERLIN_LMS_URL` postavlja punu HTTPS adresu njegove prijave.
+Merlin ima vlastite nastavne materijale, zadatke, predaje i povratne informacije povezane s ISVU kolegijima. Za uključivanje je potrebna migracija `202611090002_native_learning.sql`; vidi [MERLIN.md](MERLIN.md). Kvizovi i izravno učitavanje datoteka još nisu izvedeni. Ako postoji zaseban Moodle ili drugi LMS, opcionalna Vercel varijabla `MERLIN_LMS_URL` dodaje punu HTTPS adresu njegove prijave.
 
 Webmail stranica na `/webmail` koristi opcionalnu varijablu `WEBMAIL_LOGIN_URL` za punu HTTPS adresu prijave pružatelja pošte. Bez nje prikazuje da servis nije povezan. Najprije treba aktivirati poštansku domenu i zasebne sandučiće kod odabranog pružatelja. ISVU adresa za prijavu sama ne stvara sandučić.
 

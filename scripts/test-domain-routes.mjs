@@ -242,8 +242,8 @@ try {
       assert.ok(!webmail.text.includes("WEBMAIL_LOGIN_URL"));
       const merlin = await request(H("merlin"), "/", null, cookies.superadmin);
       assert.equal(merlin.status, 200);
-      assert.ok(merlin.text.includes("E-učenje još nije povezano"));
-      assert.ok(merlin.text.includes("MERLIN_LMS_URL"));
+      assert.ok(merlin.text.includes("Moji kolegiji"));
+      assert.ok(merlin.text.includes("Odaberite kolegij"));
       assert.ok(!merlin.text.includes("Funkcionalnosti ovog"));
       const old = await request(H("webmail"), "/");
       assert.equal(old.status, 308);

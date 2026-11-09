@@ -28,7 +28,8 @@
     "test:exam-workflow": "node scripts/test-exam-workflow.mjs",
     "test:enrollment-completion": "node scripts/test-enrollment-completion.mjs",
     "test:registrar": "node scripts/test-registrar.mjs",
-    "test:domain-routes": "node scripts/test-domain-routes.mjs"
+    "test:domain-routes": "node scripts/test-domain-routes.mjs",
+    "test:learning": "node scripts/test-learning.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",

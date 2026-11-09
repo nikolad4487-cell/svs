@@ -11,7 +11,7 @@ Naziv ISVU je potvrđen. Prilozi su specifikacijski materijal za postojeći zaht
 | Ispiti i ocjene | Stanja, zaključavanje, nedolazak i povijest ispravaka implementirani | Pismeni/usmeni dio, povjerenstva, pravila izlazaka i outbox |
 | Financije i potvrde | Osnovne evidencije postoje | Ledger, idempotentne uplate, vlastiti PDF/QR |
 | Završetak i analitika | Osobni ECTS i agregati postoje | Priznavanje, obrana, uvjeti završetka |
-| LMS i integracije | Nije početo | Odobreni adapteri, LMS, institucionalna pošta |
+| LMS i integracije | Osnovno vlastito e-učenje: materijali, zadaci, predaje i povratne informacije | Kvizovi, datoteke, Moodle adapter, SSO i integrirana institucionalna pošta |
 
 ## Izvori i provjere
 
@@ -71,3 +71,12 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Uklonjena općenita poruka o idućim fazama i neizvedeni Merlinovi izbornici. Prikazuje se stvarni status poštanskog servisa/e-učenja i upute glavnom administratoru.
 - Opcionalni `WEBMAIL_LOGIN_URL` i `MERLIN_LMS_URL` daju tipku za vanjsku HTTPS prijavu. To ne stvara sandučiće, LMS sadržaj, SSO ili sinkronizaciju. Čeka se korisnikov odabir vlastitog e-učenja ili postojećeg Moodlea te podatak postoji li poštanski servis.
 - Prolazi 51 jedinični test, TypeScript provjera, produkcijska webpack izgradnja i osam lokalnih HTTP/Chromium scenarija. Nema nove SQL migracije. Javna dostupnost DNS-a, vanjskih usluga i dovršetak Vercel objave nisu potvrđeni.
+
+## Vlastiti Merlin i Zoho — 9. studenoga 2026.
+
+- Korisnik je odabrao vlastito e-učenje uz mogućnost budućeg Moodle povezivanja; potvrdio je Zoho paket do pet sandučića. ISVU računi i upisi nisu ograničeni brojem Zoho sandučića.
+- Merlin koristi stvarne ISVU kolegije, ustanove, akademske godine, nastavničke dodjele i studentske upise. Izvedeni su nacrti/objava i uređivanje tekstualnih materijala/poveznica, zadaci, rokovi, zakašnjele predaje, zamjena nevrednovanog rada, bodovi i povratna informacija.
+- Nova migracija `202611090002_native_learning.sql`: tri tablice s RLS-om, isključivo kontrolirani RPC upisi, zaključavanje retka i provjera revizije. Studentske predaje vidljive su vlasniku i ovlaštenom osoblju kolegija; izravno pisanje u tablice nije dopušteno aplikacijskim računima.
+- Bodovi ne mijenjaju službene ispitne ocjene ili ECTS. Kvizovi, izravno učitavanje datoteka, potpuna povijest sadržaja i Moodle adapter nisu izvedeni. Opcionalni vanjski LMS link ostaje moguć, bez tvrdnje o SSO-u/sinkronizaciji.
+- Prolaze 54 jedinična testa, TypeScript provjera, produkcijska webpack izgradnja i čista instalacija s 36 RLS tablica. Deset novih lokalnih scenarija pokriva ovlasti, nacrte, rokove, konkurentno spremanje, privatnost vršnjaka, bodove i stvarni Chromium postupak objave/predaje/povratne informacije; prolazi i osam scenarija domena i institucijskih ovlasti.
+- Migracija je primijenjena samo na lokalnoj testnoj bazi; produkcijska primjena čeka korisnika. Nisu kreirani Zoho računi niti slane poruke. Pripremljeno slanje na povezani GitHub main; završni Vercel status nije potvrđen. Upute i granice: [docs/MERLIN.md](docs/MERLIN.md).
