@@ -1,6 +1,11 @@
 import "server-only";
 import { headers } from "next/headers";
-import { resolveHost, deploymentHosts, moduleUrl } from "../hosts";
+import {
+  resolveHost,
+  deploymentHosts,
+  moduleUrl,
+  productionCanonicalBase,
+} from "../hosts";
 import { sameOrigin } from "./policy";
 export async function requestContext() {
   const h = await headers();
@@ -9,6 +14,7 @@ export async function requestContext() {
     process.env.BASE_DOMAIN || "isvu.me",
     process.env.LOCAL_BASE_DOMAIN || "",
     deploymentHosts(),
+    productionCanonicalBase(),
   );
   if (!host) throw new Error("Nepodržana domena");
   const fallback = h.get("x-svs-fallback") === "1";

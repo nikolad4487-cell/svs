@@ -19,6 +19,8 @@ Portal na `/admin` dostupan je prijavljenom korisniku prema njegovim ovlastima. 
 
 Ranije poddomene `portal`, `isvu` i `admin` na vlastitoj produkcijskoj domeni preusmjeravaju na odgovarajuće nove putanje. Za takve stare poveznice poddomene i dalje moraju biti spojene na Vercel. Lokalne i Vercel preview adrese zadržavaju postojeći `?module=` način rada; prihvaćaju i nove `/admin` putanje. Webmail ostaje postojeći zasebni modul ako se koristi; ova promjena ne konfigurira pružatelja pošte ili stvarni LMS.
 
+Vlastita domena ima prednost pred Vercelovim popisom adresa objave: čak i kada je `VERCEL_PROJECT_PRODUCTION_URL=isvu.me`, tipke koriste nove putanje i poddomene. U produkcijskom okruženju (`VERCEL_ENV=production`) dopuštene Vercel adrese preusmjeravaju na vlastitu domenu. Stare poveznice poput `https://isvu.me/?module=portal` također vode na novu adresu. Preview objave zadržavaju vlastite adrese i odvojene sesije. Ovaj ispravak poveznica ne zahtijeva dodatnu SQL migraciju.
+
 ## Prvo primijeniti migraciju
 
 Na postojeći projekt nakon ranijih migracija primijeniti:

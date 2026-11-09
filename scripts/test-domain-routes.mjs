@@ -92,6 +92,10 @@ try {
       env: {
         ...process.env,
         BASE_DOMAIN: "isvu.me",
+        VERCEL: "1",
+        VERCEL_ENV: "production",
+        VERCEL_PROJECT_PRODUCTION_URL: "isvu.me",
+        VERCEL_URL: "routing-production.vercel.app",
         NEXT_PUBLIC_SUPABASE_URL: c.API_URL,
         NEXT_PUBLIC_SUPABASE_ANON_KEY: c.ANON_KEY,
         SVS_SUPABASE_URL: c.API_URL,
@@ -134,6 +138,41 @@ try {
         assert.equal(r.status, 308);
         assert.equal(new URL(r.headers.location).pathname, path);
       }
+    },
+  );
+  await check(
+    "home and module buttons use new addresses even when Vercel injects the custom domain as its production URL",
+    async () => {
+      const home = await request(H(""), "/");
+      assert.equal(home.status, 200);
+      for (const target of [
+        `https://isvu.me:${port}/admin`,
+        `https://isvu.me:${port}/admin/studiji`,
+        `https://isvu.me:${port}/admin/sustav`,
+        `https://referada.isvu.me:${port}`,
+        `https://studomat.isvu.me:${port}`,
+      ])
+        assert.ok(home.text.includes(`href="${target}"`), target);
+      assert.ok(
+        !home.text.includes('href="https://isvu.me:' + port + "/?module="),
+      );
+      const legacy = await request(H(""), "/?module=admin&view=Ustanove");
+      assert.equal(legacy.status, 308);
+      assert.equal(new URL(legacy.headers.location).pathname, "/admin/sustav");
+      assert.equal(
+        new URL(legacy.headers.location).searchParams.get("module"),
+        null,
+      );
+      const alias = "routing-production.vercel.app:" + port;
+      const moved = await request(alias, "/?module=portal");
+      assert.equal(moved.status, 308);
+      assert.equal(moved.headers.location, "https://isvu.me/admin");
+      const timetable = await request(alias, `/${aSlug}?module=raspored`);
+      assert.equal(timetable.status, 308);
+      assert.equal(
+        timetable.headers.location,
+        `https://raspored.isvu.me/${aSlug}`,
+      );
     },
   );
   await check(

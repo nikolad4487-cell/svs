@@ -57,3 +57,10 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Dodana migracija `202611090001_institution_routes.sql`; broj aplikacijskih RLS tablica ostaje 33. Nova zadana roditeljska domena u runtime konfiguraciji i `.env.example` je `isvu.me`; Vercel postojeća varijabla mora se uskladiti ručno.
 - 48 jediničnih testova i čista instalacija SQL-a prolaze. Šest novih integracijskih scenarija prolazi, uključujući stvarni Chromium tok prijave i fakultetskog rasporeda. Typecheck i webpack build prolaze. Nakon promjene usmjeravanja prolaze i 19 Auth/SSO te 16 akademskih DB/HTTP regresijskih scenarija.
 - Korisnik je odobrio slanje ove iteracije na GitHub radi Vercel objave. Javne Vercel/DNS/Supabase Auth postavke agent nije mijenjao; završni status objave i primjena nove migracije nisu ovdje potvrđeni. Točna konfiguracija i granice lokalnog testa: [docs/DOMENE-ISVU.md](docs/DOMENE-ISVU.md).
+
+## Ispravak tipki na produkcijskim domenama — 9. studenoga 2026.
+
+- Ispravljen prioritet razrješavanja hosta: `isvu.me` ostaje vlastita domena i kada je Vercel navede u `VERCEL_PROJECT_PRODUCTION_URL`. Tipke tada koriste `/admin`, `/admin/studiji`, `/admin/sustav` i odgovarajuće poddomene.
+- Stare produkcijske `?module=` poveznice i točno dopušteni produkcijski Vercel hostovi preusmjeravaju na nove adrese. Preview i lokalne sesije zadržavaju odvojeni način rada. Proizvoljne Vercel adrese nisu dopuštene.
+- Prolazi 50 jediničnih testova, TypeScript provjera i produkcijska webpack izgradnja. Sedam lokalnih HTTP/Chromium scenarija potvrđuje stvarne poveznice na početnoj stranici, produkcijske varijable, preusmjeravanja, prijavu i izolaciju ustanove.
+- Nema nove SQL migracije ni promjena DNS-a ili vanjskih Auth postavki. Slanje na GitHub pokreće postojeću Vercel integraciju; dovršetak javne objave nije ovdje potvrđen.

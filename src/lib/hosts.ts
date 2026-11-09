@@ -6,6 +6,7 @@ export type HostResult = {
   port: string;
   local: boolean;
   singleDomain?: boolean;
+  canonicalBase?: string;
 } | null;
 function hostname(value: string) {
   if (!/^[a-z0-9.-]+(?::[0-9]{1,5})?$/i.test(value)) return null;
@@ -20,19 +21,10 @@ export function resolveHost(
   baseDomain = "domena.hr",
   localDomain = "",
   deploymentHosts: string[] = [],
+  canonicalBase = "",
 ): HostResult {
   const parsed = hostname(host);
   if (!parsed) return null;
-  // Only exact deployment hosts injected by Vercel; never trust arbitrary *.vercel.app.
-  if (deploymentHosts.some((h) => h && hostname(h)?.name === parsed.name)) {
-    return {
-      module: "home",
-      base: parsed.name,
-      port: parsed.port,
-      local: false,
-      singleDomain: true,
-    };
-  }
   const bases = [
     "localhost",
     "127.0.0.1",
@@ -48,6 +40,20 @@ export function resolveHost(
       if (isModule(sub)) return { module: sub, base, port: parsed.port, local };
     }
   }
+  // Only exact deployment hosts injected by Vercel; never trust arbitrary *.vercel.app.
+  if (deploymentHosts.some((h) => h && hostname(h)?.name === parsed.name)) {
+    return {
+      module: "home",
+      base: parsed.name,
+      port: parsed.port,
+      local: false,
+      singleDomain: true,
+      ...(canonicalBase &&
+      hostname(canonicalBase)?.name === baseDomain.toLowerCase()
+        ? { canonicalBase: baseDomain.toLowerCase() }
+        : {}),
+    };
+  }
   return null;
 }
 export function moduleUrl(
@@ -55,6 +61,12 @@ export function moduleUrl(
   host: NonNullable<HostResult>,
   fallback = false,
 ) {
+  if (host.canonicalBase) {
+    const path = centralPath(target);
+    return path
+      ? `https://${host.canonicalBase}${path}`
+      : `https://${target === "home" ? "" : `${target}.`}${host.canonicalBase}`;
+  }
   const protocol = host.local ? "http" : "https";
   if (host.singleDomain || (fallback && host.local))
     return `${protocol}://${host.base}${host.port}/${target === "home" ? "" : `?module=${target}`}`;
@@ -71,4 +83,10 @@ export function deploymentHosts(): string[] {
         process.env.VERCEL_PROJECT_PRODUCTION_URL,
       ].filter((value): value is string => !!value)
     : [];
+}
+
+export function productionCanonicalBase() {
+  return process.env.VERCEL === "1" && process.env.VERCEL_ENV === "production"
+    ? process.env.BASE_DOMAIN || "isvu.me"
+    : "";
 }

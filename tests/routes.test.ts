@@ -87,3 +87,32 @@ test("local and Vercel preview aliases remain available together with central pa
     null,
   );
 });
+
+test("configured custom domain keeps canonical navigation when Vercel also injects it as a deployment host", () => {
+  const production = resolveHost("isvu.me", "isvu.me", "", [
+    "isvu.me",
+    "svs-zeta-three.vercel.app",
+  ])!;
+  assert.equal(moduleUrl("portal", production), "https://isvu.me/admin");
+  assert.equal(moduleUrl("admin", production), "https://isvu.me/admin/sustav");
+  assert.equal(moduleUrl("studomat", production), "https://studomat.isvu.me");
+  assert.equal(moduleUrl("referada", production), "https://referada.isvu.me");
+});
+
+test("production deployment aliases generate canonical destinations while preview aliases remain isolated", () => {
+  const alias = "svs-project.vercel.app";
+  const production = resolveHost(alias, "isvu.me", "", [alias], "isvu.me")!;
+  assert.equal(moduleUrl("portal", production), "https://isvu.me/admin");
+  assert.equal(moduleUrl("admin", production), "https://isvu.me/admin/sustav");
+  assert.equal(moduleUrl("referada", production), "https://referada.isvu.me");
+  assert.equal(moduleUrl("auth", production), "https://auth.isvu.me");
+  const preview = resolveHost(alias, "isvu.me", "", [alias])!;
+  assert.equal(
+    moduleUrl("portal", preview),
+    "https://svs-project.vercel.app/?module=portal",
+  );
+  assert.equal(
+    resolveHost("evil.vercel.app", "isvu.me", "", [alias], "isvu.me"),
+    null,
+  );
+});

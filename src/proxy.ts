@@ -1,6 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { resolveHost, moduleUrl, deploymentHosts } from "./lib/hosts";
-import { centralPath, publicRoute } from "./lib/routes";
+import {
+  resolveHost,
+  moduleUrl,
+  deploymentHosts,
+  productionCanonicalBase,
+} from "./lib/hosts";
+import { isModule } from "./lib/modules";
+import {
+  centralPath,
+  publicRoute,
+  facultyUrl,
+  validFaculty,
+} from "./lib/routes";
 import { supabaseConfig } from "./lib/supabase/config";
 import { refreshSession } from "./lib/supabase/proxy";
 import { sameOrigin } from "./lib/auth/policy";
@@ -10,6 +21,7 @@ export async function proxy(request: NextRequest) {
     process.env.BASE_DOMAIN || "isvu.me",
     process.env.LOCAL_BASE_DOMAIN || "",
     deploymentHosts(),
+    productionCanonicalBase(),
   );
   const url = request.nextUrl.clone();
   if (
@@ -20,6 +32,27 @@ export async function proxy(request: NextRequest) {
     url.pathname = "/unknown-host";
     return NextResponse.rewrite(url);
   }
+  const oldModule = url.searchParams.get("module");
+  if (
+    !host.local &&
+    !host.singleDomain &&
+    host.module === "home" &&
+    url.pathname === "/" &&
+    oldModule &&
+    isModule(oldModule) &&
+    ["GET", "HEAD"].includes(request.method)
+  ) {
+    const target = new URL(moduleUrl(oldModule, host));
+    target.search = url.search;
+    target.searchParams.delete("module");
+    const faculty = url.searchParams.get("faculty");
+    return NextResponse.redirect(
+      oldModule === "raspored" && validFaculty(faculty)
+        ? facultyUrl(target.toString(), faculty)
+        : target,
+      308,
+    );
+  }
   const route = url.pathname.startsWith("/api/")
     ? { module: host.module, faculty: "" }
     : publicRoute(host, url.pathname, url.searchParams);
@@ -29,6 +62,19 @@ export async function proxy(request: NextRequest) {
   }
   const { module, faculty } = route;
   const fallback = url.searchParams.get("module");
+  if (
+    host.canonicalBase &&
+    !url.pathname.startsWith("/api/") &&
+    ["GET", "HEAD"].includes(request.method)
+  ) {
+    const target = new URL(moduleUrl(module, host));
+    target.search = url.search;
+    target.searchParams.delete("module");
+    return NextResponse.redirect(
+      faculty ? facultyUrl(target.toString(), faculty) : target,
+      308,
+    );
+  }
   if (
     !host.local &&
     !host.singleDomain &&

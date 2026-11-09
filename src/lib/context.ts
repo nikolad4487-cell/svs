@@ -1,6 +1,11 @@
 import { facultyUrl } from "./routes";
 import { headers } from "next/headers";
-import { resolveHost, moduleUrl, deploymentHosts } from "./hosts";
+import {
+  resolveHost,
+  moduleUrl,
+  deploymentHosts,
+  productionCanonicalBase,
+} from "./hosts";
 export async function navigation() {
   const h = await headers();
   const host = resolveHost(
@@ -8,6 +13,7 @@ export async function navigation() {
     process.env.BASE_DOMAIN || "isvu.me",
     process.env.LOCAL_BASE_DOMAIN || "",
     deploymentHosts(),
+    productionCanonicalBase(),
   );
   if (!host) throw new Error("Nepodržan hostname");
   return (slug: Parameters<typeof moduleUrl>[0]) => {
