@@ -4,12 +4,36 @@ import { learningErrors } from "@/lib/learning/validation";
 import type { Assignment, Material, Submission } from "@/lib/learning/model";
 import { navigation } from "@/lib/context";
 import { hrDate, zagrebInput } from "@/lib/academic/time";
-import { serviceLoginUrl } from "@/lib/external-services";
+import { serviceLoginUrl, moodleLoginUrl } from "@/lib/external-services";
 import { inputClass } from "@/components/auth/forms";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/academic/shared";
 import { LearningAttachments } from "./attachments";
 import { LearningCreateForm } from "./create-form";
+
+function MoodleAccess({ target }: { target: string | null }) {
+  if (!target) return null;
+  return (
+    <section
+      className="space-y-4 rounded-xl border border-blue-200 bg-blue-50 p-5"
+      aria-label="Moodle"
+    >
+      <h2 className="text-xl font-bold">Moodle</h2>
+      <p className="text-sm leading-6">
+        Otvorite materijale, zadatke i kvizove na svojem Moodleu. Prijavite se
+        korisničkim računom koji imate na toj stranici.
+      </p>
+      <Button asChild>
+        <a href={target} target="_blank" rel="noopener noreferrer">
+          Otvori Moodle
+        </a>
+      </Button>
+      <p className="break-all text-xs text-slate-500">
+        {new URL(target).hostname}
+      </p>
+    </section>
+  );
+}
 
 function Field({
   name,
@@ -256,24 +280,28 @@ export async function LearningWorkspace({
   view: string;
   status?: string;
 }) {
+  const moodle = moodleLoginUrl(process.env.MERLIN_LMS_URL);
   const data = await learningData(courseId);
   const url = await navigation();
   if (!data) {
     const administrator = (await identity())?.superadmin;
     return (
-      <p
-        role="status"
-        className="rounded-lg bg-amber-50 p-4 text-sm text-amber-900"
-      >
-        {administrator ? (
-          <>
-            E-učenje još nije uključeno. Primijenite migraciju{" "}
-            <code>202611090002_native_learning.sql</code>.
-          </>
-        ) : (
-          "E-učenje trenutačno nije dostupno. Obratite se administratoru ustanove."
-        )}
-      </p>
+      <div className="space-y-6">
+        <MoodleAccess target={moodle} />
+        <p
+          role="status"
+          className="rounded-lg bg-amber-50 p-4 text-sm text-amber-900"
+        >
+          {administrator ? (
+            <>
+              E-učenje još nije uključeno. Primijenite migraciju{" "}
+              <code>202611090002_native_learning.sql</code>.
+            </>
+          ) : (
+            "E-učenje trenutačno nije dostupno. Obratite se administratoru ustanove."
+          )}
+        </p>
+      </div>
     );
   }
   const {
@@ -294,9 +322,9 @@ export async function LearningWorkspace({
     u.searchParams.set("view", tab);
     return u.toString();
   };
-  const moodle = serviceLoginUrl(process.env.MERLIN_LMS_URL);
   return (
     <div className="space-y-8">
+      <MoodleAccess target={moodle} />
       {status && (
         <p
           role={status === "saved" ? "status" : "alert"}
@@ -306,12 +334,6 @@ export async function LearningWorkspace({
             ? "Promjena je spremljena."
             : learningErrors[status] || learningErrors.invalid}
         </p>
-      )}
-      {moodle && (
-        <Resource
-          url={moodle}
-          label="Otvori povezani vanjski sustav e-učenja"
-        />
       )}
       <section className="space-y-4">
         <h2 className="text-xl font-bold">Moji kolegiji</h2>

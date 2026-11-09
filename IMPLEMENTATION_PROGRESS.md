@@ -103,3 +103,9 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Materijal može sadržavati samo naslov i datoteke; kao tekst se tada sprema popis stvarnih odabranih naziva. Kod novog zapisa s privitcima objava slijedi tek nakon dovršetka prijenosa. Neuspjeli prijenos ostavlja nacrt, čuva obrazac i pri ponavljanju ne stvara novi zapis niti ponovno učitava već potvrđene odabrane datoteke.
 - Zajednički klijentski prijenos zadržava postojeće provjere i granicu 1 GiB. API podržava JSON potvrdu spremanja za novi obrazac i postojeća HTTP preusmjeravanja za ostale radnje. Nema nove migracije ili promjene ovlasti.
 - Prolazi 55 jediničnih testova, TypeScript provjera i webpack izgradnja. Osam Storage/HTTP/Chromium scenarija uključuje izradu materijala bez teksta/URL-a, privitke novog zadatka, skriven nacrt tijekom prijenosa, simulirani djelomični neuspjeh i ponovno spremanje bez duplikata. Prolazi i deset ranijih LMS scenarija. Javna Vercel objava provjerava se odvojeno.
+
+## Gnomio Moodle poveznica — 9. studenoga 2026.
+
+- Korisnik je odabrao Gnomio i dostavio `https://merlinhr.gnomio.com/my/`. Na vrhu Merlina dodana je vidljiva tipka **Otvori Moodle**, s tom zadanom adresom i mogućnošću promjene kroz `MERLIN_LMS_URL`. Prazna/nepostavljena varijabla koristi korisnikovu Gnomio adresu; neispravna eksplicitna adresa ne postaje poveznica.
+- Tipka otvara zasebnu stranicu bez prosljeđivanja ISVU lozinke ili sesije. Vlastite akademske evidencije i Merlinovi sadržaji ostaju dostupni. Nema nove migracije, DNS promjene, Gnomio administratorskih radnji, automatske prijave ili sinkronizacije korisnika/kolegija.
+- Prolazi 55 jediničnih testova, TypeScript provjera, webpack izgradnja i 10 lokalnih LMS scenarija, s provjerom stvarno ispisane Gnomio poveznice. Dostupnost i prijava na vanjskoj stranici nisu provjerene. Slanje na GitHub koristi postojeću Vercel integraciju; završni status objave nije potvrđen.

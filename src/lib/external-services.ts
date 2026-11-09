@@ -8,3 +8,8 @@ export function serviceLoginUrl(value: string | undefined): string | null {
     return null;
   }
 }
+
+export const defaultMoodleUrl = "https://merlinhr.gnomio.com/my/";
+export function moodleLoginUrl(value: string | undefined) {
+  return serviceLoginUrl(value?.trim() || defaultMoodleUrl);
+}

@@ -511,6 +511,8 @@ try {
       );
       assert.equal(r.status, 200);
       const text = await r.text();
+      assert.ok(text.includes('href="https://merlinhr.gnomio.com/my/"'));
+      assert.ok(text.includes("Otvori Moodle"));
       assert.ok(text.includes("Dopunjeno rješenje"));
       assert.ok(text.includes("18.5/20"));
       const forged = await request(

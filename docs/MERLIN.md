@@ -45,7 +45,9 @@ Bodovi iz e-učenja **ne postaju automatski službene ocjene ispita ili ECTS bod
 
 Kolegiji e-učenja koriste postojeći stabilni ISVU `course_id`, ustanovu, godinu i semestar. Za budući adapter treba dodati mapiranje na Moodle identifikatore, ovlašten serverski pristup, pravila prijenosa upisa i sadržaja te evidenciju sinkronizacije. Takav adapter još nije izveden. Ne treba mijenjati lokalne identifikatore kolegija.
 
-Opcionalni `MERLIN_LMS_URL` može već sada prikazati poveznicu na zasebni Moodle. To je samo vanjska prijava, bez prijenosa lozinki, jedinstvene prijave ili sinkronizacije. Vlastiti Merlin nastavlja raditi i bez te varijable.
+Korisnik je otvorio Moodle na Gnomiju: `https://merlinhr.gnomio.com/my/`. Merlin u ISVU-u na vrhu prikazuje **Otvori Moodle**; zadana adresa vrijedi i kada `MERLIN_LMS_URL` nije postavljen ili je prazan. Varijabla može postaviti drugu punu HTTPS adresu bez korisničkog imena/lozinke u URL-u. Pristupna tipka dostupna je i kada migracije vlastitog e-učenja još nisu primijenjene, nakon postojeće ISVU prijave i provjere ovlasti.
+
+To je poveznica na zasebnu Moodle prijavu, bez prijenosa lozinki, jedinstvene prijave, automatskog stvaranja računa, uvoza postojećih materijala ili sinkronizacije kolegija. Vlastiti ISVU materijali i zadaci i dalje su dostupni ispod te poveznice. DNS za `merlin.isvu.me` nije promijenjen, a dostupnost Gnomio stranice i ovlasti na njoj provjeravaju se zasebno.
 
 ## Zoho i ISVU računi
 
