@@ -8,6 +8,7 @@ import { serviceLoginUrl } from "@/lib/external-services";
 import { inputClass } from "@/components/auth/forms";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/academic/shared";
+import { LearningAttachments } from "./attachments";
 
 function Field({
   name,
@@ -157,6 +158,12 @@ function MaterialForm({
       <Check name="published" checked={material?.published}>
         Objavljeno studentima
       </Check>
+      {!material && (
+        <p className="text-xs text-slate-500">
+          Spremite naslov i kratak opis, a zatim dodajte slike, videa ili
+          datoteke ispod spremljenog materijala.
+        </p>
+      )}
       <Button type="submit">Spremi materijal</Button>
     </form>
   );
@@ -208,6 +215,12 @@ function AssignmentForm({
         Objavljeno studentima
       </Check>
       <Button type="submit">Spremi zadatak</Button>
+      {!assignment && (
+        <p className="text-xs text-slate-500">
+          Nakon spremanja zadatka možete dodati slike, videa i datoteke s
+          uputama.
+        </p>
+      )}
     </form>
   );
 }
@@ -273,6 +286,8 @@ export async function LearningWorkspace({
     submissions,
     account,
     profiles,
+    files,
+    filesReady,
   } = data;
   const base = new URL(url("merlin"));
   const href = (id: string, tab = "Moji kolegiji") => {
@@ -414,6 +429,13 @@ export async function LearningWorkspace({
                     {m.body}
                   </p>
                   <Resource url={m.resource_url} label="Otvori materijal" />
+                  <LearningAttachments
+                    kind="material"
+                    target={m.id}
+                    files={files.filter((f) => f.material_id === m.id)}
+                    manage={course.can_manage}
+                    ready={filesReady}
+                  />
                   <p className="text-xs text-slate-500">
                     Ažurirano {hrDate(m.updated_at)}
                   </p>
@@ -498,6 +520,13 @@ export async function LearningWorkspace({
                         </div>
                       </details>
                     )}
+                    <LearningAttachments
+                      kind="assignment"
+                      target={a.id}
+                      files={files.filter((f) => f.assignment_id === a.id)}
+                      manage={course.can_manage}
+                      ready={filesReady}
+                    />
                     {course.can_submit && (
                       <section className="space-y-4 border-t border-slate-200 pt-4">
                         <h4 className="font-semibold">Moja predaja</h4>

@@ -2,6 +2,7 @@ import "server-only";
 import { notFound } from "next/navigation";
 import { requireIdentity } from "../auth/access";
 import type { LearningCourse, Material, Assignment, Submission } from "./model";
+import type { LearningFile } from "./files";
 const missing = (code: string) =>
   ["PGRST202", "PGRST205", "42P01", "42883"].includes(code);
 export async function learningData(courseId?: string) {
@@ -43,6 +44,27 @@ export async function learningData(courseId?: string) {
     rows<Submission>("learning_submissions"),
   ]);
   const profiles: { id: string; full_name: string }[] = [];
+  const files: LearningFile[] = [];
+  let filesReady = true;
+  if (course) {
+    for (let offset = 0; ; offset += 500) {
+      const result = await db
+        .from("learning_files")
+        .select("*")
+        .eq("course_id", course.id)
+        .order("id")
+        .range(offset, offset + 499);
+      if (result.error) {
+        if (missing(result.error.code)) {
+          filesReady = false;
+          break;
+        }
+        throw new Error("Privitci nisu dostupni.");
+      }
+      files.push(...result.data);
+      if (result.data.length < 500) break;
+    }
+  }
   const ids = [...new Set(submissions.map((s) => s.student_id))];
   for (let offset = 0; offset < ids.length; offset += 200) {
     const result = await db
@@ -60,5 +82,7 @@ export async function learningData(courseId?: string) {
     assignments,
     submissions,
     profiles,
+    files,
+    filesReady,
   };
 }

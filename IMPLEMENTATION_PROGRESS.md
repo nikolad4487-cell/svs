@@ -11,7 +11,7 @@ Naziv ISVU je potvrđen. Prilozi su specifikacijski materijal za postojeći zaht
 | Ispiti i ocjene | Stanja, zaključavanje, nedolazak i povijest ispravaka implementirani | Pismeni/usmeni dio, povjerenstva, pravila izlazaka i outbox |
 | Financije i potvrde | Osnovne evidencije postoje | Ledger, idempotentne uplate, vlastiti PDF/QR |
 | Završetak i analitika | Osobni ECTS i agregati postoje | Priznavanje, obrana, uvjeti završetka |
-| LMS i integracije | Osnovno vlastito e-učenje: materijali, zadaci, predaje i povratne informacije | Kvizovi, datoteke, Moodle adapter, SSO i integrirana institucionalna pošta |
+| LMS i integracije | Vlastito e-učenje: materijali, slike/videa/dokumenti u materijalima i uputama zadataka, predaje i povratne informacije | Kvizovi, privitci studentskih predaja, Moodle adapter, SSO i integrirana institucionalna pošta |
 
 ## Izvori i provjere
 
@@ -80,3 +80,12 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Bodovi ne mijenjaju službene ispitne ocjene ili ECTS. Kvizovi, izravno učitavanje datoteka, potpuna povijest sadržaja i Moodle adapter nisu izvedeni. Opcionalni vanjski LMS link ostaje moguć, bez tvrdnje o SSO-u/sinkronizaciji.
 - Prolaze 54 jedinična testa, TypeScript provjera, produkcijska webpack izgradnja i čista instalacija s 36 RLS tablica. Deset novih lokalnih scenarija pokriva ovlasti, nacrte, rokove, konkurentno spremanje, privatnost vršnjaka, bodove i stvarni Chromium postupak objave/predaje/povratne informacije; prolazi i osam scenarija domena i institucijskih ovlasti.
 - Migracija je primijenjena samo na lokalnoj testnoj bazi; produkcijska primjena čeka korisnika. Nisu kreirani Zoho računi niti slane poruke. Pripremljeno slanje na povezani GitHub main; završni Vercel status nije potvrđen. Upute i granice: [docs/MERLIN.md](docs/MERLIN.md).
+
+## Privatne slike, videa i dokumenti u Merlinu — 9. studenoga 2026.
+
+- Dodano višestruko učitavanje privitaka na spremljene materijale i upute zadataka, prikaz napretka i prekid prijenosa, ugrađene slike/video, preuzimanje dokumenata i uklanjanje. Nedovršena učitavanja osoblje može vidjeti i ukloniti; student ih ne vidi.
+- Nova migracija `202611090003_learning_files.sql` dodaje RLS tablicu metapodataka, rezervaciju/potvrdu prijenosa, provjeru veličine/MIME-a, privatni Storage bucket i pravila koja slijede kolegij i objavu roditelja. Granice: 50 MiB po datoteci, 20 privitaka po materijalu ili zadatku te ukupne kvote projekta.
+- Prijenos datoteke ide iz preglednika u Supabase preko odobrene putanje. Vercel prima samo metapodatke; prijenos od 6 MiB provjeren je u pregledniku. Dokumenti se preuzimaju, samo podržane slike i video imaju ugrađeni prikaz. HTML/SVG nisu podržani.
+- Lokalni testni profil nadograđen je službenim Storage servisom i lokalnim pristupnikom. Čisti SQL installer provjeren je s pravim Auth i Storage shemama i 37 aplikacijskih RLS tablica. Produkcija nije mijenjana.
+- Prolazi 55 jediničnih testova, TypeScript i webpack izgradnja. Šest Storage/HTTP/Chromium scenarija uključuje stvarno učitavanje i prikaz PNG-a, reprodukciju videa, dokument veći od 4,5 MB, uklanjanje, nacrte i povlačenje objave. Prolaze i 10 ranijih LMS te osam domenskih i institucijskih scenarija.
+- Pripremljene detaljne upute za Zoho, Namecheap, MX/SPF/DKIM i Vercel Webmail poveznicu: [docs/ZOHO-POSTAVLJANJE.md](docs/ZOHO-POSTAVLJANJE.md). Nisu otvarani sandučići, mijenjan DNS niti slane poruke. Nova produkcijska migracija čeka korisnika; završni Vercel status nije ovdje potvrđen.

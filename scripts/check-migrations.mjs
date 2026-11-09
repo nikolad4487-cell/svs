@@ -50,6 +50,21 @@ try {
     "",
   );
   sql(name, auth);
+  // Real Storage schema, excluding application policies recreated by the installer.
+  const storage = execFileSync(
+    "docker",
+    [
+      ...docker,
+      "pg_dump",
+      "-U",
+      "postgres",
+      "--schema-only",
+      "--schema=storage",
+      "postgres",
+    ],
+    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
+  ).replace(/^CREATE POLICY merlin_object_[\s\S]*?;\n/gm, "");
+  sql(name, storage);
   sql(name, readFileSync("supabase/setup.sql", "utf8"));
   const tables = Number(
     sql(
@@ -57,9 +72,9 @@ try {
       "select count(*) from pg_tables where schemaname='public' and rowsecurity",
     ),
   );
-  if (tables !== 36) throw new Error(`Expected 36 RLS tables, got ${tables}`);
+  if (tables !== 37) throw new Error(`Expected 37 RLS tables, got ${tables}`);
   console.log(
-    "Fresh SQL installer verified on PostgreSQL with real Auth schema; all 36 application tables have RLS.",
+    "Fresh SQL installer verified on PostgreSQL with real Auth and Storage schemas; all 37 application tables have RLS.",
   );
 } finally {
   sql("postgres", `drop database ${name}`);

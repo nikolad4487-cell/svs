@@ -22,7 +22,7 @@ const names = [
   "svs-test-mail",
 ];
 if (process.argv.includes("--stop")) {
-  for (const name of names) {
+  for (const name of [...names, "svs-test-storage"]) {
     try {
       docker("stop", name);
     } catch {}
@@ -41,6 +41,9 @@ const existing = names.filter((n) => {
 if (existing.length === names.length && existsSync(".local-supabase.json")) {
   for (const name of names) docker("start", name);
   await wait(async () => (await fetch("http://127.0.0.1:54325/health")).ok);
+  execFileSync(process.execPath, ["scripts/local-storage.mjs"], {
+    stdio: ["ignore", "pipe", "pipe"],
+  });
   let gateway = false;
   try {
     gateway = (await fetch("http://127.0.0.1:54321/auth/v1/health")).ok;
@@ -196,6 +199,9 @@ await wait(async () => (await fetch("http://127.0.0.1:54325/health")).ok);
 sql(
   `create or replace function auth.uid() returns uuid language sql stable as $$ select (nullif(current_setting('request.jwt.claims',true),'')::jsonb->>'sub')::uuid $$; create or replace function auth.jwt() returns jsonb language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb $$;`,
 );
+execFileSync(process.execPath, ["scripts/local-storage.mjs"], {
+  stdio: ["ignore", "pipe", "pipe"],
+});
 for (const migration of readdirSync("supabase/migrations")
   .filter((n) => n.endsWith(".sql"))
   .sort())

@@ -22,9 +22,11 @@ Ranije poddomene `portal`, `isvu`, `admin` i `webmail` na vlastitoj produkcijsko
 
 ## Pošta i e-učenje
 
-Merlin ima vlastite nastavne materijale, zadatke, predaje i povratne informacije povezane s ISVU kolegijima. Za uključivanje je potrebna migracija `202611090002_native_learning.sql`; vidi [MERLIN.md](MERLIN.md). Kvizovi i izravno učitavanje datoteka još nisu izvedeni. Ako postoji zaseban Moodle ili drugi LMS, opcionalna Vercel varijabla `MERLIN_LMS_URL` dodaje punu HTTPS adresu njegove prijave.
+Merlin ima vlastite nastavne materijale, zadatke, predaje i povratne informacije povezane s ISVU kolegijima. Za uključivanje su potrebne migracije `202611090002_native_learning.sql` i, za slike/videa/dokumente, `202611090003_learning_files.sql`; vidi [MERLIN.md](MERLIN.md). Kvizovi još nisu izvedeni. Ako postoji zaseban Moodle ili drugi LMS, opcionalna Vercel varijabla `MERLIN_LMS_URL` dodaje punu HTTPS adresu njegove prijave.
 
 Webmail stranica na `/webmail` koristi opcionalnu varijablu `WEBMAIL_LOGIN_URL` za punu HTTPS adresu prijave pružatelja pošte. Bez nje prikazuje da servis nije povezan. Najprije treba aktivirati poštansku domenu i zasebne sandučiće kod odabranog pružatelja. ISVU adresa za prijavu sama ne stvara sandučić.
+
+Za korisnikov Zoho paket i Namecheap DNS prati [ZOHO-POSTAVLJANJE.md](ZOHO-POSTAVLJANJE.md). Webmail URL je konfiguracija; SMTP lozinke se ne stavljaju u njega.
 
 Obje su varijable obična konfiguracija, bez korisničkog imena ili lozinke u adresi. Nakon promjene potrebna je nova Vercel objava. Tipka otvara vanjsku prijavu u novoj kartici; ne uvodi jedinstvenu prijavu, prijenos ISVU lozinki, čitanje poruka ili sinkronizaciju kolegija. Te funkcije zahtijevaju zasebnu integraciju. Dodatna SQL migracija za ove pristupne stranice nije potrebna.
 
