@@ -48,8 +48,16 @@ export async function learningMutation(action: string, form: FormData) {
       expected: d.revision,
     });
   } else throw new Error("Nepoznata radnja.");
-  if (!result.error) return "saved";
-  return ["PGRST202", "PGRST205", "42P01", "42883"].includes(result.error.code)
+  if (!result.error)
+    return {
+      status: "saved",
+      id: typeof result.data === "string" ? result.data : undefined,
+      revision: Number(values.revision) + 1,
+    };
+  const status = ["PGRST202", "PGRST205", "42P01", "42883"].includes(
+    result.error.code,
+  )
     ? "unavailable"
     : learningError(result.error.message);
+  return { status };
 }

@@ -589,6 +589,172 @@ try {
           .waitFor();
       },
     );
+  if (process.env.WORKFLOW_PLAYWRIGHT_MODULE)
+    await check(
+      "Chromium creates material and assignment with files in the initial form and safely retries a partial upload",
+      async () => {
+        const page = await browser.newPage();
+        await page.goto(origin + "/?module=auth&next=merlin");
+        await page
+          .getByLabel("E-adresa", { exact: true })
+          .fill(users.nastavnik.email);
+        await page
+          .getByLabel("Lozinka", { exact: true })
+          .fill(users.nastavnik.password);
+        await page
+          .getByRole("button", { name: "Prijavi se", exact: true })
+          .click();
+        await page.waitForURL((u) => u.searchParams.get("module") === "merlin");
+        let privateDuringUpload = false,
+          failSecond = true;
+        await page.route("**/api/learning/files/prepare", async (route) => {
+          const metadata = route.request().postDataJSON();
+          if (metadata.kind === "material" && metadata.name === "izravna.png") {
+            const rows = await ok(
+              student
+                .from("learning_materials")
+                .select("id")
+                .eq("id", metadata.target),
+            );
+            privateDuringUpload = rows.length === 0;
+          }
+          if (metadata.name === "drugi.txt" && failSecond) {
+            failSecond = false;
+            await route.fulfill({
+              status: 503,
+              contentType: "application/json",
+              body: JSON.stringify({ error: "Simulirani prekid prijenosa." }),
+            });
+          } else await route.continue();
+        });
+        await page.goto(
+          origin + `/?module=merlin&course=${f.courseA}&view=Materijali`,
+        );
+        const materialForm = page
+          .locator("form")
+          .filter({
+            has: page.getByRole("button", {
+              name: "Spremi materijal",
+              exact: true,
+            }),
+          })
+          .filter({
+            has: page.getByLabel("Slike, videa i datoteke", { exact: true }),
+          });
+        await page.getByText("Dodaj materijal", { exact: true }).click();
+        const materialTitle = `Izravni materijal ${tag}`;
+        await materialForm.getByLabel("Naslov materijala").fill(materialTitle);
+        await materialForm
+          .getByLabel("Slike, videa i datoteke", { exact: true })
+          .setInputFiles({
+            name: "izravna.png",
+            mimeType: "image/png",
+            buffer: png,
+          });
+        await materialForm.getByLabel("Objavljeno studentima").check();
+        await materialForm
+          .getByRole("button", { name: "Spremi materijal", exact: true })
+          .click();
+        await page.waitForURL((u) => u.searchParams.get("status") === "saved");
+        const material = await ok(
+          service
+            .from("learning_materials")
+            .select("id,published,body")
+            .eq("title", materialTitle)
+            .single(),
+        );
+        materials.push(material.id);
+        assert.ok(material.published);
+        assert.ok(material.body.includes("izravna.png"));
+        assert.ok(privateDuringUpload);
+        assert.equal(
+          (
+            await ok(
+              student
+                .from("learning_files")
+                .select("id")
+                .eq("material_id", material.id),
+            )
+          ).length,
+          1,
+        );
+        await page.goto(
+          origin + `/?module=merlin&course=${f.courseA}&view=Zadaci`,
+        );
+        await page.getByText("Dodaj zadatak", { exact: true }).click();
+        const assignmentForm = page
+          .locator("form")
+          .filter({
+            has: page.getByRole("button", {
+              name: "Spremi zadatak",
+              exact: true,
+            }),
+          })
+          .filter({
+            has: page.getByLabel("Slike, videa i datoteke", { exact: true }),
+          });
+        const title = `Izravni zadatak ${tag}`;
+        await assignmentForm.getByLabel("Naslov zadatka").fill(title);
+        await assignmentForm
+          .getByLabel("Upute za izradu")
+          .fill("Pročitajte obje datoteke.");
+        await assignmentForm.getByLabel("Objavljeno studentima").check();
+        await assignmentForm
+          .getByLabel("Slike, videa i datoteke", { exact: true })
+          .setInputFiles([
+            {
+              name: "prvi.txt",
+              mimeType: "text/plain",
+              buffer: Buffer.from("Prvi dokument."),
+            },
+            {
+              name: "drugi.txt",
+              mimeType: "text/plain",
+              buffer: Buffer.from("Drugi dokument."),
+            },
+          ]);
+        await assignmentForm
+          .getByRole("button", { name: "Spremi zadatak", exact: true })
+          .click();
+        await assignmentForm.getByRole("alert").waitFor();
+        const draftAssignment = await ok(
+          service
+            .from("learning_assignments")
+            .select("id,published")
+            .eq("title", title)
+            .single(),
+        );
+        assignments.push(draftAssignment.id);
+        assert.equal(draftAssignment.published, false);
+        assert.equal(
+          await assignmentForm.getByLabel("Naslov zadatka").inputValue(),
+          title,
+        );
+        await assignmentForm
+          .getByRole("button", { name: "Spremi zadatak", exact: true })
+          .click();
+        await page.waitForURL((u) => u.searchParams.get("status") === "saved");
+        const completed = await ok(
+          service
+            .from("learning_assignments")
+            .select("id,published")
+            .eq("title", title),
+        );
+        assert.equal(completed.length, 1);
+        assert.ok(completed[0].published);
+        const files = await ok(
+          student
+            .from("learning_files")
+            .select("file_name")
+            .eq("assignment_id", draftAssignment.id),
+        );
+        assert.deepEqual(files.map((file) => file.file_name).sort(), [
+          "drugi.txt",
+          "prvi.txt",
+        ]);
+        await page.close();
+      },
+    );
   await check(
     "unpublishing a parent removes fresh read access to the attachment",
     async () => {

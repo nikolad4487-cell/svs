@@ -9,6 +9,7 @@ import { inputClass } from "@/components/auth/forms";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/academic/shared";
 import { LearningAttachments } from "./attachments";
+import { LearningCreateForm } from "./create-form";
 
 function Field({
   name,
@@ -128,12 +129,18 @@ function Resource({ url, label }: { url: string; label: string }) {
 function MaterialForm({
   course,
   material,
+  filesReady,
 }: {
   course: string;
   material?: Material;
+  filesReady: boolean;
 }) {
   return (
-    <form action="/api/learning/material" method="post" className="space-y-4">
+    <LearningCreateForm
+      kind="material"
+      filesReady={filesReady}
+      existing={!!material}
+    >
       <Hidden course={course} view="Materijali" revision={material?.revision} />
       <input type="hidden" name="id" value={material?.id || ""} />
       <Field
@@ -152,31 +159,29 @@ function MaterialForm({
         maxLength={2048}
       />
       <p className="text-xs text-slate-500">
-        Unesite tekst ili poveznicu. Za privatne dokumente odaberite servis koji
-        ograničava pristup članovima kolegija.
+        Unesite tekst, odaberite datoteke ili dodajte vanjsku HTTPS poveznicu.
       </p>
       <Check name="published" checked={material?.published}>
         Objavljeno studentima
       </Check>
-      {!material && (
-        <p className="text-xs text-slate-500">
-          Spremite naslov i kratak opis, a zatim dodajte slike, videa ili
-          datoteke ispod spremljenog materijala.
-        </p>
-      )}
-      <Button type="submit">Spremi materijal</Button>
-    </form>
+    </LearningCreateForm>
   );
 }
 function AssignmentForm({
   course,
   assignment,
+  filesReady,
 }: {
   course: string;
   assignment?: Assignment;
+  filesReady: boolean;
 }) {
   return (
-    <form action="/api/learning/assignment" method="post" className="space-y-4">
+    <LearningCreateForm
+      kind="assignment"
+      filesReady={filesReady}
+      existing={!!assignment}
+    >
       <Hidden course={course} view="Zadaci" revision={assignment?.revision} />
       <input type="hidden" name="id" value={assignment?.id || ""} />
       <Field
@@ -214,14 +219,7 @@ function AssignmentForm({
       <Check name="published" checked={assignment?.published}>
         Objavljeno studentima
       </Check>
-      <Button type="submit">Spremi zadatak</Button>
-      {!assignment && (
-        <p className="text-xs text-slate-500">
-          Nakon spremanja zadatka možete dodati slike, videa i datoteke s
-          uputama.
-        </p>
-      )}
-    </form>
+    </LearningCreateForm>
   );
 }
 function SubmissionDetails({ submission }: { submission: Submission }) {
@@ -403,7 +401,7 @@ export async function LearningWorkspace({
                     Dodaj materijal
                   </summary>
                   <div className="mt-5">
-                    <MaterialForm course={course.id} />
+                    <MaterialForm course={course.id} filesReady={filesReady} />
                   </div>
                 </details>
               )}
@@ -445,7 +443,11 @@ export async function LearningWorkspace({
                         Uredi materijal
                       </summary>
                       <div className="mt-4">
-                        <MaterialForm course={course.id} material={m} />
+                        <MaterialForm
+                          course={course.id}
+                          material={m}
+                          filesReady={filesReady}
+                        />
                       </div>
                     </details>
                   )}
@@ -470,7 +472,10 @@ export async function LearningWorkspace({
                     Dodaj zadatak
                   </summary>
                   <div className="mt-5">
-                    <AssignmentForm course={course.id} />
+                    <AssignmentForm
+                      course={course.id}
+                      filesReady={filesReady}
+                    />
                   </div>
                 </details>
               )}
@@ -516,7 +521,11 @@ export async function LearningWorkspace({
                           Uredi zadatak
                         </summary>
                         <div className="mt-4">
-                          <AssignmentForm course={course.id} assignment={a} />
+                          <AssignmentForm
+                            course={course.id}
+                            assignment={a}
+                            filesReady={filesReady}
+                          />
                         </div>
                       </details>
                     )}

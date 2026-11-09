@@ -26,10 +26,8 @@ export const learningFileAccept = Object.values(learningMimeTypes)
   .flat()
   .map((x) => `.${x}`)
   .join(",");
-export const fileRequest = z
+export const learningFileMetadata = z
   .object({
-    kind: z.enum(["material", "assignment"]),
-    target: z.uuid(),
     name: z
       .string()
       .trim()
@@ -59,6 +57,9 @@ export const fileRequest = z
     }
     return { ...v, type };
   });
+export const fileRequest = z
+  .object({ kind: z.enum(["material", "assignment"]), target: z.uuid() })
+  .and(learningFileMetadata);
 export type LearningFile = {
   id: string;
   course_id: string;

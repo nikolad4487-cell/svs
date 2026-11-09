@@ -39,14 +39,22 @@ export async function POST(
       )
     )
       target.searchParams.set("view", String(view));
-    let status: string;
+    let result: { status: string; id?: string; revision?: number };
     try {
-      status = await learningMutation((await params).action, form);
+      result = await learningMutation((await params).action, form);
     } catch (error) {
       if (!(error instanceof z.ZodError)) throw error;
-      status = "invalid";
+      result = { status: "invalid" };
     }
-    target.searchParams.set("status", status);
+    target.searchParams.set("status", result.status);
+    if (request.headers.get("accept")?.includes("application/json"))
+      return NextResponse.json(
+        { ...result, redirect: target.toString() },
+        {
+          status: result.status === "saved" ? 200 : 400,
+          headers: { "cache-control": "private, no-store" },
+        },
+      );
     return NextResponse.redirect(target, 303);
   } catch {
     return NextResponse.json(

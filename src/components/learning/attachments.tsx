@@ -2,23 +2,16 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  fileRequest,
   fileSize,
   learningFileAccept,
   type LearningFile,
 } from "@/lib/learning/files";
 import { Button } from "@/components/ui/button";
+import {
+  learningFileAction as action,
+  uploadLearningFiles,
+} from "@/lib/learning/upload";
 
-async function action(name: string, body: unknown) {
-  const response = await fetch(`/api/learning/files/${name}`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Radnja nije dovršena.");
-  return result;
-}
 export function LearningAttachments({
   target,
   kind,
@@ -48,67 +41,23 @@ export function LearningAttachments({
       setMessage("Najviše 20 privitaka po materijalu ili zadatku.");
       return;
     }
-    const checked = selected.map((file) => ({
-      file,
-      meta: fileRequest.safeParse({
+    setBusy(true);
+    try {
+      await uploadLearningFiles({
         kind,
         target,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-      }),
-    }));
-    if (checked.some((x) => !x.meta.success)) {
-      setMessage(
-        "Odaberite podržanu sliku, video ili dokument veličine do 1 GB. Prazne datoteke nisu podržane.",
-      );
-      return;
-    }
-    setBusy(true);
-    let reservation: string | undefined;
-    try {
-      for (const { file, meta } of checked) {
-        if (!meta.success) continue;
-        setPercent(0);
-        setMessage(`Učitavanje: ${file.name}`);
-        const prepared = await action("prepare", meta.data);
-        reservation = prepared.id;
-        await new Promise<void>((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
+        files: selected,
+        onProgress: (name, value) => {
+          setMessage(`Učitavanje: ${name}`);
+          setPercent(value);
+        },
+        onRequest: (xhr) => {
           request.current = xhr;
-          xhr.open("PUT", prepared.url);
-          xhr.setRequestHeader("content-type", prepared.type);
-          xhr.setRequestHeader("cache-control", "max-age=0");
-          xhr.upload.onprogress = (e) => {
-            if (e.lengthComputable)
-              setPercent(Math.round((e.loaded / e.total) * 100));
-          };
-          xhr.onload = () =>
-            xhr.status >= 200 && xhr.status < 300
-              ? resolve()
-              : reject(
-                  new Error(
-                    "Učitavanje nije uspjelo. Provjerite vezu i raspoloživi prostor pohrane.",
-                  ),
-                );
-          xhr.onerror = () =>
-            reject(
-              new Error("Veza s pohranom nije dostupna. Pokušajte ponovno."),
-            );
-          xhr.onabort = () => reject(new Error("Učitavanje je prekinuto."));
-          xhr.send(file);
-        });
-        await action("complete", { id: reservation });
-        reservation = undefined;
-      }
+        },
+      });
       if (input.current) input.current.value = "";
       setMessage("Privitci su spremljeni.");
     } catch (error) {
-      if (reservation) {
-        try {
-          await action("remove", { id: reservation });
-        } catch {}
-      }
       setMessage(
         error instanceof Error ? error.message : "Učitavanje nije uspjelo.",
       );

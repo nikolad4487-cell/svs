@@ -13,9 +13,10 @@ Merlin na `https://merlin.isvu.me` koristi postojeću ISVU prijavu i evidenciju 
 
 ## Nastavnički postupak
 
-- **Materijali → Dodaj materijal**: naslov te tekst ili HTTPS poveznica na dokument/video. Označiti **Objavljeno studentima** kada je sadržaj spreman. Nacrt je vidljiv samo ovlaštenom osoblju kolegija. Uređivanjem se sadržaj može ponovno sakriti.
-- Ispod spremljenog materijala ili zadatka nalazi se **Dodaj slike, videa ili dokumente → Učitaj privitke**. Može se odabrati više datoteka. Prikazuju se napredak, rezultat prijenosa i mogućnost uklanjanja. Slike se prikazuju u stranici, video ima ugrađeni player, a dokumenti tipku za preuzimanje.
-- **Zadaci → Dodaj zadatak**: upute, neobvezni rok u hrvatskom vremenu, maksimalni bodovi i pravilo zakašnjele predaje. Zadatak postaje dostupan studentima tek objavom.
+- **Materijali → Dodaj materijal**: naslov te tekst, HTTPS poveznica ili datoteke. Odabir **Slike, videa i datoteke** nalazi se odmah u početnom obrascu. Klik na **Spremi materijal** sprema zapis i učitava odabrane datoteke. Ako materijal ima samo naslov i datoteke, kao tekst se sprema popis odabranih naziva datoteka. Označiti **Objavljeno studentima** kada je sadržaj spreman.
+- **Zadaci → Dodaj zadatak**: upute, neobvezni rok u hrvatskom vremenu, maksimalni bodovi, pravilo zakašnjele predaje i odabir datoteka u istom obrascu. Klik na **Spremi zadatak** sprema zadatak i privitke.
+- Kod stvaranja zapisa s privitcima objava studentima provodi se nakon potvrde svih prijenosa. Ako prijenos ne uspije, zapis ostaje nacrt, obrazac čuva vrijednosti, a ponovno spremanje nastavlja s preostalim odabranim datotekama bez ponovnog stvaranja zapisa. Nacrt se može pregledati i urediti; prije ponovnog odabira istih datoteka provjeriti već spremljene privitke.
+- Ispod spremljenog materijala ili zadatka i dalje postoji **Dodaj slike, videa ili dokumente → Učitaj privitke** za naknadno dodavanje. Može se odabrati više datoteka. Prikazuju se napredak, rezultat prijenosa i mogućnost uklanjanja. Slike se prikazuju u stranici, video ima ugrađeni player, a dokumenti tipku za preuzimanje.
 - **Predaje**: otvoriti studentov rad, upisati bodove i povratnu informaciju te spremiti. Bodovi moraju biti između nule i maksimuma zadatka. Nakon prve predaje maksimum se ne mijenja; rok i pravilo zakašnjenja mogu se promijeniti.
 
 Administrator ustanove i referada mogu upravljati kolegijima svoje ustanove; glavni administrator svim ustanovama. Nastavnik radi na kolegijima na koje je izričito dodijeljen.
