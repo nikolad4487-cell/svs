@@ -43,6 +43,17 @@ try {
   exists = true;
 } catch {}
 if (exists) {
+  const current = JSON.parse(
+    docker("inspect", "--format", "{{json .Config.Env}}", name),
+  );
+  if (!current.includes("FILE_SIZE_LIMIT=1073741824")) {
+    // Recreate only this test service; its database and named data volume remain.
+    docker("stop", name);
+    docker("rm", name);
+    exists = false;
+  }
+}
+if (exists) {
   docker(
     "exec",
     "svs-test-db",
@@ -95,7 +106,7 @@ if (exists) {
     POSTGREST_URL: "http://svs-test-rest:3000",
     STORAGE_BACKEND: "file",
     FILE_STORAGE_BACKEND_PATH: "/var/lib/storage",
-    FILE_SIZE_LIMIT: "52428800",
+    FILE_SIZE_LIMIT: "1073741824",
     TENANT_ID: "local",
     REGION: "local",
     GLOBAL_S3_BUCKET: "local",

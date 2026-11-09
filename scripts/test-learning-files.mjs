@@ -263,10 +263,45 @@ try {
             target: published,
             filename: "large.mp4",
             mimetype: "video/mp4",
-            bytes: 52428801,
+            bytes: 1073741825,
           })
         ).error,
       );
+    },
+  );
+  await check(
+    "1 GiB metadata is accepted and an actual 64 MiB attachment passes Storage limits",
+    async () => {
+      const boundary = await reserve(
+        "material",
+        published,
+        "boundary.mp4",
+        "video/mp4",
+        1073741824,
+      );
+      assert.equal(Number(boundary.byte_size), 1073741824);
+      const bucket = await ok(service.storage.getBucket("merlin-files"));
+      assert.equal(Number(bucket.file_size_limit), 1073741824);
+      const file = await reserve(
+        "material",
+        published,
+        "large.txt",
+        "text/plain",
+        64 * 1024 * 1024,
+      );
+      await upload(file, Buffer.alloc(64 * 1024 * 1024, "x"));
+      await ok(teacher.rpc("learning_complete_file", { target: file.id }));
+      const signed = await ok(
+        student.storage
+          .from("merlin-files")
+          .createSignedUrl(file.object_path, 60),
+      );
+      const range = await fetch(signed.signedUrl, {
+        headers: { Range: "bytes=0-15" },
+      });
+      assert.equal(range.status, 206);
+      assert.equal(range.headers.get("content-range"), "bytes 0-15/67108864");
+      assert.equal(await range.text(), "x".repeat(16));
     },
   );
   server = spawn(
@@ -447,7 +482,11 @@ try {
               mimeType: "video/webm",
               buffer: readFileSync(videoPath),
             },
-            { name: "veliki-dokument.txt", mimeType: "text/plain", buffer: Buffer.alloc(6 * 1024 * 1024, "x") },
+            {
+              name: "veliki-dokument.txt",
+              mimeType: "text/plain",
+              buffer: Buffer.alloc(6 * 1024 * 1024, "x"),
+            },
           ]);
         await card
           .getByRole("button", { name: "Učitaj privitke", exact: true })

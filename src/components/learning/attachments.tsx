@@ -60,7 +60,7 @@ export function LearningAttachments({
     }));
     if (checked.some((x) => !x.meta.success)) {
       setMessage(
-        "Odaberite podržanu sliku, video ili dokument veličine do 50 MB. Prazne datoteke nisu podržane.",
+        "Odaberite podržanu sliku, video ili dokument veličine do 1 GB. Prazne datoteke nisu podržane.",
       );
       return;
     }
@@ -216,7 +216,7 @@ export function LearningAttachments({
               />
             </label>
             <p className="text-xs leading-5 text-slate-500">
-              Do 50 MB po datoteci i 20 privitaka. Slike: JPG, PNG, GIF, WebP.
+              Do 1 GB po datoteci i 20 privitaka. Slike: JPG, PNG, GIF, WebP.
               Video: MP4, WebM. Dokumenti: PDF, Word, Excel, PowerPoint, TXT i
               ZIP.
             </p>

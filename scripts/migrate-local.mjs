@@ -40,7 +40,7 @@ const applied = sql("select name from public.local_test_migrations")
   .trim()
   .split("\n");
 for (const name of readdirSync("supabase/migrations")
-  .filter((n) => /^\d+_[a-z_]+\.sql$/.test(n))
+  .filter((n) => /^\d+_[a-z0-9_]+\.sql$/.test(n))
   .sort()) {
   if (applied.includes(name)) continue;
   sql(

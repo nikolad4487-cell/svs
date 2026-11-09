@@ -1,6 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { fileRequest, maxLearningFileBytes } from "../src/lib/learning/files";
+import {
+  fileRequest,
+  fileSize,
+  maxLearningFileBytes,
+} from "../src/lib/learning/files";
 const input = {
   kind: "material",
   target: "10000000-0000-4000-8000-000000000001",
@@ -9,6 +13,8 @@ const input = {
   size: 100,
 };
 test("learning attachments accept bounded supported files and infer empty browser MIME types", () => {
+  assert.equal(maxLearningFileBytes, 1073741824);
+  assert.equal(fileSize(1073741824), "1.0 GB");
   assert.equal(fileRequest.parse(input).type, "image/png");
   assert.equal(
     fileRequest.parse({ ...input, name: "Predavanje.PPTX", type: "" }).type,

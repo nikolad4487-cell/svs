@@ -89,3 +89,10 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Lokalni testni profil nadograđen je službenim Storage servisom i lokalnim pristupnikom. Čisti SQL installer provjeren je s pravim Auth i Storage shemama i 37 aplikacijskih RLS tablica. Produkcija nije mijenjana.
 - Prolazi 55 jediničnih testova, TypeScript i webpack izgradnja. Šest Storage/HTTP/Chromium scenarija uključuje stvarno učitavanje i prikaz PNG-a, reprodukciju videa, dokument veći od 4,5 MB, uklanjanje, nacrte i povlačenje objave. Prolaze i 10 ranijih LMS te osam domenskih i institucijskih scenarija.
 - Pripremljene detaljne upute za Zoho, Namecheap, MX/SPF/DKIM i Vercel Webmail poveznicu: [docs/ZOHO-POSTAVLJANJE.md](docs/ZOHO-POSTAVLJANJE.md). Nisu otvarani sandučići, mijenjan DNS niti slane poruke. Nova produkcijska migracija čeka korisnika; završni Vercel status nije ovdje potvrđen.
+
+## Merlin privitci do 1 GB — 9. studenoga 2026.
+
+- Na zahtjev korisnika granica aplikacije, SQL metapodataka i privatnog bucketa podignuta je na 1 GiB (1.073.741.824 bajta; u sučelju 1 GB). Dodana je migracija `202611090004_learning_files_1gb.sql`, prikaz veličine u GB i ažurirane upute. Broj privitaka i postojeća pravila pristupa ostaju isti.
+- Lokalna pohrana i CLI konfiguracija koriste isti limit. Ispravljen je lokalni migracijski runner kako ne bi preskakao nazive sa znamenkama poput `1gb`.
+- Prolazi 55 jediničnih testova, TypeScript provjera, webpack izgradnja i čista SQL instalacija s 37 RLS tablica. Sedam Storage/HTTP/Chromium scenarija potvrđuje prihvat metapodataka na granici 1 GiB, odbijanje jednog bajta iznad granice, stvarni prijenos i potvrdu 64 MiB datoteke, privatnost i postojeći prikaz medija. Cijela 1 GiB datoteka nije slana u testu.
+- Prema službenim Supabase uputama Free dopušta najviše 50 MB po datoteci. Pro ili viši paket i odgovarajući **Storage Settings → Global file size limit** nužni su za stvarne datoteke od 1 GB. Paket, produkcijska globalna postavka i produkcijska baza nisu mijenjani. Standardni izravni prijenos podržava do 5 GB; TUS prijenos s nastavkom još nije izveden. Vidi [docs/MERLIN.md](docs/MERLIN.md).

@@ -1,6 +1,6 @@
 import { z } from "zod";
 export const learningBucket = "merlin-files";
-export const maxLearningFileBytes = 50 * 1024 * 1024;
+export const maxLearningFileBytes = 1024 * 1024 * 1024;
 export const learningMimeTypes: Record<string, string[]> = {
   "image/png": ["png"],
   "image/jpeg": ["jpg", "jpeg"],
@@ -72,6 +72,8 @@ export type LearningFile = {
   uploaded_by: string;
 };
 export function fileSize(bytes: number) {
+  if (bytes >= 1024 * 1024 * 1024)
+    return `${(bytes / 1024 / 1024 / 1024).toFixed(1)} GB`;
   return bytes < 1024 * 1024
     ? `${Math.ceil(bytes / 1024)} KB`
     : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
