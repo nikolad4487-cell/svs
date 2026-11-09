@@ -64,3 +64,10 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Stare produkcijske `?module=` poveznice i točno dopušteni produkcijski Vercel hostovi preusmjeravaju na nove adrese. Preview i lokalne sesije zadržavaju odvojeni način rada. Proizvoljne Vercel adrese nisu dopuštene.
 - Prolazi 50 jediničnih testova, TypeScript provjera i produkcijska webpack izgradnja. Sedam lokalnih HTTP/Chromium scenarija potvrđuje stvarne poveznice na početnoj stranici, produkcijske varijable, preusmjeravanja, prijavu i izolaciju ustanove.
 - Nema nove SQL migracije ni promjena DNS-a ili vanjskih Auth postavki. Slanje na GitHub pokreće postojeću Vercel integraciju; dovršetak javne objave nije ovdje potvrđen.
+
+## Pristup Webmailu i stvarni status Merlina — 9. studenoga 2026.
+
+- Webmail tipke koriste `https://isvu.me/webmail`, bez obvezne dodatne poddomene. Ako je stari `webmail` host povezan, preusmjerava na novu putanju. Pristup zadržava provjeru prijave i ovlasti.
+- Uklonjena općenita poruka o idućim fazama i neizvedeni Merlinovi izbornici. Prikazuje se stvarni status poštanskog servisa/e-učenja i upute glavnom administratoru.
+- Opcionalni `WEBMAIL_LOGIN_URL` i `MERLIN_LMS_URL` daju tipku za vanjsku HTTPS prijavu. To ne stvara sandučiće, LMS sadržaj, SSO ili sinkronizaciju. Čeka se korisnikov odabir vlastitog e-učenja ili postojećeg Moodlea te podatak postoji li poštanski servis.
+- Prolazi 51 jedinični test, TypeScript provjera, produkcijska webpack izgradnja i osam lokalnih HTTP/Chromium scenarija. Nema nove SQL migracije. Javna dostupnost DNS-a, vanjskih usluga i dovršetak Vercel objave nisu potvrđeni.

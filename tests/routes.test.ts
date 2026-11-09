@@ -12,12 +12,14 @@ test("production central portal and both administrations use root-domain paths; 
     ["studomat", "https://studomat.isvu.me"],
     ["merlin", "https://merlin.isvu.me"],
     ["auth", "https://auth.isvu.me"],
+    ["webmail", "https://isvu.me/webmail"],
   ] as const)
     assert.equal(moduleUrl(module, host("auth.isvu.me")), url);
   for (const [path, module] of [
     ["/admin", "portal"],
     ["/admin/studiji", "isvu"],
     ["/admin/sustav", "admin"],
+    ["/webmail", "webmail"],
   ] as const)
     assert.equal(
       publicRoute(host("isvu.me"), path, new URLSearchParams())?.module,

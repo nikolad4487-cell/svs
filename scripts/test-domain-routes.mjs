@@ -96,6 +96,8 @@ try {
         VERCEL_ENV: "production",
         VERCEL_PROJECT_PRODUCTION_URL: "isvu.me",
         VERCEL_URL: "routing-production.vercel.app",
+        WEBMAIL_LOGIN_URL: "",
+        MERLIN_LMS_URL: "",
         NEXT_PUBLIC_SUPABASE_URL: c.API_URL,
         NEXT_PUBLIC_SUPABASE_ANON_KEY: c.ANON_KEY,
         SVS_SUPABASE_URL: c.API_URL,
@@ -151,6 +153,7 @@ try {
         `https://isvu.me:${port}/admin/sustav`,
         `https://referada.isvu.me:${port}`,
         `https://studomat.isvu.me:${port}`,
+        `https://isvu.me:${port}/webmail`,
       ])
         assert.ok(home.text.includes(`href="${target}"`), target);
       assert.ok(
@@ -222,6 +225,29 @@ try {
             `/${aSlug}`,
           );
       }
+    },
+  );
+  await check(
+    "external services show connection status and Webmail uses the existing root domain",
+    async () => {
+      const anonymous = await request(H(""), "/webmail");
+      assert.equal(anonymous.status, 307);
+      assert.equal(
+        new URL(anonymous.headers.location).searchParams.get("next"),
+        "webmail",
+      );
+      const webmail = await request(H(""), "/webmail", null, cookies.student);
+      assert.equal(webmail.status, 200);
+      assert.ok(webmail.text.includes("Poštanski servis još nije povezan"));
+      assert.ok(!webmail.text.includes("WEBMAIL_LOGIN_URL"));
+      const merlin = await request(H("merlin"), "/", null, cookies.superadmin);
+      assert.equal(merlin.status, 200);
+      assert.ok(merlin.text.includes("E-učenje još nije povezano"));
+      assert.ok(merlin.text.includes("MERLIN_LMS_URL"));
+      assert.ok(!merlin.text.includes("Funkcionalnosti ovog"));
+      const old = await request(H("webmail"), "/");
+      assert.equal(old.status, 308);
+      assert.equal(new URL(old.headers.location).pathname, "/webmail");
     },
   );
   await check(

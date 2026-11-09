@@ -4,6 +4,7 @@ export const centralPaths = {
   portal: "/admin",
   isvu: "/admin/studiji",
   admin: "/admin/sustav",
+  webmail: "/webmail",
 } as const;
 export function centralPath(module: ModuleSlug | "home") {
   return centralPaths[module as keyof typeof centralPaths];

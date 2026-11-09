@@ -14,10 +14,19 @@
 | Raspored Učiteljskog fakulteta | `https://raspored.isvu.me/ufzg` |
 | Raspored Geodetskog fakulteta | `https://raspored.isvu.me/geofzg` |
 | Prijava | `https://auth.isvu.me` |
+| Pristup pošti | `https://isvu.me/webmail` |
 
 Portal na `/admin` dostupan je prijavljenom korisniku prema njegovim ovlastima. Administracija sustava i dalje je samo za glavnoga administratora, a administracija studija za odgovarajuće osoblje. Sam naziv putanje ne daje administratorsku ovlast.
 
-Ranije poddomene `portal`, `isvu` i `admin` na vlastitoj produkcijskoj domeni preusmjeravaju na odgovarajuće nove putanje. Za takve stare poveznice poddomene i dalje moraju biti spojene na Vercel. Lokalne i Vercel preview adrese zadržavaju postojeći `?module=` način rada; prihvaćaju i nove `/admin` putanje. Webmail ostaje postojeći zasebni modul ako se koristi; ova promjena ne konfigurira pružatelja pošte ili stvarni LMS.
+Ranije poddomene `portal`, `isvu`, `admin` i `webmail` na vlastitoj produkcijskoj domeni preusmjeravaju na odgovarajuće nove putanje. Za takve stare poveznice poddomene i dalje moraju biti spojene na Vercel. Lokalne i Vercel preview adrese zadržavaju postojeći `?module=` način rada; prihvaćaju i nove putanje. Webmail tipke koriste postojeću glavnu domenu, pa za njih nije potrebno stvarati `webmail.isvu.me`.
+
+## Pošta i e-učenje
+
+Merlin zasad nema izvedene nastavne materijale, zadatke i kvizove. Stranica prikazuje stvarno stanje povezivanja. Ako postoji zaseban Moodle ili drugi LMS, opcionalna Vercel varijabla `MERLIN_LMS_URL` postavlja punu HTTPS adresu njegove prijave.
+
+Webmail stranica na `/webmail` koristi opcionalnu varijablu `WEBMAIL_LOGIN_URL` za punu HTTPS adresu prijave pružatelja pošte. Bez nje prikazuje da servis nije povezan. Najprije treba aktivirati poštansku domenu i zasebne sandučiće kod odabranog pružatelja. ISVU adresa za prijavu sama ne stvara sandučić.
+
+Obje su varijable obična konfiguracija, bez korisničkog imena ili lozinke u adresi. Nakon promjene potrebna je nova Vercel objava. Tipka otvara vanjsku prijavu u novoj kartici; ne uvodi jedinstvenu prijavu, prijenos ISVU lozinki, čitanje poruka ili sinkronizaciju kolegija. Te funkcije zahtijevaju zasebnu integraciju. Dodatna SQL migracija za ove pristupne stranice nije potrebna.
 
 Vlastita domena ima prednost pred Vercelovim popisom adresa objave: čak i kada je `VERCEL_PROJECT_PRODUCTION_URL=isvu.me`, tipke koriste nove putanje i poddomene. U produkcijskom okruženju (`VERCEL_ENV=production`) dopuštene Vercel adrese preusmjeravaju na vlastitu domenu. Stare poveznice poput `https://isvu.me/?module=portal` također vode na novu adresu. Preview objave zadržavaju vlastite adrese i odvojene sesije. Ovaj ispravak poveznica ne zahtijeva dodatnu SQL migraciju.
 

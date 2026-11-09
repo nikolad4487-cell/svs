@@ -8,13 +8,8 @@ import { AcademicWorkspace } from "@/components/academic/workspace";
 import { AdmissionImport } from "@/components/auth/admission-import";
 import { Institutions } from "@/components/auth/institutions";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  ArrowRight,
-  LockKeyhole,
-  Info,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ExternalService } from "@/components/external-service";
 import { modules, academicAdminItems, studomatGroups } from "@/lib/modules";
 import { navigation } from "@/lib/context";
 import { Brand } from "@/components/brand";
@@ -215,27 +210,13 @@ export default async function Module({
                 studentId={student}
                 faculty={faculty}
               />
+            ) : module === "merlin" || module === "webmail" ? (
+              <ExternalService
+                module={module}
+                administrator={!!account?.superadmin}
+              />
             ) : (
-              <>
-                <div className="mb-6 inline-flex rounded-xl bg-blue-50 p-4 text-blue-700">
-                  {module === "webmail" ? (
-                    <ExternalLink size={28} />
-                  ) : (
-                    <LockKeyhole size={28} />
-                  )}
-                </div>
-                <h2 className="text-xl font-bold">{active}</h2>
-                <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-500">
-                  {copy[module]}
-                </p>
-                <div className="mt-7 flex max-w-2xl gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
-                  <Info size={20} className="shrink-0" />
-                  <p>
-                    Vaša sesija i ovlasti su provjerene. Funkcionalnosti ovog
-                    modula slijede u idućim fazama.
-                  </p>
-                </div>
-              </>
+              <p>{copy[module]}</p>
             )}
           </div>
           <section className="mt-10">
