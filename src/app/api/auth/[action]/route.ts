@@ -3,18 +3,26 @@ import { z } from "zod";
 import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseConfig } from "@/lib/supabase/config";
 import { requestContext, assertSameOrigin } from "@/lib/auth/request";
+import { facultyUrl, validFaculty } from "@/lib/routes";
 import { safeModule } from "@/lib/auth/policy";
 import { requireIdentity } from "@/lib/auth/access";
 const credentials = z.object({
   email: z.email().max(254),
   password: z.string().min(12).max(128),
 });
-async function authRedirect(status: string, mode = "login", next = "portal") {
+async function authRedirect(
+  status: string,
+  mode = "login",
+  next = "portal",
+  faculty?: string,
+) {
   const { url } = await requestContext();
   const target = new URL(url("auth"));
   target.searchParams.set("status", status);
   target.searchParams.set("mode", mode);
   target.searchParams.set("next", safeModule(next));
+  if (next === "raspored" && validFaculty(faculty))
+    target.searchParams.set("faculty", faculty);
   return NextResponse.redirect(target, 303);
 }
 export async function POST(
@@ -35,6 +43,10 @@ export async function POST(
       return NextResponse.json({ error: "Prevelik zahtjev." }, { status: 413 });
     const form = await request.formData();
     const next = safeModule(form.get("next"));
+    const faculty =
+      next === "raspored" && validFaculty(form.get("faculty"))
+        ? String(form.get("faculty"))
+        : undefined;
     const db = await supabaseServer();
     if (action === "login") {
       const input = z
@@ -43,29 +55,35 @@ export async function POST(
           password: z.string().min(1).max(128),
         })
         .safeParse(Object.fromEntries(form));
-      if (!input.success) return authRedirect("invalid", "login", next);
+      if (!input.success)
+        return authRedirect("invalid", "login", next, faculty);
       const { data, error } = await db.auth.signInWithPassword(input.data);
-      if (error) return authRedirect("invalid", "login", next);
+      if (error) return authRedirect("invalid", "login", next, faculty);
       if (data.user?.app_metadata?.svs_password_change_required === true)
-        return authRedirect("temporary-password", "password", next);
+        return authRedirect("temporary-password", "password", next, faculty);
       const acceptance = await db.rpc("accept_invitations");
       if (acceptance.error) {
         await db.auth.signOut({ scope: "local" });
-        return authRedirect("unavailable", "login", next);
+        return authRedirect("unavailable", "login", next, faculty);
       }
       const { url } = await requestContext();
-      return NextResponse.redirect(url(next), 303);
+      return NextResponse.redirect(
+        faculty ? facultyUrl(url(next), faculty) : url(next),
+        303,
+      );
     }
     if (action === "signup") {
       if (process.env.AUTH_INVITE_SIGNUP_ENABLED !== "true")
-        return authRedirect("registration-disabled", "signup", next);
+        return authRedirect("registration-disabled", "signup", next, faculty);
       const input = credentials
         .extend({ full_name: z.string().trim().min(2).max(200) })
         .safeParse(Object.fromEntries(form));
-      if (!input.success) return authRedirect("invalid", "signup", next);
+      if (!input.success)
+        return authRedirect("invalid", "signup", next, faculty);
       const { origin } = await requestContext();
       const callback = new URL("/api/auth/callback", origin);
       callback.searchParams.set("next", next);
+      if (faculty) callback.searchParams.set("faculty", faculty);
       // The mandatory database Auth hook enforces invitations even for direct Auth API requests.
       await db.auth.signUp({
         email: input.data.email,
@@ -75,18 +93,21 @@ export async function POST(
           emailRedirectTo: callback.toString(),
         },
       });
-      return authRedirect("check-email", "signup", next);
+      return authRedirect("check-email", "signup", next, faculty);
     }
     if (action === "reset") {
       const email = z.email().max(254).safeParse(form.get("email"));
-      if (!email.success) return authRedirect("invalid", "reset", next);
+      if (!email.success)
+        return authRedirect("invalid", "reset", next, faculty);
       const { origin } = await requestContext();
       const callback = new URL("/api/auth/callback", origin);
       callback.searchParams.set("mode", "password");
+      callback.searchParams.set("next", next);
+      if (faculty) callback.searchParams.set("faculty", faculty);
       await db.auth.resetPasswordForEmail(email.data, {
         redirectTo: callback.toString(),
       });
-      return authRedirect("check-email", "reset", next);
+      return authRedirect("check-email", "reset", next, faculty);
     }
     const account = await requireIdentity(undefined, true);
     if (action === "password") {
@@ -95,14 +116,16 @@ export async function POST(
         .min(12)
         .max(128)
         .safeParse(form.get("password"));
-      if (!password.success) return authRedirect("invalid", "password");
+      if (!password.success)
+        return authRedirect("invalid", "password", next, faculty);
       const { error } = await db.auth.updateUser({ password: password.data });
-      if (error) return authRedirect("invalid", "password");
+      if (error) return authRedirect("invalid", "password", next, faculty);
       // Password change invalidates all existing sessions, including this browser.
       const revoke = await db.rpc("revoke_my_session", { all_sessions: true });
-      if (revoke.error) return authRedirect("unavailable", "password");
+      if (revoke.error)
+        return authRedirect("unavailable", "password", next, faculty);
       await db.auth.signOut({ scope: "local" });
-      return authRedirect("password-changed");
+      return authRedirect("password-changed", "login", next, faculty);
     }
     const global = form.get("scope") !== "local";
     const { error } = await account.db.rpc("revoke_my_session", {
@@ -125,6 +148,11 @@ export async function GET(
   try {
     const db = await supabaseServer();
     const next = safeModule(request.nextUrl.searchParams.get("next"));
+    const faculty =
+      next === "raspored" &&
+      validFaculty(request.nextUrl.searchParams.get("faculty"))
+        ? request.nextUrl.searchParams.get("faculty")!
+        : undefined;
     let error;
     if (action === "callback") {
       const code = request.nextUrl.searchParams.get("code");
@@ -150,9 +178,12 @@ export async function GET(
       request.nextUrl.searchParams.get("mode") === "password" ||
       request.nextUrl.searchParams.get("type") === "recovery"
     )
-      return authRedirect("verified", "password");
+      return authRedirect("verified", "password", next, faculty);
     const { url } = await requestContext();
-    return NextResponse.redirect(url(next), 303);
+    return NextResponse.redirect(
+      faculty ? facultyUrl(url(next), faculty) : url(next),
+      303,
+    );
   } catch {
     return authRedirect("unavailable");
   }

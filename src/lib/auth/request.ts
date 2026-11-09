@@ -6,7 +6,7 @@ export async function requestContext() {
   const h = await headers();
   const host = resolveHost(
     h.get("host") || "",
-    process.env.BASE_DOMAIN || "domena.hr",
+    process.env.BASE_DOMAIN || "isvu.me",
     process.env.LOCAL_BASE_DOMAIN || "",
     deploymentHosts(),
   );

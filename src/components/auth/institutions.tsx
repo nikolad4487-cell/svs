@@ -36,6 +36,7 @@ export async function Institutions({
   const fields = (institution?: {
     name: string;
     code: string;
+    url_slug?: string;
     headquarters: string;
     contact_email: string | null;
     email_domains: string[];
@@ -56,6 +57,17 @@ export async function Institutions({
         defaultValue={institution?.code}
         maxLength={20}
       />
+      <Field
+        label="Oznaka adrese rasporeda (npr. ufzg ili geofzg)"
+        name="url_slug"
+        defaultValue={institution?.url_slug || ""}
+        required={false}
+        maxLength={64}
+      />
+      <p className="text-xs text-slate-500">
+        Mala slova, brojevi i crtice. Prazno polje pri kreiranju koristi kraticu
+        ustanove; promjena naziva ustanove ne mijenja adresu rasporeda.
+      </p>
       <Field
         label="Sjedište"
         name="headquarters"

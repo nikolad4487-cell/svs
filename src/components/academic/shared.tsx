@@ -86,8 +86,10 @@ export function InstitutionPicker({
   data,
   base,
   view,
+  requireSelection = false,
 }: {
   data: AcademicData;
+  requireSelection?: boolean;
   base: string;
   view: string;
 }) {
@@ -107,8 +109,10 @@ export function InstitutionPicker({
         <select
           className={inputClass}
           name="institution"
-          defaultValue={data.institution.id}
+          required
+          defaultValue={requireSelection ? "" : data.institution.id}
         >
+          {requireSelection && <option value="">Odaberite ustanovu…</option>}
           {data.institutions.map((i) => (
             <option key={i.id} value={i.id}>
               {i.name}

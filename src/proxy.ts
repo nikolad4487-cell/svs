@@ -1,13 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { resolveHost, moduleUrl, deploymentHosts } from "./lib/hosts";
-import { isModule } from "./lib/modules";
+import { centralPath, publicRoute } from "./lib/routes";
 import { supabaseConfig } from "./lib/supabase/config";
 import { refreshSession } from "./lib/supabase/proxy";
 import { sameOrigin } from "./lib/auth/policy";
 export async function proxy(request: NextRequest) {
   const host = resolveHost(
     request.headers.get("host") ?? "",
-    process.env.BASE_DOMAIN || "domena.hr",
+    process.env.BASE_DOMAIN || "isvu.me",
     process.env.LOCAL_BASE_DOMAIN || "",
     deploymentHosts(),
   );
@@ -20,16 +20,28 @@ export async function proxy(request: NextRequest) {
     url.pathname = "/unknown-host";
     return NextResponse.rewrite(url);
   }
-  let module = host.module;
+  const route = url.pathname.startsWith("/api/")
+    ? { module: host.module, faculty: "" }
+    : publicRoute(host, url.pathname, url.searchParams);
+  if (!route) {
+    url.pathname = "/unknown-host";
+    return NextResponse.rewrite(url);
+  }
+  const { module, faculty } = route;
   const fallback = url.searchParams.get("module");
-  if ((host.local || host.singleDomain) && fallback) {
-    if (!isModule(fallback)) {
-      url.pathname = "/unknown-host";
-      return NextResponse.rewrite(url);
-    }
-    module = fallback;
+  if (
+    !host.local &&
+    !host.singleDomain &&
+    host.module !== "home" &&
+    centralPath(host.module) &&
+    !url.pathname.startsWith("/api/")
+  ) {
+    const target = new URL(moduleUrl(host.module, host));
+    target.search = url.search;
+    return NextResponse.redirect(target, 308);
   }
   const headers = new Headers(request.headers);
+  headers.set("x-svs-faculty", faculty);
   headers.set("x-svs-base", moduleUrl("home", host));
   headers.set(
     "x-svs-fallback",
@@ -54,8 +66,7 @@ export async function proxy(request: NextRequest) {
       return NextResponse.next({ request: { headers } });
     });
   }
-  if (module !== "home")
-    url.pathname = `/sites/${module}${url.pathname === "/" ? "" : url.pathname}`;
+  if (module !== "home") url.pathname = `/sites/${module}`;
   return refreshSession(request, host, (authenticated) => {
     if (
       supabaseConfig() &&
@@ -67,6 +78,7 @@ export async function proxy(request: NextRequest) {
         moduleUrl("auth", host, headers.get("x-svs-fallback") === "1"),
       );
       login.searchParams.set("next", module);
+      if (faculty) login.searchParams.set("faculty", faculty);
       return NextResponse.redirect(login);
     }
     headers.set("cookie", request.headers.get("cookie") || "");

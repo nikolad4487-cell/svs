@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { assertSameOrigin, requestContext } from "@/lib/auth/request";
 import { academicMutation } from "@/lib/academic/service";
+import { facultyUrl } from "@/lib/routes";
+import { requireIdentity } from "@/lib/auth/access";
 import { safeModule } from "@/lib/auth/policy";
 import { workflowErrorStatus } from "@/lib/academic/exam-workflow";
 export async function POST(
@@ -25,6 +27,19 @@ export async function POST(
       "status",
       error ? workflowErrorStatus(error.message) : "saved",
     );
+    if (module === "raspored") {
+      const account = await requireIdentity();
+      const inst = await account.db
+        .from("institutions")
+        .select("url_slug")
+        .eq("id", String(form.get("institution_id")))
+        .single();
+      if (inst.data?.url_slug)
+        return NextResponse.redirect(
+          facultyUrl(target.toString(), inst.data.url_slug),
+          303,
+        );
+    }
     return NextResponse.redirect(target, 303);
   } catch {
     return NextResponse.json(

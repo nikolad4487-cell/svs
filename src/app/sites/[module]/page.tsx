@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { identity } from "@/lib/auth/access";
 import { canAccessModule } from "@/lib/auth/policy";
@@ -37,9 +38,11 @@ export default async function Module({
     course?: string;
     academic_year?: string;
     student?: string;
+    faculty?: string;
   }>;
 }) {
   const { module } = await params;
+  const faculty = (await headers()).get("x-svs-faculty") || undefined;
   const m = modules.find((m) => m.slug === module);
   if (!m) notFound();
   const {
@@ -52,6 +55,7 @@ export default async function Module({
     course,
     academic_year,
     student,
+    faculty: loginFaculty,
   } = await searchParams;
   const active = m.items.find((i) => i === view) || m.items[0];
   const url = await navigation();
@@ -59,6 +63,7 @@ export default async function Module({
   if (module !== "auth" && supabaseConfig() && !account) {
     const target = new URL(url("auth"));
     target.searchParams.set("next", m.slug);
+    if (faculty) target.searchParams.set("faculty", faculty);
     redirect(target.toString());
   }
   const allowed =
@@ -171,7 +176,12 @@ export default async function Module({
           <p className="mt-3 text-slate-500">{m.description}</p>
           <div className="mt-10 rounded-xl border border-slate-200 bg-white p-6 md:p-10">
             {module === "auth" ? (
-              <AuthPanel mode={mode} status={status} next={next} />
+              <AuthPanel
+                mode={mode}
+                status={status}
+                next={next}
+                faculty={loginFaculty}
+              />
             ) : !supabaseConfig() ? (
               <ConfigNotice />
             ) : !allowed ? (
@@ -203,6 +213,7 @@ export default async function Module({
                 courseId={course}
                 academicYear={academic_year}
                 studentId={student}
+                faculty={faculty}
               />
             ) : (
               <>

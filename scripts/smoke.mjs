@@ -31,7 +31,9 @@ const request = (host, path = "/") =>
       .on("error", reject);
   });
 let count = 0;
-for (const base of ["localhost:3000", "domena.hr"]) {
+const localBase = `localhost:${process.env.SMOKE_PORT || 3000}`;
+const productionBase = process.env.BASE_DOMAIN || "isvu.me";
+for (const base of [localBase, productionBase]) {
   for (const host of [base, `www.${base}`]) {
     const r = await request(host);
     assert.equal(r.status, 200, host);
@@ -39,20 +41,34 @@ for (const base of ["localhost:3000", "domena.hr"]) {
     count++;
   }
   for (const [slug, title] of Object.entries(modules)) {
-    const r = await request(`${slug}.${base}`);
+    let r = await request(`${slug}.${base}`);
+    if (
+      !base.startsWith("localhost") &&
+      ["portal", "isvu", "admin"].includes(slug)
+    ) {
+      assert.equal(r.status, 308, slug);
+      const central = {
+        portal: "/admin",
+        isvu: "/admin/studiji",
+        admin: "/admin/sustav",
+      };
+      r = await request(base, central[slug]);
+    }
     assert.equal(r.status, 200, slug);
     assert.ok(r.body.includes(title), slug);
     assert.ok(!r.body.includes("Vaš akademski svijet"), slug);
     assert.ok(
       r.body.includes(
-        `${base.startsWith("localhost") ? "http" : "https"}://portal.${base}`,
+        base.startsWith("localhost")
+          ? `http://portal.${base}`
+          : `https://${base}/admin`,
       ) || slug === "portal",
     );
     count++;
   }
 }
 for (const slug of Object.keys(modules)) {
-  const r = await request("localhost:3000", `/?module=${slug}`);
+  const r = await request(localBase, `/?module=${slug}`);
   assert.equal(r.status, 200);
   assert.ok(
     r.body.includes(`module=${slug === "portal" ? "studomat" : "portal"}`),

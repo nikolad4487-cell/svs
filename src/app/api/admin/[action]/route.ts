@@ -5,6 +5,18 @@ import { requireIdentity } from "@/lib/auth/access";
 import { roles } from "@/lib/auth/policy";
 import { emailDomainsInput } from "@/lib/auth/email-domains";
 const institutionSchema = z.object({
+  url_slug: z
+    .union([
+      z.literal(""),
+      z
+        .string()
+        .trim()
+        .toLowerCase()
+        .min(2)
+        .max(64)
+        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    ])
+    .optional(),
   name: z.string().trim().min(2).max(200),
   code: z.string().regex(/^[A-Z0-9-]{2,20}$/),
   registrar_contact: z.string().trim().max(2000).default(""),

@@ -1,4 +1,5 @@
 export type Institution = {
+  url_slug?: string;
   email_domains?: string[];
   id: string;
   name: string;

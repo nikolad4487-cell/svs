@@ -47,3 +47,13 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - 45 jediničnih testova, typecheck, build i čista instalacija svih migracija prolaze. Prolazi 16 referadskih integracijskih scenarija, uključujući svih osam vrsta, utrku dvostrukog upisa, ograničene službene podatke, studentski pristup bez e-pošte i Chromium pripremu/odobrenje/izradu upisnog lista te izmjenu godišnjih podataka. Regresija prvog i već provedenog uvoza prolazi.
 
 [Operativne upute](docs/REFERADA.md) · [Inventar 21 privitka, provjereni odjeljci i granice implementacije](docs/ISVU-PRILOZI-REFERADA.md). Evidentiranih 609 stranica/slajdova nije tvrdnja da su svi prikazi ručno pregledani ili sva njihova funkcionalnost izvedena. Verzije nastavnog programa/kalendara, cjelovita financijska knjiga, sva PDS pravila, priznavanje, završetak i službeno pečatiranje i dalje nisu proglašeni dovršenima.
+
+## Domene, centralni portal i fakultetski rasporedi — 9. studenoga 2026.
+
+- Centralni portal na glavnoj domeni `/admin`, Administracija studija na `/admin/studiji`, Administracija sustava na `/admin/sustav`. Produkcijske stare poddomene tih modula preusmjeravaju na nove putanje.
+- Referada ostaje zasebno na `referada.isvu.me`. Jedina korisnikova referadska ustanova otvara se automatski; za više ustanova traži se izbor. Nastavnička članstva ne nude se kao referadska ovlast.
+- Jedinstvene oznake `url_slug`, početno iz postojeće kratice, služe adresama `raspored.isvu.me/ufzg`, `/geofzg` itd. Oznaka se može urediti u postavkama ustanove i ostaje stabilna pri promjeni naziva.
+- Sačuvana oznaka fakulteta pri prijavi, promjeni prikaza i povratku nakon izmjene rasporeda. Ne uvodi se javni pristup privatnim akademskim podacima. Query/Host manipulacije ne prelaze granicu ustanove.
+- Dodana migracija `202611090001_institution_routes.sql`; broj aplikacijskih RLS tablica ostaje 33. Nova zadana roditeljska domena u runtime konfiguraciji i `.env.example` je `isvu.me`; Vercel postojeća varijabla mora se uskladiti ručno.
+- 48 jediničnih testova i čista instalacija SQL-a prolaze. Šest novih integracijskih scenarija prolazi, uključujući stvarni Chromium tok prijave i fakultetskog rasporeda. Typecheck i webpack build prolaze. Nakon promjene usmjeravanja prolaze i 19 Auth/SSO te 16 akademskih DB/HTTP regresijskih scenarija.
+- Korisnik je odobrio slanje ove iteracije na GitHub radi Vercel objave. Javne Vercel/DNS/Supabase Auth postavke agent nije mijenjao; završni status objave i primjena nove migracije nisu ovdje potvrđeni. Točna konfiguracija i granice lokalnog testa: [docs/DOMENE-ISVU.md](docs/DOMENE-ISVU.md).

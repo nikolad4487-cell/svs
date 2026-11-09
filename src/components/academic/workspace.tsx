@@ -1,3 +1,4 @@
+import { facultyUrl } from "@/lib/routes";
 import { academicData } from "@/lib/academic/data";
 import { navigation } from "@/lib/context";
 import type { ModuleSlug } from "@/lib/modules";
@@ -22,6 +23,7 @@ export async function AcademicWorkspace({
   courseId,
   academicYear,
   studentId,
+  faculty,
 }: {
   module: ModuleSlug;
   view: string;
@@ -31,8 +33,12 @@ export async function AcademicWorkspace({
   courseId?: string;
   academicYear?: string;
   studentId?: string;
+  faculty?: string;
 }) {
-  const data = await academicData(institution);
+  const data = await academicData(institution, {
+    faculty: module === "raspored" ? faculty : undefined,
+    staffOnly: module === "referada",
+  });
   if (!data)
     return (
       <Empty>
@@ -40,6 +46,20 @@ export async function AcademicWorkspace({
       </Empty>
     );
   const url = await navigation();
+  if (module === "referada" && !institution && data.institutions.length > 1)
+    return (
+      <div>
+        <p className="mb-5">
+          Imate ovlasti na više ustanova. Odaberite ustanovu za rad u referadi.
+        </p>
+        <InstitutionPicker
+          data={data}
+          base={url(module)}
+          view={view}
+          requireSelection
+        />
+      </div>
+    );
   const sections: Record<string, AcademicAction[]> = {
     Pregled: ["program"],
     "Studijski programi": ["program"],
@@ -53,7 +73,28 @@ export async function AcademicWorkspace({
   };
   return (
     <div>
-      <InstitutionPicker data={data} base={url(module)} view={view} />
+      {module === "raspored" && faculty ? (
+        <p className="mb-6 rounded-lg bg-blue-50 p-4">
+          Raspored ustanove: <strong>{data.institution.name}</strong>
+        </p>
+      ) : (
+        <InstitutionPicker data={data} base={url(module)} view={view} />
+      )}
+      {module === "raspored" && !faculty && (
+        <div className="mb-6 flex flex-wrap gap-3">
+          {data.institutions
+            .filter((i) => i.url_slug)
+            .map((i) => (
+              <a
+                className="text-sm text-blue-700 underline"
+                key={i.id}
+                href={facultyUrl(url("raspored"), i.url_slug!)}
+              >
+                {i.name}
+              </a>
+            ))}
+        </div>
+      )}
       {(module === "admin" || module === "isvu") && data.manager && (
         <p className="mb-6 rounded-lg bg-blue-50 p-4 text-sm text-blue-900">
           Upravljate podacima ustanove: <strong>{data.institution.name}</strong>

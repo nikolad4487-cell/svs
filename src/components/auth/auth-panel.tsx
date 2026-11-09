@@ -1,5 +1,6 @@
 import { supabaseConfig } from "@/lib/supabase/config";
 import { identity } from "@/lib/auth/access";
+import { facultyUrl, validFaculty } from "@/lib/routes";
 import { safeModule } from "@/lib/auth/policy";
 import { navigation } from "@/lib/context";
 import { Field, Submit } from "./forms";
@@ -15,7 +16,8 @@ const statuses: Record<string, string> = {
   "signed-out": "Odjavljeni ste.",
   "password-changed": "Lozinka je promijenjena. Ponovno se prijavite.",
   saved: "Promjene su spremljene.",
-  "temporary-password": "Prije pristupa studiju promijenite dodijeljenu privremenu lozinku.",
+  "temporary-password":
+    "Prije pristupa studiju promijenite dodijeljenu privremenu lozinku.",
   verified: "E-adresa je potvrđena. Postavite novu lozinku.",
 };
 export function ConfigNotice() {
@@ -35,22 +37,30 @@ export async function AuthPanel({
   mode = "login",
   status = "",
   next,
+  faculty,
 }: {
   mode?: string;
   status?: string;
   next?: string;
+  faculty?: string;
 }) {
   if (!supabaseConfig()) return <ConfigNotice />;
   const account = await identity();
   const url = await navigation();
   const target = safeModule(next);
-  const selected = account?.user.app_metadata?.svs_password_change_required === true ? "password" : ["signup", "reset", "password", "account"].includes(mode)
-    ? mode
-    : "login";
+  const nextFaculty =
+    target === "raspored" && validFaculty(faculty) ? faculty : undefined;
+  const selected =
+    account?.user.app_metadata?.svs_password_change_required === true
+      ? "password"
+      : ["signup", "reset", "password", "account"].includes(mode)
+        ? mode
+        : "login";
   const authLink = (view: string) => {
     const u = new URL(url("auth"));
     u.searchParams.set("mode", view);
     u.searchParams.set("next", target);
+    if (nextFaculty) u.searchParams.set("faculty", nextFaculty);
     return u.toString();
   };
   if (account && (selected === "login" || selected === "account")) {
@@ -70,7 +80,9 @@ export async function AuthPanel({
           {account.user.email} · E-adresa potvrđena
         </p>
         <a
-          href={url(target)}
+          href={
+            nextFaculty ? facultyUrl(url(target), nextFaculty) : url(target)
+          }
           className="inline-block font-semibold text-blue-700"
         >
           Nastavi u modul →
@@ -189,6 +201,9 @@ export async function AuthPanel({
         className="mt-7 space-y-5"
       >
         <input type="hidden" name="next" value={target} />
+        {nextFaculty && (
+          <input type="hidden" name="faculty" value={nextFaculty} />
+        )}
         {selected === "signup" && (
           <Field
             label="Ime i prezime"

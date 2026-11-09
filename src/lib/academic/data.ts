@@ -10,18 +10,34 @@ import type {
 } from "./registrar";
 import type { ExamState } from "./exam-workflow";
 import type { CompletionState } from "./enrollment-completion";
-export async function academicData(institutionId?: string) {
+export async function academicData(
+  institutionId?: string,
+  options: { faculty?: string; staffOnly?: boolean } = {},
+) {
   const account = await requireIdentity();
   const institutions = await account.db
     .from("institutions")
     .select("*")
     .order("name");
   if (institutions.error) throw new Error("Ustanove nisu dostupne.");
-  const available = institutions.data as M.Institution[];
-  const institution = institutionId
-    ? available.find((i) => i.id === institutionId)
-    : available[0];
-  if (institutionId && !institution) notFound();
+  const available = (institutions.data as M.Institution[]).filter(
+    (i) =>
+      !options.staffOnly ||
+      account.superadmin ||
+      account.memberships.some(
+        (m) =>
+          m.institution_id === i.id &&
+          ["institution_admin", "registrar"].includes(m.role),
+      ),
+  );
+  const institution = options.faculty
+    ? available.find((i) => i.url_slug === options.faculty)
+    : institutionId
+      ? available.find((i) => i.id === institutionId)
+      : available[0];
+  if ((institutionId || options.faculty) && !institution) notFound();
+  if (options.faculty && institutionId && institution?.id !== institutionId)
+    notFound();
   if (!institution) return null;
   const id = institution.id;
   const table = async <T>(name: string) => {

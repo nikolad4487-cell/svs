@@ -22,6 +22,8 @@ LMS i napredni zahtjevi/dokumenti referade slijede u idućim fazama. Modul e-uč
 
 **Studentska referada:** sve vrste upisa provodi referada kroz pripremu, provjeru i izradu upisnog lista. Dostupni su dosjei, službeni godišnji podaci, studentski početni pristup bez e-pošte, uvoz, grupe i postojeće studentske evidencije. Studomat prikazuje vlastite službene podatke bez mogućnosti upisa. [Radni postupak i migracija](docs/REFERADA.md) · [Pregled dostavljenih uputa](docs/ISVU-PRILOZI-REFERADA.md).
 
+**Domene i fakultetski raspored:** portal je na `isvu.me/admin`, administracija studija na `/admin/studiji`, a sustava na `/admin/sustav`. Referada koristi `referada.isvu.me` i ovlasti korisnika za automatski odabir ustanove. Raspored koristi oznaku ustanove, npr. `raspored.isvu.me/ufzg`. [Migracija, DNS, Vercel i Supabase postavke](docs/DOMENE-ISVU.md).
+
 ## Pokretanje
 
 Node.js 24 i npm:
@@ -72,7 +74,7 @@ Vercelove točne platformom zadane adrese (`VERCEL_URL`, `VERCEL_PROJECT_PRODUCT
 
 ## Vlastita domena i HTTPS
 
-1. Postavite `BASE_DOMAIN=domena.hr` bez protokola, porta ili putanje.
+1. Postavite `BASE_DOMAIN=isvu.me` bez protokola, porta ili putanje.
 2. U Vercel Domains dodajte glavnu domenu, `www` i svaku poddomenu, ili glavnu domenu i `*.domena.hr`.
 3. Unesite konkretne DNS zapise koje Vercel prikaže. Za wildcard certifikat slijedite Vercelove zahtjeve, u pravilu delegaciju nameservera. Ako delegacija nije moguća, dodajte pojedinačne poddomene.
 4. Sve domene moraju pripadati istom Vercel projektu. Vercel omogućuje HTTPS nakon provjere DNS-a. Aplikacija ne registrira domene i ne mijenja DNS.

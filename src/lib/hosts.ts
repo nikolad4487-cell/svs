@@ -1,3 +1,4 @@
+import { centralPath } from "./routes";
 import { isModule, type ModuleSlug } from "./modules";
 export type HostResult = {
   module: ModuleSlug | "home";
@@ -57,6 +58,9 @@ export function moduleUrl(
   const protocol = host.local ? "http" : "https";
   if (host.singleDomain || (fallback && host.local))
     return `${protocol}://${host.base}${host.port}/${target === "home" ? "" : `?module=${target}`}`;
+  const central = centralPath(target);
+  if (central && !host.local)
+    return `${protocol}://${host.base}${host.port}${central}`;
   return `${protocol}://${target === "home" ? "" : `${target}.`}${host.base}${host.port}`;
 }
 
