@@ -47,11 +47,21 @@ button {
   background: #bfdbfe;
 }
 .learning-surface { font-family: Arial, Helvetica, sans-serif; }
-.learning-surface .bg-blue-700 { background-color: #dd6b20; }
-.learning-surface .hover\:bg-blue-800:hover { background-color: #c05621; }
-.learning-surface input, .learning-surface select, .learning-surface textarea { accent-color: #ea580c; }
-.learning-surface summary::marker { color: #ea580c; }
-.learning-surface progress { accent-color: #ea580c; }
+ .learning-surface input, .learning-surface select, .learning-surface textarea { accent-color: #0969bc; }
+.learning-surface summary::marker { color: #0969bc; }
+.learning-surface progress { accent-color: #0969bc; }
+.learning-rich p + p { margin-top: .65rem; }
+.learning-rich h2, .learning-rich h3 { font-weight: 700; margin: 1rem 0 .5rem; line-height: 1.4; }
+.learning-rich h2 { font-size: 1.3rem; }
+.learning-rich h3 { font-size: 1.1rem; }
+.learning-rich ul { list-style: disc; padding-left: 1.5rem; }
+.learning-rich ol { list-style: decimal; padding-left: 1.5rem; }
+.learning-rich blockquote { border-left: 3px solid #94a3b8; padding-left: 1rem; margin: .75rem 0; }
+.learning-rich pre { overflow-x: auto; background: #e8edf4; color: #172033; padding: 1rem; border-radius: .5rem; }
+.learning-rich a { color: #0969bc; text-decoration: underline; }
+.learning-rich hr { margin: 1rem 0; border-color: #cbd5e1; }
+.learning-dialog { max-height: min(85vh, 800px); overflow-y: auto; }
+.learning-surface [id] { scroll-margin-top: 6rem; }
 
 @media print {
   aside, nav, header, form, button, .print\:hidden { display: none !important; }

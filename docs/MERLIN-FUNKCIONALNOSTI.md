@@ -1,27 +1,31 @@
-# Merlin unutar ISVU-a: izvedeni opseg i sljedeće nadogradnje
+# Merlin: izvedene funkcije i preostali Moodle postupci
 
-Korisnik želi funkcije i preglednost sustava poput Moodlea unutar vlastite aplikacije. Ova iteracija donosi stvarne nove prikaze i osnovne kvizove, ali nije instalacija Moodlea niti potpuna zamjena za sve njegove module/dodatke.
+Vlastiti ISVU modul nadograđen je prema korisnikovim slikama i priloženom **Moodle_prirucnik_sve_uloge_HR.pdf** (21 stranica, neslužbeni praktični vodič, studeni 2026.). Dokument i slike služe kao funkcionalna referenca. Ovo nije instalacija Moodlea ni implementacija svih njegovih dodataka.
 
 | Područje | Izvedeno | Preostalo |
 |---|---|---|
-| Radni prostor | Zaseban Merlin izgled, mobilna navigacija, kartice kolegija, pretraživanje, ustanova/godina, omiljeni na uređaju | Omiljeni i postavke sinkronizirani među uređajima, personalizirani blokovi |
-| Pristup | Ista ISVU prijava, stvarni kolegiji, aktivni studentski upisi i nastavničke dodjele | Gosti i samostalni upisi prema pravilima ustanove |
-| Organizacija | Pregled kolegija, izbornik aktivnosti, odvojeni materijali/zadaci/kvizovi | Nastavne teme/tjedni, povlačenje redoslijeda, preduvjeti i uvjetna dostupnost aktivnosti |
-| Materijali | Tekst, HTTPS poveznice, slike, video i privatni dokumenti; nacrti i objava | Bogati uređivač teksta, višestranične lekcije, uređivanje medija |
-| Zadaci | Upute i privitci, rokovi, zakašnjenja, tekstualne predaje/poveznice, bodovi i komentari | Izravni privitci studentskih radova, grupne predaje, rubrike, više verzija i označavanje PDF-a |
-| Kvizovi | 1–20 pitanja s jednim točnim odgovorom, 2–6 opcija, ponderirani bodovi, datumi dostupnosti, jedan pokušaj, server bodovanje i privatni rezultati | Banka i kategorije pitanja, slučajni odabir, više točnih odgovora, kratki odgovori, eseji, numerička pitanja, odbrojavanje, autosave, više pokušaja i povijest |
-| Bodovi | Pregled zadataka i kvizova; student vidi svoje, osoblje svoj kolegij | Ponderirana završna ocjena kolegija, skale, kategorije, ručne stavke, izvoz i kontrolirana sinkronizacija sa službenim ispitima |
-| Napredak | Stvarni broj predanih zadataka | Praćenje čitanja, dovršenost aktivnosti, uvjeti završetka kolegija, značke i certifikati |
-| Rokovi | Datumi zadataka i otvaranja/zatvaranja kvizova u kolegiju | Mjesečni kalendar, događaji i pregled svih kolegija, podsjetnici |
-| Komunikacija | Povratna informacija uz zadatak | Forumi, rasprave, objave unutar LMS-a, privatne poruke i moderiranje |
-| Sadržaj i integracije | Stabilni ISVU identifikatori i opcionalna Gnomio poveznica | Moodle API/SSO, uvoz/izvoz tečaja, SCORM, H5P, LTI i dodaci |
+| Osobna stranica | Kartice/popis, pretraga, ustanova/godina, poredak, omiljeni na uređaju, vremenska crta stvarnih rokova | Sinkronizacija osobnih postavki, prilagodljivi blokovi, obavijesti |
+| Pristup | ISVU prijava, stvarni kolegiji, aktivni studentski upisi i nastavničke dodjele | Gosti, kohorte, dodatne kontekstne uloge |
+| Organizacija | Indeks, sklopive cjeline, opis, skrivanje, strelice za redoslijed cjelina i miješanih aktivnosti, premještanje aktivnosti, brisanje praznih cjelina | Tjedni format s datumima, povlačenje mišem, preduvjeti i uvjetna dostupnost |
+| Uređivanje | Prekidač za ovlašteno osoblje; dijalog aktivnosti s pretragom i filtrima | Skupne radnje, dupliciranje, koš i vraćanje obrisanih aktivnosti |
+| Resursi | Datoteka, mapa privitaka, stranica, tekst i mediji, HTTPS poveznica; slike/video/privatni dokumenti | Podmape, knjiga i višestranična lekcija, snimanje zvuka/videa |
+| Tekst | Uređivač oblikovanja, naslovi/popisi/citati/poveznice/poništavanje, siguran strukturirani prikaz | Tablice, ugrađene slike u tekstu, formule i napredni medijski uređivač |
+| Zadaci | Oblikovane upute, nastavnički privitci, rokovi/zakašnjenja, studentske tekstualne predaje/poveznice, bodovi/komentari | Studentski prijenos datoteka, nacrt/konačna predaja, grupni rad, rubrike, verzije i PDF anotacije |
+| Kvizovi | 1–20 pitanja s jednim točnim odgovorom, 2–6 opcija, bodovi, datumi, jedan pokušaj, serversko bodovanje i privatni rezultati | Banka pitanja, druge vrste, slučajni odabir, odbrojavanje, autosave, više pokušaja |
+| Bodovi | Zajednički pregled zadataka i kvizova; vlastiti rezultati studenta, kolegij nastavnika | Ponderi, kategorije ocjena, skale, ručne stavke i izvoz |
+| Napredak | Broj predanih zadataka i postojeći rezultati | Dovršenost, uvjeti završetka, značke i certifikati |
+| Komunikacija | Povratne informacije uz zadatak | Forumi, objave, poruke, moderiranje i radionice |
+| Administracija | Službeni ISVU kolegiji, ustanove, godine, nastavnici i upisi u postojećoj administraciji/referadi | Zasebna hijerarhija LMS kategorija, CSV uvoz kolegija i administracija prema Moodle prikazima |
+| Integracije | Stabilni ISVU identifikatori, opcionalna Gnomio poveznica | Moodle API/SSO, .mbz arhive, SCORM, H5P, IMS, LTI i drugi dodaci |
 
-## Nova migracija
+## Pokrivenost dostavljenih slika
 
-`202611100001_learning_quizzes.sql` primijeniti nakon ranijih ISVU/Merlin migracija. Dodaje četiri tablice s RLS-om. Ključ odgovora odvojen je od studentski dostupnih pitanja, a objava, dostupnost, revizija, broj pokušaja i bodovanje provjeravaju se na serveru. Ne mijenja službene ispitne ocjene, ECTS, poštu ili Gnomio račune.
+Osobna stranica odgovara primjeru pregleda kolegija i rokova. Prikaz kolegija prati indeks, sklopive cjeline, način uređivanja i dijalog aktivnosti. Oblikovani uređivač koristi se u materijalima i uputama zadataka. Administracija kategorija, CSV uvoz, višestranične lekcije i ostale vrste iz Moodleova izbornika ostaju zasebne nadogradnje; njihove nefunkcionalne tipke nisu dodane.
 
-## Provjere ove iteracije
+Upis svih vrsta studenata ostaje u referadi. Dodavanje nastavne aktivnosti ne dodaje studentski upis i ne stvara novi službeni kolegij. Bodovi e-učenja ne mijenjaju službene ispitne ocjene ni ECTS.
 
-57 jediničnih testova, TypeScript provjera i produkcijska webpack izgradnja. Nova SQL instalacija ima 41 aplikacijsku tablicu s RLS-om. Osam novih DB/HTTP/Chromium scenarija provjerava ovlasti, skriveni ključ odgovora, datume, istodobne predaje, bodovanje, privatnost vršnjaka, zaključavanje pitanja, izradu/rješavanje u pregledniku, filtre, omiljene i mobilni raspored. Prolaze i raniji testovi privitaka, predaja, prijave i domena.
+## Migracije i provjere
 
-Snimke izgleda izrađene su lokalno s testnim računima i aktivnostima. Testovi ne stvaraju produkcijske račune, ne objavljuju stvarne studentske rezultate i ne predstavljaju potvrdu završene Vercel objave.
+Nova migracija **`202611100002_learning_sections.sql`** primjenjuje se nakon **`202611100001_learning_quizzes.sql`** u ISVU projektu. Postojeći sadržaj nije obrisan; bez migracije ostaju dostupne prethodne kartice sadržaja, uz obavijest ovlaštenom osoblju.
+
+Provjere: jedinični testovi, TypeScript, produkcijska izgradnja, čista SQL instalacija sa 42 RLS tablice, testovi osnovnog e-učenja, privitaka, kvizova i cjelina. Testovi rade s lokalnim računima i privremenim sadržajem. Snimke služe za pregled izgleda; ne potvrđuju dovršenu Vercel objavu ni stanje produkcijskih migracija.

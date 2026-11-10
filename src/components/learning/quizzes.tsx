@@ -5,7 +5,17 @@ import { CircleHelp, CheckCircle2 } from "lucide-react";
 import { QuizEditor } from "./quiz-editor";
 import { QuizAttemptForm } from "./quiz-attempt";
 type Data = NonNullable<Awaited<ReturnType<typeof learningData>>>;
-export function CourseQuizzes({ data }: { data: Data }) {
+export function CourseQuizzes({
+  data,
+  create,
+  sectionId,
+  editing,
+}: {
+  data: Data;
+  create?: boolean;
+  sectionId?: string;
+  editing?: boolean;
+}) {
   const {
     course,
     quizzes,
@@ -40,13 +50,21 @@ export function CourseQuizzes({ data }: { data: Data }) {
           Provjerite znanje i pregledajte rezultate svojih aktivnosti.
         </p>
       </div>
-      {course.can_manage && (
-        <details className="rounded-2xl border border-dashed border-orange-300 bg-white p-6">
+      {editing && (
+        <details
+          open={create}
+          className="rounded-2xl border border-dashed border-blue-300 bg-white p-6"
+        >
           <summary className="cursor-pointer font-semibold text-orange-800">
             Dodaj kviz
           </summary>
           <div className="mt-6">
-            <QuizEditor courseId={course.id} />
+            <QuizEditor
+              courseId={course.id}
+              sections={data.sections}
+              sectionsReady={data.sectionsReady}
+              sectionId={sectionId}
+            />
           </div>
         </details>
       )}
@@ -70,6 +88,7 @@ export function CourseQuizzes({ data }: { data: Data }) {
         return (
           <article
             key={quiz.id}
+            id={quiz.id}
             className="overflow-hidden rounded-2xl border border-slate-200 bg-white"
           >
             <div className="space-y-4 p-6">
@@ -141,25 +160,30 @@ export function CourseQuizzes({ data }: { data: Data }) {
               ) : null}
               {course.can_manage && (
                 <>
-                  <details className="border-t border-slate-200 pt-4">
-                    <summary className="cursor-pointer text-sm font-semibold text-slate-500">
-                      Uredi kviz
-                    </summary>
-                    <div className="mt-5">
-                      <QuizEditor
-                        courseId={course.id}
-                        quiz={quiz}
-                        initialQuestions={questions.map((q) => ({
-                          prompt: q.prompt,
-                          choices: q.choices,
-                          points: q.points,
-                          correct_index:
-                            quizKeys.find((k) => k.question_id === q.id)
-                              ?.correct_index ?? 0,
-                        }))}
-                      />
-                    </div>
-                  </details>
+                  {editing && (
+                    <details className="border-t border-slate-200 pt-4">
+                      <summary className="cursor-pointer text-sm font-semibold text-slate-500">
+                        Uredi kviz
+                      </summary>
+                      <div className="mt-5">
+                        <QuizEditor
+                          courseId={course.id}
+                          quiz={quiz}
+                          sections={data.sections}
+                          sectionsReady={data.sectionsReady}
+                          sectionId={quiz.section_id}
+                          initialQuestions={questions.map((q) => ({
+                            prompt: q.prompt,
+                            choices: q.choices,
+                            points: q.points,
+                            correct_index:
+                              quizKeys.find((k) => k.question_id === q.id)
+                                ?.correct_index ?? 0,
+                          }))}
+                        />
+                      </div>
+                    </details>
+                  )}
                   <details className="border-t border-slate-200 pt-4">
                     <summary className="cursor-pointer text-sm font-semibold text-slate-500">
                       Rezultati studenata ({attempts.length})

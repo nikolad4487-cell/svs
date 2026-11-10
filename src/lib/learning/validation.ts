@@ -60,6 +60,10 @@ export const learningSchemas = {
   }),
 };
 export const learningErrors: Record<string, string> = {
+  file_required:
+    "Resurs Datoteka mora imati dovršen privitak prije objave. Odaberite datoteku ili najprije spremite nacrt.",
+  section_not_empty:
+    "Cjelina sadrži aktivnosti. Premjestite ih u drugu cjelinu prije brisanja.",
   quiz_locked:
     "Nakon prve predaje pitanja, odgovori i bodovi kviza više se ne mijenjaju. Za novu provjeru izradite novi kviz.",
   quiz_closed: "Kviz još nije otvoren ili je rok za predaju završio.",

@@ -45,6 +45,7 @@ export async function POST(
       ].includes(String(view))
     )
       target.searchParams.set("view", String(view));
+    if (form.get("return_edit") === "1") target.searchParams.set("edit", "1");
     let result: { status: string; id?: string; revision?: number };
     try {
       result = await learningMutation((await params).action, form);

@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { Search, Star, ArrowUpRight, BookOpen } from "lucide-react";
 import type { LearningCourse } from "@/lib/learning/model";
 const covers = [
-  "from-slate-900 via-indigo-900 to-indigo-600",
-  "from-emerald-900 via-teal-800 to-teal-500",
-  "from-violet-950 via-purple-800 to-fuchsia-500",
-  "from-blue-950 via-sky-800 to-cyan-500",
-  "from-orange-950 via-orange-800 to-amber-500",
+  "from-indigo-400 via-indigo-300 to-violet-200",
+  "from-teal-600 via-teal-400 to-emerald-200",
+  "from-violet-600 via-purple-400 to-fuchsia-200",
+  "from-blue-600 via-sky-400 to-cyan-200",
+  "from-orange-600 via-orange-400 to-amber-200",
 ];
 export function CourseCatalogue({
   courses,
@@ -20,6 +20,9 @@ export function CourseCatalogue({
 }) {
   const [query, setQuery] = useState(""),
     [institution, setInstitution] = useState(""),
+    [year, setYear] = useState(""),
+    [sort, setSort] = useState("name"),
+    [layout, setLayout] = useState("cards"),
     [onlyStars, setOnlyStars] = useState(false),
     [stars, setStars] = useState<string[]>([]);
   const key = `merlin-favourites:${userId}`;
@@ -44,14 +47,25 @@ export function CourseCatalogue({
       courses.map((c) => [c.institution_id, c.institution_name]),
     ).entries(),
   ];
-  const visible = courses.filter(
-    (c) =>
-      (!institution || c.institution_id === institution) &&
-      (!onlyStars || stars.includes(c.id)) &&
-      `${c.name} ${c.code} ${c.institution_name} ${c.academic_year_name}`
-        .toLocaleLowerCase("hr")
-        .includes(query.toLocaleLowerCase("hr")),
-  );
+  const visible = courses
+    .filter(
+      (c) =>
+        (!institution || c.institution_id === institution) &&
+        (!year || c.academic_year_name === year) &&
+        (!onlyStars || stars.includes(c.id)) &&
+        `${c.name} ${c.code} ${c.institution_name} ${c.academic_year_name}`
+          .toLocaleLowerCase("hr")
+          .includes(query.toLocaleLowerCase("hr")),
+    )
+    .sort((a, b) =>
+      sort === "year"
+        ? b.academic_year_name.localeCompare(a.academic_year_name, "hr") ||
+          a.name.localeCompare(b.name, "hr")
+        : sort === "institution"
+          ? a.institution_name.localeCompare(b.institution_name, "hr") ||
+            a.name.localeCompare(b.name, "hr")
+          : a.name.localeCompare(b.name, "hr"),
+    );
   return (
     <section className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -66,6 +80,20 @@ export function CourseCatalogue({
         </span>
       </div>
       <div className="flex flex-wrap gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+        <select
+          aria-label="Akademska godina"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          className="max-w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+        >
+          <option value="">Sve godine</option>
+          {[...new Set(courses.map((c) => c.academic_year_name))]
+            .sort()
+            .reverse()
+            .map((y) => (
+              <option key={y}>{y}</option>
+            ))}
+        </select>
         <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl bg-slate-50 px-4">
           <Search size={18} className="text-slate-400" />
           <input
@@ -89,6 +117,25 @@ export function CourseCatalogue({
             </option>
           ))}
         </select>
+        <select
+          aria-label="Poredak kolegija"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="max-w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+        >
+          <option value="name">Prema nazivu</option>
+          <option value="year">Prema godini</option>
+          <option value="institution">Prema ustanovi</option>
+        </select>
+        <select
+          aria-label="Prikaz kolegija"
+          value={layout}
+          onChange={(e) => setLayout(e.target.value)}
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+        >
+          <option value="cards">Kartice</option>
+          <option value="list">Popis</option>
+        </select>
         <button
           type="button"
           aria-pressed={onlyStars}
@@ -110,7 +157,13 @@ export function CourseCatalogue({
           </p>
         </div>
       )}
-      <div className="grid gap-6 sm:grid-cols-2 2xl:grid-cols-3">
+      <div
+        className={
+          layout === "cards"
+            ? "grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            : "space-y-3"
+        }
+      >
         {visible.map((c, i) => {
           const href = new URL(base);
           href.searchParams.set("course", c.id);
@@ -118,10 +171,10 @@ export function CourseCatalogue({
           return (
             <article
               key={c.id}
-              className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              className={`group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${layout === "list" ? "sm:grid sm:grid-cols-[160px_minmax(0,1fr)]" : ""}`}
             >
               <div
-                className={`relative flex h-36 items-end overflow-hidden bg-gradient-to-br ${covers[c.code.charCodeAt(0) % covers.length]} p-5 text-white`}
+                className={`relative flex h-32 items-end overflow-hidden bg-gradient-to-br ${covers[c.code.charCodeAt(0) % covers.length]} p-5 text-white`}
               >
                 <span className="absolute -right-7 -top-12 h-44 w-44 rotate-12 rounded-[40px] border-[22px] border-white/10" />
                 <span className="absolute right-20 top-16 h-24 w-24 rounded-full border-[14px] border-white/10" />

@@ -81,3 +81,23 @@ ISVU korisničko ime koje izgleda kao adresa nije samo po sebi sandučić. Za ra
 `npm test`, `npm run typecheck`, `npm run build -- --webpack`, `npm run db:test:migrate`, `npm run test:migrations`, `npm run test:learning`, `npm run test:learning-files` i `npm run test:learning-quizzes`. Lightweight testni profil uključuje službeni Supabase Storage servis (`node scripts/local-storage.mjs`); pristupnik treba uključivati `/storage/v1` rutu. Nova puna lokalna instalacija pokreće Storage prije aplikacijskih migracija.
 
 Integracijska skripta koristi samo lokalni Supabase i testne račune te uklanja svoje privremene zapise. Opcionalni `WORKFLOW_PLAYWRIGHT_MODULE` uključuje stvarni Chromium postupak objave, predaje i povratne informacije. Produkcijski računi, pošta i Moodle ne mijenjaju se ovim testovima.
+
+## Cjeline i uređivanje prema priloženim primjerima (10. 11. 2026.)
+
+Nakon ranijih migracija primijeniti **`202611100002_learning_sections.sql`** u ISVU projektu `wjxmyxxwqspwswfwjpdn`. Ova migracija zahtijeva prethodnu migraciju kvizova `202611100001_learning_quizzes.sql`. Na postojećoj bazi izvršavati nove migracije, a ne cijeli `supabase/setup.sql`. Ako nedostaje `public.courses`, provjeriti da je otvoren ISVU projekt, a ne projekt e-Matice/e-Dnevnika.
+
+1. Otvorite **Merlin → kolegij → Način uređivanja**. Tipka je dostupna samo ovlaštenom osoblju kolegija.
+2. **Dodaj cjelinu** stvara nastavnu temu s nazivom, opisom i vidljivošću. Postojeći sadržaj ostaje u **Općenito**.
+3. U cjelini odaberite **Dodaj aktivnost ili resurs**. Pretraživanje i filtri nude Datoteku, Mapu, Stranicu, Tekst i medije, Poveznicu, Zadaću i Kviz. Kviz se nudi kada je primijenjena njegova migracija.
+4. Cjelina je unaprijed odabrana u obrascu. Tekst materijala i upute zadataka imaju oblikovanje, naslove, popise, citate, HTTPS poveznice i poništavanje izmjena. Privitci se dodaju postojećim izravnim prijenosom.
+5. **Tekst i mediji** prikazuju sadržaj izravno u cjelini; druge vrste vode na puni sadržaj. Resurs **Datoteka** prije objave zahtijeva dovršen privitak. **Poveznica** zahtijeva HTTPS URL. **Mapa** okuplja privitke, bez podmapa.
+6. Strelice pomiču cjeline i aktivnosti. Promjena cjeline u obrascu premješta aktivnost zajedno s privitcima i postojećim predajama/rezultatima. Brisanje je dopušteno samo za praznu cjelinu.
+7. Isključite način uređivanja za pregled sadržaja bez uređivačkih kontrola. Osoblje i dalje vidi nacrte i skrivene cjeline; ovo nije simulacija studentske uloge. Student vidi samo objavljeni sadržaj u vidljivim cjelinama i nema prekidač uređivanja.
+
+Indeks povezuje cjeline i pojedine aktivnosti. Skrivanje cjeline provjerava se kroz RLS za materijale, zadatke, kvizove, pitanja i datoteke te kroz poslužitelj pri predaji. Vlastite ranije predaje i rezultati ostaju u povijesti bodova. Već izdana kratkotrajna poveznica datoteke vrijedi do svojeg isteka (najviše pet minuta).
+
+Početna stranica ima kartice ili popis, pretragu, filtre ustanove/godine, poredak naziva/godine/ustanove te vremensku crtu datuma zadataka i kvizova iz dostupnih kolegija. Vremenska crta ne označava dovršenost aktivnosti niti šalje podsjetnike.
+
+Strukturirani tekst sprema se kao ograničeni JSON uz obični tekst. Prikaz sastavlja sigurne React elemente i ne izvršava proizvoljan HTML. Stariji sadržaj prikazuje se bez izmjena. Stariji klijent koji mijenja obični tekst uklanja zastarjelu oblikovanu verziju. Nova migracija ne stvara studentske upise, ne mijenja službene ocjene i ne dodaje Moodle/PHP na Vercel.
+
+Dodatna provjera: `npm run test:learning-sections`. Obuhvaća izolaciju kolegija, revizije, skriveni sadržaj i privitke, stare RPC predaje, redoslijed, brisanje te stvarni preglednički postupak nastavnika i studenta.

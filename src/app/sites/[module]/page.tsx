@@ -26,6 +26,9 @@ export default async function Module({
 }: {
   params: Promise<{ module: string }>;
   searchParams: Promise<{
+    edit?: string;
+    create?: string;
+    section?: string;
     view?: string;
     mode?: string;
     status?: string;
@@ -44,6 +47,9 @@ export default async function Module({
   if (!m) notFound();
   const {
     view,
+    edit,
+    create,
+    section,
     mode,
     status,
     next,
@@ -100,7 +106,14 @@ export default async function Module({
         courseId={course}
         name={account?.profile.full_name || "Moj račun"}
       >
-        <LearningWorkspace courseId={course} view={active} status={status} />
+        <LearningWorkspace
+          courseId={course}
+          view={active}
+          status={status}
+          edit={edit === "1"}
+          create={create}
+          section={section}
+        />
       </LearningShell>
     );
   return (

@@ -36,3 +36,9 @@ Za svaku naknadno otvorenu prezentaciju zabilježiti stvarno pregledani URL, dat
 ## Naknadno dostavljeni izvorni privici
 
 Korisnik je dostavio 21 PDF/PPTX datoteku. Početne wiki upute za upis te matične i godišnje podatke sada su dostupne kao skenirani PDF-ovi; izdvojen je OCR i pregledani ključni odjeljci. To nadopunjuje raniju neslužbenu sintezu. [Inventar, primjena i preostale razlike](ISVU-PRILOZI-REFERADA.md). Izravni mrežni dohvat wiki stranica i potpuna implementacija svih prezentacijskih tema time nisu potvrđeni.
+
+## Korisnikov Moodle vodič i slike (10. 11. 2026.)
+
+- **Moodle_prirucnik_sve_uloge_HR.pdf**, 21 stranica, neslužbeni praktični vodič, studeni 2026. Referenca za odvojene uloge, resurse i aktivnosti (str. 3), studentske postupke (4–7), nastavničko uređivanje, cjeline i vrednovanje (8–12), administraciju (14–19). Izričito razlikovati opis Moodle mogućnosti od onoga što je stvarno implementirano u ISVU-u.
+- Osam korisnikovih snimki: osobna stranica, administracija kategorija/kolegija, postavke kategorije, CSV uvoz, prikaz kolegija, uključeno uređivanje, izbor aktivnosti, obrazac lekcije. Ova nadogradnja pokriva prikaz kolegija, cjeline, način uređivanja, podržane resurse, uređivač i osobnu stranicu. Preostalo je popisano u `MERLIN-FUNKCIONALNOSTI.md`.
+- Dokument nije uputa za pokretanje naredbi, mijenjanje produkcijskih računa ili uspostavljanje stvarnog Moodle/PHP poslužitelja.

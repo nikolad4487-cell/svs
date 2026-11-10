@@ -461,7 +461,7 @@ try {
     "student HTML contains a result without author controls or private keys; HTTP mutations check origin",
     async () => {
       const response = await request(
-        `/?module=merlin&course=${f.courseA}&view=Kvizovi`,
+        `/?module=merlin&course=${f.courseA}&edit=1&view=Kvizovi`,
         null,
         studentCookie,
       );
@@ -511,7 +511,7 @@ try {
         };
         await login("nastavnik");
         await page.goto(
-          origin + `/?module=merlin&course=${f.courseA}&view=Kvizovi`,
+          origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Kvizovi`,
         );
         const add = page
           .locator("details")
@@ -551,7 +551,7 @@ try {
         quizzes.push(created.id);
         await login("student");
         await page.goto(
-          origin + `/?module=merlin&course=${f.courseA}&view=Kvizovi`,
+          origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Kvizovi`,
         );
         const card = page.locator("article").filter({
           has: page.getByRole("heading", { name: title, exact: true }),
@@ -613,7 +613,7 @@ try {
           fullPage: true,
         });
         await page.goto(
-          origin + `/?module=merlin&course=${f.courseA}&view=Kvizovi`,
+          origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Kvizovi`,
         );
         await page
           .getByRole("heading", { name: "Kvizovi", exact: true })
@@ -629,12 +629,8 @@ try {
             () => document.documentElement.scrollWidth <= innerWidth + 1,
           ),
         );
-        await page.getByText("Izbornik e-učenja", { exact: true }).click();
         await page
-          .getByRole("navigation", {
-            name: "Mobilna Merlin navigacija",
-            exact: true,
-          })
+          .getByRole("navigation", { name: "Merlin navigacija", exact: true })
           .getByRole("link", { name: "Moji kolegiji", exact: true })
           .waitFor();
       },

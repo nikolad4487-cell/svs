@@ -444,7 +444,7 @@ try {
           .click();
         await page.waitForURL((u) => u.searchParams.get("module") === "merlin");
         await page.goto(
-          origin + `/?module=merlin&course=${f.courseA}&view=Materijali`,
+          origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Materijali`,
         );
         const card = page
           .locator("article")
@@ -562,7 +562,7 @@ try {
         );
         // Assignment instructions have a separate uploader bound to the assignment id.
         await page.goto(
-          origin + `/?module=merlin&course=${f.courseA}&view=Zadaci`,
+          origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Zadaci`,
         );
         const task = page.locator("article").filter({
           has: page.getByRole("heading", {
@@ -628,7 +628,7 @@ try {
           } else await route.continue();
         });
         await page.goto(
-          origin + `/?module=merlin&course=${f.courseA}&view=Materijali`,
+          origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Materijali`,
         );
         const materialForm = page
           .locator("form")
@@ -679,7 +679,7 @@ try {
           1,
         );
         await page.goto(
-          origin + `/?module=merlin&course=${f.courseA}&view=Zadaci`,
+          origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Zadaci`,
         );
         await page.getByText("Dodaj zadatak", { exact: true }).click();
         const assignmentForm = page
@@ -696,7 +696,7 @@ try {
         const title = `Izravni zadatak ${tag}`;
         await assignmentForm.getByLabel("Naslov zadatka").fill(title);
         await assignmentForm
-          .getByLabel("Upute za izradu")
+          .getByRole("textbox", { name: "Upute za izradu", exact: true })
           .fill("Pročitajte obje datoteke.");
         await assignmentForm.getByLabel("Objavljeno studentima").check();
         await assignmentForm

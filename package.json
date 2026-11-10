@@ -31,12 +31,16 @@
     "test:domain-routes": "node scripts/test-domain-routes.mjs",
     "test:learning": "node scripts/test-learning.mjs",
     "test:learning-files": "node scripts/test-learning-files.mjs",
-    "test:learning-quizzes": "node scripts/test-learning-quizzes.mjs"
+    "test:learning-quizzes": "node scripts/test-learning-quizzes.mjs",
+    "test:learning-sections": "node scripts/test-learning-sections.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.118.0",
+    "@tiptap/pm": "^3.33.1",
+    "@tiptap/react": "^3.33.1",
+    "@tiptap/starter-kit": "^3.33.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",

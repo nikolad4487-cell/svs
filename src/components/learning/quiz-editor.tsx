@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import type { Section } from "@/lib/learning/model";
+import { PlacementFields } from "./placement";
 import { Plus, Trash2 } from "lucide-react";
 import type { Quiz, QuizDraftQuestion } from "@/lib/learning/quizzes";
 import { zagrebInput } from "@/lib/academic/time";
@@ -15,7 +17,13 @@ export function QuizEditor({
   courseId,
   quiz,
   initialQuestions,
+  sections = [],
+  sectionsReady = false,
+  sectionId,
 }: {
+  sections?: Section[];
+  sectionsReady?: boolean;
+  sectionId?: string | null;
   courseId: string;
   quiz?: Quiz;
   initialQuestions?: QuizDraftQuestion[];
@@ -33,6 +41,11 @@ export function QuizEditor({
       <input type="hidden" name="return_view" value="Kvizovi" />
       <input type="hidden" name="id" value={quiz?.id || ""} />
       <input type="hidden" name="revision" value={quiz?.revision || 0} />
+      <PlacementFields
+        sections={sections}
+        sectionId={sectionId}
+        enabled={sectionsReady}
+      />
       <input type="hidden" name="questions" value={JSON.stringify(questions)} />
       <label className="block text-sm font-semibold">
         Naziv kviza

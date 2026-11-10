@@ -45,7 +45,9 @@ export function CourseHeader({
   data,
   base,
   view,
+  editing,
 }: {
+  editing?: boolean;
   data: Data;
   base: string;
   view: string;
@@ -61,23 +63,42 @@ export function CourseHeader({
   ];
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-indigo-800 p-6 text-white md:p-8">
-        <span className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rotate-12 rounded-[60px] border-[35px] border-white/5" />
-        <p className="relative text-xs font-semibold uppercase tracking-[.15em] text-indigo-200">
-          {c.institution_name} · {c.academic_year_name}
+      <div className="p-6 md:p-8">
+        <p className="text-xs text-slate-500">
+          {c.institution_name} / {c.academic_year_name} / {c.code}
         </p>
-        <h1 className="relative mt-3 max-w-3xl text-3xl font-bold tracking-tight md:text-4xl">
-          {c.name}
-        </h1>
-        <div className="relative mt-5 flex flex-wrap gap-2 text-xs">
-          <span className="rounded-lg bg-white/10 px-3 py-2">{c.code}</span>
-          <span className="rounded-lg bg-white/10 px-3 py-2">
-            {c.semester_name}
-          </span>
-          <span className="rounded-lg bg-orange-400/20 px-3 py-2 text-orange-100">
-            {c.can_manage ? "Nastavnički prostor" : "Upisani kolegij"}
-          </span>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+            {c.name}
+          </h1>
+          {c.can_manage &&
+            (() => {
+              const toggle = new URL(courseLink(base, c.id, view));
+              if (editing) toggle.searchParams.delete("edit");
+              else toggle.searchParams.set("edit", "1");
+              return (
+                <a
+                  href={toggle.toString()}
+                  role="switch"
+                  aria-checked={!!editing}
+                  className="flex items-center gap-3 text-sm font-medium"
+                >
+                  Način uređivanja
+                  <span
+                    className={`relative inline-block h-6 w-11 rounded-full ${editing ? "bg-blue-700" : "bg-slate-300"}`}
+                  >
+                    <span
+                      className={`absolute top-1 h-4 w-4 rounded-full bg-white ${editing ? "right-1" : "left-1"}`}
+                    />
+                  </span>
+                </a>
+              );
+            })()}
         </div>
+        <p className="mt-3 text-sm text-slate-500">
+          {c.semester_name} ·{" "}
+          {c.can_manage ? "Nastavnički prostor" : "Upisani kolegij"}
+        </p>
       </div>
       <nav
         aria-label="Aktivnosti kolegija"
@@ -87,7 +108,7 @@ export function CourseHeader({
           <a
             key={tab}
             href={courseLink(base, c.id, tab)}
-            className={`shrink-0 border-b-[3px] py-4 text-sm font-semibold ${view === tab ? "border-orange-500 text-orange-700" : "border-transparent text-slate-500 hover:text-slate-800"}`}
+            className={`shrink-0 border-b-[3px] py-4 text-sm font-semibold ${view === tab ? "border-blue-600 text-blue-700" : "border-transparent text-slate-500 hover:text-slate-800"}`}
             aria-current={view === tab ? "page" : undefined}
           >
             {tab === "Moji kolegiji" ? "Kolegij" : tab}

@@ -1,3 +1,4 @@
+import type { RichNode } from "./rich-text";
 export type LearningCourse = {
   id: string;
   institution_id: string;
@@ -9,7 +10,19 @@ export type LearningCourse = {
   can_manage: boolean;
   can_submit: boolean;
 };
-export type Material = {
+export type Section = {
+  id: string;
+  course_id: string;
+  title: string;
+  summary: string;
+  published: boolean;
+  sort_order: number;
+  revision: number;
+};
+export type Placement = { section_id?: string | null; sort_order?: number };
+export type Material = Placement & {
+  rich_body?: RichNode | null;
+  resource_kind?: "text" | "page" | "file" | "folder" | "url";
   id: string;
   course_id: string;
   title: string;
@@ -19,7 +32,8 @@ export type Material = {
   revision: number;
   updated_at: string;
 };
-export type Assignment = {
+export type Assignment = Placement & {
+  rich_body?: RichNode | null;
   id: string;
   course_id: string;
   title: string;

@@ -117,3 +117,12 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Migracija `202611100001_learning_quizzes.sql` dodaje četiri RLS tablice i kontrolirane RPC-ove. Čisti installer ima 41 RLS tablicu. Primjena je provjerena samo lokalno; produkcijska migracija čeka korisnika.
 - Prolazi 57 jediničnih testova, TypeScript i webpack izgradnja. Osam novih DB/HTTP/Chromium scenarija uključuje stvarno authorstvo i rješavanje kviza, skriveni ključ, vremenske granice, utrku predaje, bodovanje, privatnost, filtre, omiljene i mobilni prikaz. Prolaze i osam Storage scenarija, deset ranijih LMS i osam domenskih scenarija.
 - Izgled je pregledan na lokalnim snimkama s testnim podacima. Nije proglašena potpuna funkcijska jednakost s Moodleom: teme/tjedni, forumi, banka/napredne vrste pitanja, više pokušaja, autosave, odbrojavanje i dodatne integracije ostaju navedeni u [docs/MERLIN-FUNKCIONALNOSTI.md](docs/MERLIN-FUNKCIONALNOSTI.md). Nisu mijenjani Gnomio računi, DNS ili produkcijski podaci. Slanje na GitHub pokreće postojeću Vercel integraciju; završni status objave nije potvrđen.
+
+## 2026-11-10 — Merlin prema priloženim Moodle slikama i vodiču
+
+- Pročitana korisnikova referenca (21 str.) i pregledano osam snimki; opseg i preostale funkcije evidentirani u `docs/MERLIN-FUNKCIONALNOSTI.md`.
+- Svjetliji raspored, gornja navigacija, kartice/popis, godina/poredak i vremenska crta; kolegij dobio indeks, sklopive cjeline, sigurno skrivanje, uređivački način i dijalog sedam podržanih vrsta aktivnosti/resursa.
+- Tiptap uređivač u materijalima i uputama zadataka; ograničeni JSON i React prikaz bez izvršavanja proizvoljnog HTML-a. Postojeći privitci i granice prijenosa ostaju dostupni.
+- `202611100002_learning_sections.sql`: RLS cjeline, mjesto/redoslijed sadržaja, transakcijsko spremanje, provjera revizije, zaštita skrivenih privitaka/predaja, brisanje praznih cjelina i kompatibilnost ranijih tekstualnih klijenata. Upisi ostaju u referadi.
+- Testiranje koristi isključivo lokalnu testnu bazu; nova produkcijska migracija nije automatski izvršena.
+- Završna provjera: 58 jediničnih testova, TypeScript, produkcijska webpack izgradnja i čista SQL instalacija (42 RLS tablice). Prolaze 32 lokalna DB/HTTP/Chromium scenarija: 6 struktura kolegija, 8 kvizovi, 8 privitci i 10 osnovno e-učenje. Testne zapise uklanjaju vlastite skripte.

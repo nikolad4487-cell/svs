@@ -505,7 +505,7 @@ try {
     "HTTP workspace preserves selected course, escapes content and blocks foreign origins",
     async () => {
       const r = await request(
-        `/?module=merlin&course=${f.courseA}&view=Predaje`,
+        `/?module=merlin&course=${f.courseA}&edit=1&view=Predaje`,
         null,
         teacherCookie,
       );
@@ -559,7 +559,7 @@ try {
       );
       assert.ok(!hiddenText.includes(`Nepovezani kolegij ${tag}`));
       const materialPage = await request(
-        `/?module=merlin&course=${f.courseA}&view=Materijali`,
+        `/?module=merlin&course=${f.courseA}&edit=1&view=Materijali`,
         null,
         studentCookie,
       );
@@ -604,7 +604,7 @@ try {
           };
           await signIn("nastavnik");
           await page.goto(
-            origin + `/?module=merlin&course=${f.courseA}&view=Zadaci`,
+            origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Zadaci`,
           );
           const add = page.locator("details").filter({
             has: page.locator("summary", { hasText: "Dodaj zadatak" }),
@@ -612,7 +612,9 @@ try {
           await add.locator("summary").click();
           const title = `Preglednički zadatak ${tag}`;
           await add.getByLabel("Naslov zadatka").fill(title);
-          await add.getByLabel("Upute za izradu").fill("Objasnite rješenje.");
+          await add
+            .getByRole("textbox", { name: "Upute za izradu", exact: true })
+            .fill("Objasnite rješenje.");
           await add.getByLabel("Objavljeno studentima").check();
           await add
             .getByRole("button", { name: "Spremi zadatak", exact: true })
@@ -630,7 +632,7 @@ try {
           assignments.push(row.id);
           await signIn("student");
           await page.goto(
-            origin + `/?module=merlin&course=${f.courseA}&view=Zadaci`,
+            origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Zadaci`,
           );
           let card = page.locator("article").filter({
             has: page.getByRole("heading", { name: title, exact: true }),
@@ -646,7 +648,7 @@ try {
           );
           await signIn("nastavnik");
           await page.goto(
-            origin + `/?module=merlin&course=${f.courseA}&view=Predaje`,
+            origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Predaje`,
           );
           card = page.locator("article").filter({
             has: page.getByRole("heading", { name: title, exact: true }),
@@ -666,7 +668,7 @@ try {
           );
           await signIn("student");
           await page.goto(
-            origin + `/?module=merlin&course=${f.courseA}&view=Zadaci`,
+            origin + `/?module=merlin&course=${f.courseA}&edit=1&view=Zadaci`,
           );
           card = page.locator("article").filter({
             has: page.getByRole("heading", { name: title, exact: true }),

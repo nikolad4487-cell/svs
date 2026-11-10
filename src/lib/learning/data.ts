@@ -1,7 +1,13 @@
 import "server-only";
 import { notFound } from "next/navigation";
 import { requireIdentity } from "../auth/access";
-import type { LearningCourse, Material, Assignment, Submission } from "./model";
+import type {
+  LearningCourse,
+  Material,
+  Assignment,
+  Submission,
+  Section,
+} from "./model";
 import type { LearningFile } from "./files";
 import type { Quiz, QuizQuestion, QuizKey, QuizAttempt } from "./quizzes";
 const missing = (code: string) =>
@@ -85,11 +91,72 @@ export async function learningData(courseId?: string) {
       if (result.data.length < 500) return { ready: true, data };
     }
   };
-  const [quizRows, questionRows, attemptRows] = await Promise.all([
+  const [quizRows, questionRows, attemptRows, sectionRows] = await Promise.all([
     optionalRows<Quiz>("learning_quizzes"),
     optionalRows<QuizQuestion>("learning_quiz_questions"),
     optionalRows<QuizAttempt>("learning_quiz_attempts"),
+    optionalRows<Section>("learning_sections"),
   ]);
+  const dashboardEvents: {
+    id: string;
+    title: string;
+    courseId: string;
+    courseName: string;
+    date: string;
+    kind: string;
+    view: string;
+    published: boolean;
+  }[] = [];
+  if (!course) {
+    for (let start = 0; start < courses.length; start += 100) {
+      const ids = courses.slice(start, start + 100).map((c) => c.id);
+      for (const [table, columns] of [
+        ["learning_assignments", "id,course_id,title,due_at,published"],
+        ["learning_quizzes", "id,course_id,title,opens_at,closes_at,published"],
+      ] as const) {
+        for (let offset = 0; ; offset += 500) {
+          const r = await db
+            .from(table)
+            .select(columns)
+            .in("course_id", ids)
+            .order("id")
+            .range(offset, offset + 499);
+          if (r.error) {
+            if (missing(r.error.code)) break;
+            throw new Error("Rokovi e-učenja nisu dostupni.");
+          }
+          for (const row of r.data as unknown as {
+            id: string;
+            course_id: string;
+            title: string;
+            due_at?: string;
+            closes_at?: string;
+            opens_at?: string;
+            published: boolean;
+          }[]) {
+            const date = row.due_at || row.closes_at || row.opens_at;
+            if (date)
+              dashboardEvents.push({
+                id: row.id,
+                title: row.title,
+                courseId: row.course_id,
+                courseName: courses.find((c) => c.id === row.course_id)!.name,
+                date,
+                kind:
+                  table === "learning_assignments"
+                    ? "Zadaća"
+                    : row.closes_at
+                      ? "Rok kviza"
+                      : "Otvaranje kviza",
+                view: table === "learning_assignments" ? "Zadaci" : "Kvizovi",
+                published: row.published,
+              });
+          }
+          if (r.data.length < 500) break;
+        }
+      }
+    }
+  }
   const quizKeys: QuizKey[] = [];
   if (course?.can_manage && questionRows.data.length) {
     for (let offset = 0; offset < questionRows.data.length; offset += 200) {
@@ -134,5 +201,10 @@ export async function learningData(courseId?: string) {
     quizQuestions: questionRows.data,
     quizAttempts: attemptRows.data,
     quizKeys,
+    dashboardEvents,
+    sections: sectionRows.data.sort(
+      (a, b) => a.sort_order - b.sort_order || a.id.localeCompare(b.id),
+    ),
+    sectionsReady: sectionRows.ready,
   };
 }

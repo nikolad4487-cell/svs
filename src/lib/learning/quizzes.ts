@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { fromZagrebLocal } from "../academic/time";
 export type Quiz = {
+  section_id?: string | null;
+  sort_order?: number;
   id: string;
   institution_id: string;
   course_id: string;

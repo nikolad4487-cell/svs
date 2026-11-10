@@ -1,7 +1,12 @@
 import { learningData } from "@/lib/learning/data";
 import { identity } from "@/lib/auth/access";
 import { learningErrors } from "@/lib/learning/validation";
-import type { Assignment, Material, Submission } from "@/lib/learning/model";
+import type {
+  Assignment,
+  Material,
+  Submission,
+  Section,
+} from "@/lib/learning/model";
 import { navigation } from "@/lib/context";
 import { hrDate, zagrebInput } from "@/lib/academic/time";
 import { serviceLoginUrl, moodleLoginUrl } from "@/lib/external-services";
@@ -17,6 +22,11 @@ import {
   CourseDeadlines,
   CourseGradebook,
 } from "./course-overview";
+import { DashboardTimeline } from "./timeline";
+import { CourseSections } from "./sections";
+import { PlacementFields } from "./placement";
+import { RichEditor } from "./rich-editor";
+import { RichContent } from "./rich-content";
 import { CourseQuizzes } from "./quizzes";
 import { BookOpen, FileText, ClipboardList } from "lucide-react";
 
@@ -165,7 +175,15 @@ function MaterialForm({
   course,
   material,
   filesReady,
+  sections = [],
+  sectionsReady = false,
+  sectionId,
+  resourceKind = "text",
 }: {
+  sections?: Section[];
+  sectionsReady?: boolean;
+  sectionId?: string;
+  resourceKind?: Material["resource_kind"];
   course: string;
   material?: Material;
   filesReady: boolean;
@@ -185,7 +203,37 @@ function MaterialForm({
         required
         maxLength={200}
       />
-      <Text name="body" title="Tekst materijala" value={material?.body} />
+      <PlacementFields
+        sections={sections}
+        sectionId={material?.section_id ?? sectionId}
+        enabled={sectionsReady}
+      />
+      {sectionsReady && (
+        <label className="block text-sm font-medium">
+          Vrsta resursa
+          <select
+            name="resource_kind"
+            defaultValue={material?.resource_kind || resourceKind}
+            className={inputClass}
+          >
+            <option value="text">Tekst i mediji</option>
+            <option value="page">Stranica</option>
+            <option value="file">Datoteka</option>
+            <option value="folder">Mapa</option>
+            <option value="url">Poveznica</option>
+          </select>
+        </label>
+      )}
+      {sectionsReady ? (
+        <RichEditor
+          name="body"
+          label="Tekst materijala"
+          value={material?.body}
+          document={material?.rich_body}
+        />
+      ) : (
+        <Text name="body" title="Tekst materijala" value={material?.body} />
+      )}
       <Field
         name="resource_url"
         title="HTTPS poveznica na dokument ili video (neobvezno)"
@@ -206,7 +254,13 @@ function AssignmentForm({
   course,
   assignment,
   filesReady,
+  sections = [],
+  sectionsReady = false,
+  sectionId,
 }: {
+  sections?: Section[];
+  sectionsReady?: boolean;
+  sectionId?: string;
   course: string;
   assignment?: Assignment;
   filesReady: boolean;
@@ -226,12 +280,26 @@ function AssignmentForm({
         required
         maxLength={200}
       />
-      <Text
-        name="instructions"
-        title="Upute za izradu"
-        value={assignment?.instructions}
-        required
+      <PlacementFields
+        sections={sections}
+        sectionId={assignment?.section_id ?? sectionId}
+        enabled={sectionsReady}
       />
+      {sectionsReady ? (
+        <RichEditor
+          name="instructions"
+          label="Upute za izradu"
+          value={assignment?.instructions}
+          document={assignment?.rich_body}
+        />
+      ) : (
+        <Text
+          name="instructions"
+          title="Upute za izradu"
+          value={assignment?.instructions}
+          required
+        />
+      )}
       <Field
         name="due_at"
         title="Rok predaje (hrvatsko vrijeme; prazno znači bez roka)"
@@ -286,7 +354,13 @@ export async function LearningWorkspace({
   courseId,
   view,
   status,
+  edit = false,
+  create,
+  section,
 }: {
+  edit?: boolean;
+  create?: string;
+  section?: string;
   courseId?: string;
   view: string;
   status?: string;
@@ -326,7 +400,17 @@ export async function LearningWorkspace({
     files,
     filesReady,
   } = data;
+  const editing = !!(course?.can_manage && edit);
+  const sectionId = data.sections.some((s) => s.id === section)
+    ? section
+    : undefined;
+  const placement = {
+    sections: data.sections,
+    sectionsReady: data.sectionsReady,
+    sectionId,
+  };
   const base = new URL(url("merlin"));
+  if (editing) base.searchParams.set("edit", "1");
   return (
     <div className="space-y-8">
       {status && (
@@ -341,46 +425,63 @@ export async function LearningWorkspace({
       )}
       {!course && (
         <>
-          <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 p-7 text-white md:p-9">
-            <span className="absolute -right-12 -top-14 h-64 w-64 rounded-full border-[40px] border-white/5" />
-            <p className="relative text-xs font-bold uppercase tracking-[.18em] text-orange-300">
-              Vaša akademska učionica
-            </p>
-            <h1 className="relative mt-3 text-3xl font-bold tracking-tight md:text-4xl">
+          <section>
+            <p className="text-sm text-slate-500">Osobna stranica</p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight">
               Dobro došli
               {account.profile.full_name
                 ? `, ${account.profile.full_name.split(" ")[0]}`
                 : ""}
               .
             </h1>
-            <p className="relative mt-3 max-w-xl text-sm leading-6 text-slate-300">
-              Materijali, zadaci, provjere znanja i povratne informacije na
-              jednom mjestu. Odaberite kolegij i nastavite s učenjem.
+            <p className="mt-3 text-sm text-slate-500">
+              Vaši kolegiji, nastavni sadržaji i rokovi na jednom mjestu.
             </p>
-            <div className="relative mt-6 flex flex-wrap gap-5 text-xs font-semibold text-slate-300">
-              <span className="flex items-center gap-2">
-                <BookOpen size={16} />
-                Dostupni kolegiji: {courses.length}
-              </span>
-              <span>
-                Ustanove: {new Set(courses.map((c) => c.institution_id)).size}
-              </span>
-            </div>
           </section>
           <CourseCatalogue
             courses={courses}
             base={base.toString()}
             userId={account.user.id}
           />
+          <DashboardTimeline
+            events={data.dashboardEvents}
+            base={base.toString()}
+          />
         </>
       )}
       {course && (
         <>
-          <CourseHeader data={data} base={base.toString()} view={view} />
-          {view === "Moji kolegiji" && (
-            <CourseOverview data={data} base={base.toString()} />
+          <CourseHeader
+            data={data}
+            base={base.toString()}
+            view={view}
+            editing={editing}
+          />
+          {view === "Moji kolegiji" &&
+            (data.sectionsReady ? (
+              <CourseSections
+                data={data}
+                base={base.toString()}
+                editing={editing}
+              />
+            ) : (
+              <>
+                <p className="rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
+                  {course.can_manage
+                    ? "Za cjeline i uređivanje primijenite migraciju 202611100002_learning_sections.sql."
+                    : "Sadržaj kolegija dostupan je u karticama Materijali, Zadaci i Kvizovi."}
+                </p>
+                <CourseOverview data={data} base={base.toString()} />
+              </>
+            ))}
+          {view === "Kvizovi" && (
+            <CourseQuizzes
+              data={data}
+              editing={editing}
+              create={create === "quiz"}
+              sectionId={sectionId}
+            />
           )}
-          {view === "Kvizovi" && <CourseQuizzes data={data} />}
           {view === "Bodovi" && <CourseGradebook data={data} />}
           {view === "Rokovi" && (
             <CourseDeadlines data={data} base={base.toString()} />
@@ -398,13 +499,28 @@ export async function LearningWorkspace({
                   </p>
                 </div>
               </div>
-              {course.can_manage && (
-                <details className="rounded-2xl border border-dashed border-orange-300 bg-white p-6">
+              {editing && (
+                <details
+                  open={
+                    !!create &&
+                    ["text", "page", "file", "folder", "url"].includes(create)
+                  }
+                  className="rounded-2xl border border-dashed border-blue-300 bg-white p-6"
+                >
                   <summary className="cursor-pointer font-semibold">
                     Dodaj materijal
                   </summary>
                   <div className="mt-5">
-                    <MaterialForm course={course.id} filesReady={filesReady} />
+                    <MaterialForm
+                      course={course.id}
+                      filesReady={filesReady}
+                      {...placement}
+                      resourceKind={
+                        ["page", "file", "folder", "url"].includes(create || "")
+                          ? (create as Material["resource_kind"])
+                          : "text"
+                      }
+                    />
                   </div>
                 </details>
               )}
@@ -416,6 +532,7 @@ export async function LearningWorkspace({
               {materials.map((m) => (
                 <article
                   key={m.id}
+                  id={m.id}
                   className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
                 >
                   <h3 className="text-lg font-semibold">
@@ -426,21 +543,19 @@ export async function LearningWorkspace({
                       </span>
                     )}
                   </h3>
-                  <p className="whitespace-pre-wrap break-words text-sm leading-7">
-                    {m.body}
-                  </p>
+                  <RichContent document={m.rich_body} fallback={m.body} />
                   <Resource url={m.resource_url} label="Otvori materijal" />
                   <LearningAttachments
                     kind="material"
                     target={m.id}
                     files={files.filter((f) => f.material_id === m.id)}
-                    manage={course.can_manage}
+                    manage={editing}
                     ready={filesReady}
                   />
                   <p className="text-xs text-slate-500">
                     Ažurirano {hrDate(m.updated_at)}
                   </p>
-                  {course.can_manage && (
+                  {editing && (
                     <details>
                       <summary className="cursor-pointer text-sm text-blue-700">
                         Uredi materijal
@@ -449,6 +564,7 @@ export async function LearningWorkspace({
                         <MaterialForm
                           course={course.id}
                           material={m}
+                          {...placement}
                           filesReady={filesReady}
                         />
                       </div>
@@ -470,14 +586,18 @@ export async function LearningWorkspace({
                 Bodovi zadataka služe praćenju rada. Službena ocjena ispita
                 evidentira se zasebno u ispitnoj evidenciji.
               </p>
-              {course.can_manage && view !== "Predaje" && (
-                <details className="rounded-2xl border border-dashed border-orange-300 bg-white p-6">
+              {editing && view !== "Predaje" && (
+                <details
+                  open={create === "assignment"}
+                  className="rounded-2xl border border-dashed border-blue-300 bg-white p-6"
+                >
                   <summary className="cursor-pointer font-semibold">
                     Dodaj zadatak
                   </summary>
                   <div className="mt-5">
                     <AssignmentForm
                       course={course.id}
+                      {...placement}
                       filesReady={filesReady}
                     />
                   </div>
@@ -501,6 +621,7 @@ export async function LearningWorkspace({
                 return (
                   <article
                     key={a.id}
+                    id={a.id}
                     className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
                   >
                     <h3 className="text-lg font-semibold">
@@ -511,15 +632,16 @@ export async function LearningWorkspace({
                         </span>
                       )}
                     </h3>
-                    <p className="whitespace-pre-wrap break-words text-sm leading-7">
-                      {a.instructions}
-                    </p>
+                    <RichContent
+                      document={a.rich_body}
+                      fallback={a.instructions}
+                    />
                     <p className="text-sm text-slate-500">
                       Najviše {a.max_points} bodova ·{" "}
                       {a.due_at ? `Rok: ${hrDate(a.due_at)}` : "Bez roka"}
                       {a.allow_late ? " · Dopuštene zakašnjele predaje" : ""}
                     </p>
-                    {course.can_manage && view !== "Predaje" && (
+                    {editing && view !== "Predaje" && (
                       <details>
                         <summary className="cursor-pointer text-sm text-blue-700">
                           Uredi zadatak
@@ -528,6 +650,7 @@ export async function LearningWorkspace({
                           <AssignmentForm
                             course={course.id}
                             assignment={a}
+                            {...placement}
                             filesReady={filesReady}
                           />
                         </div>
@@ -537,7 +660,7 @@ export async function LearningWorkspace({
                       kind="assignment"
                       target={a.id}
                       files={files.filter((f) => f.assignment_id === a.id)}
-                      manage={course.can_manage}
+                      manage={editing}
                       ready={filesReady}
                     />
                     {course.can_submit && (
