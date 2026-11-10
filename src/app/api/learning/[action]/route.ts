@@ -18,10 +18,10 @@ export async function POST(
         { error: "Neispravan obrazac." },
         { status: 415 },
       );
-    if (Number(request.headers.get("content-length") || 0) > 131072)
+    if (Number(request.headers.get("content-length") || 0) > 1048576)
       return NextResponse.json({ error: "Prevelik obrazac." }, { status: 413 });
     const body = await request.text();
-    if (Buffer.byteLength(body) > 131072)
+    if (Buffer.byteLength(body) > 1048576)
       return NextResponse.json({ error: "Prevelik obrazac." }, { status: 413 });
     const form = new FormData();
     for (const [key, value] of new URLSearchParams(body)) {
@@ -34,9 +34,15 @@ export async function POST(
     if (course.success) target.searchParams.set("course", course.data);
     const view = form.get("return_view");
     if (
-      ["Moji kolegiji", "Materijali", "Zadaci", "Predaje"].includes(
-        String(view),
-      )
+      [
+        "Moji kolegiji",
+        "Materijali",
+        "Zadaci",
+        "Predaje",
+        "Kvizovi",
+        "Bodovi",
+        "Rokovi",
+      ].includes(String(view))
     )
       target.searchParams.set("view", String(view));
     let result: { status: string; id?: string; revision?: number };

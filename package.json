@@ -30,7 +30,8 @@
     "test:registrar": "node scripts/test-registrar.mjs",
     "test:domain-routes": "node scripts/test-domain-routes.mjs",
     "test:learning": "node scripts/test-learning.mjs",
-    "test:learning-files": "node scripts/test-learning-files.mjs"
+    "test:learning-files": "node scripts/test-learning-files.mjs",
+    "test:learning-quizzes": "node scripts/test-learning-quizzes.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",

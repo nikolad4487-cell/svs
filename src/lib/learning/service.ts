@@ -1,6 +1,7 @@
 import "server-only";
 import { requireIdentity } from "../auth/access";
 import { learningSchemas, learningError } from "./validation";
+import { quizSchema, quizSubmissionSchema } from "./quizzes";
 
 export async function learningMutation(action: string, form: FormData) {
   const { db } = await requireIdentity("merlin");
@@ -46,6 +47,26 @@ export async function learningMutation(action: string, form: FormData) {
       points: d.score,
       note: d.feedback,
       expected: d.revision,
+    });
+  } else if (action === "quiz") {
+    const d = quizSchema.parse(values);
+    result = await db.rpc("learning_save_quiz", {
+      target_course: d.course_id,
+      item_title: d.title,
+      item_description: d.description,
+      item_opens: d.opens_at,
+      item_closes: d.closes_at,
+      item_published: d.published,
+      questions: d.questions,
+      target: d.id,
+      expected: d.revision,
+    });
+  } else if (action === "quiz-submit") {
+    const d = quizSubmissionSchema.parse(values);
+    result = await db.rpc("learning_submit_quiz", {
+      target: d.quiz_id,
+      expected: d.revision,
+      responses: d.answers,
     });
   } else throw new Error("Nepoznata radnja.");
   if (!result.error)

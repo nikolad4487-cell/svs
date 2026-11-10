@@ -11,7 +11,7 @@ Naziv ISVU je potvrđen. Prilozi su specifikacijski materijal za postojeći zaht
 | Ispiti i ocjene | Stanja, zaključavanje, nedolazak i povijest ispravaka implementirani | Pismeni/usmeni dio, povjerenstva, pravila izlazaka i outbox |
 | Financije i potvrde | Osnovne evidencije postoje | Ledger, idempotentne uplate, vlastiti PDF/QR |
 | Završetak i analitika | Osobni ECTS i agregati postoje | Priznavanje, obrana, uvjeti završetka |
-| LMS i integracije | Vlastito e-učenje: materijali, slike/videa/dokumenti u materijalima i uputama zadataka, predaje i povratne informacije | Kvizovi, privitci studentskih predaja, Moodle adapter, SSO i integrirana institucionalna pošta |
+| LMS i integracije | Vlastiti Merlin izgled, pregled kolegija, materijali/privitci, zadaci, predaje, osnovni kvizovi, bodovi i rokovi | Napredni kvizovi, forumi, teme/tjedni, privitci studentskih predaja, Moodle adapter, SSO i integrirana institucionalna pošta |
 
 ## Izvori i provjere
 
@@ -109,3 +109,11 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Korisnik je odabrao Gnomio i dostavio `https://merlinhr.gnomio.com/my/`. Na vrhu Merlina dodana je vidljiva tipka **Otvori Moodle**, s tom zadanom adresom i mogućnošću promjene kroz `MERLIN_LMS_URL`. Prazna/nepostavljena varijabla koristi korisnikovu Gnomio adresu; neispravna eksplicitna adresa ne postaje poveznica.
 - Tipka otvara zasebnu stranicu bez prosljeđivanja ISVU lozinke ili sesije. Vlastite akademske evidencije i Merlinovi sadržaji ostaju dostupni. Nema nove migracije, DNS promjene, Gnomio administratorskih radnji, automatske prijave ili sinkronizacije korisnika/kolegija.
 - Prolazi 55 jediničnih testova, TypeScript provjera, webpack izgradnja i 10 lokalnih LMS scenarija, s provjerom stvarno ispisane Gnomio poveznice. Dostupnost i prijava na vanjskoj stranici nisu provjerene. Slanje na GitHub koristi postojeću Vercel integraciju; završni status objave nije potvrđen.
+
+## Merlin: vlastiti izgled i osnovni kvizovi — 10. studenoga 2026.
+
+- Korisnik je pojasnio da želi pregledno e-učenje s funkcijama poput Moodlea unutar ISVU-a. Dodani su zaseban Merlin okvir/navigacija, kartice i pretraživanje kolegija, filtar ustanove, omiljeni na uređaju, pregled kolegija/aktivnosti, bodovi zadataka i kvizova te stvarni rokovi. Vanjski Gnomio premješten je u sklopljeni dodatni odjeljak na dnu; glavna je postojeća ISVU sesija.
+- Novi kvizovi imaju 1–20 pitanja s jednim točnim odgovorom, 2–6 opcija, bodove pitanja, datume dostupnosti i jedan pokušaj. Bodovanje je serversko; ključ odgovora u zasebnoj RLS tablici. Pitanja nisu dostupna studentu prije otvaranja ili izvan dopuštene dostupnosti, a rezultati su privatni među vršnjacima. Prva predaja zaključava pitanja/bodove; metadata i objava ostaju uređivi uz reviziju.
+- Migracija `202611100001_learning_quizzes.sql` dodaje četiri RLS tablice i kontrolirane RPC-ove. Čisti installer ima 41 RLS tablicu. Primjena je provjerena samo lokalno; produkcijska migracija čeka korisnika.
+- Prolazi 57 jediničnih testova, TypeScript i webpack izgradnja. Osam novih DB/HTTP/Chromium scenarija uključuje stvarno authorstvo i rješavanje kviza, skriveni ključ, vremenske granice, utrku predaje, bodovanje, privatnost, filtre, omiljene i mobilni prikaz. Prolaze i osam Storage scenarija, deset ranijih LMS i osam domenskih scenarija.
+- Izgled je pregledan na lokalnim snimkama s testnim podacima. Nije proglašena potpuna funkcijska jednakost s Moodleom: teme/tjedni, forumi, banka/napredne vrste pitanja, više pokušaja, autosave, odbrojavanje i dodatne integracije ostaju navedeni u [docs/MERLIN-FUNKCIONALNOSTI.md](docs/MERLIN-FUNKCIONALNOSTI.md). Nisu mijenjani Gnomio računi, DNS ili produkcijski podaci. Slanje na GitHub pokreće postojeću Vercel integraciju; završni status objave nije potvrđen.

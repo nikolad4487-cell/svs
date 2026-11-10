@@ -65,7 +65,15 @@ export const modules = [
     description: "Materijali, zadaci i prostor za učenje.",
     icon: "BookOpen",
     color: "violet",
-    items: ["Moji kolegiji", "Materijali", "Zadaci", "Predaje"],
+    items: [
+      "Moji kolegiji",
+      "Materijali",
+      "Zadaci",
+      "Kvizovi",
+      "Predaje",
+      "Bodovi",
+      "Rokovi",
+    ],
   },
   {
     slug: "webmail",

@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ExternalService } from "@/components/external-service";
 import { LearningWorkspace } from "@/components/learning/workspace";
+import { LearningShell } from "@/components/learning/shell";
 import { modules, academicAdminItems, studomatGroups } from "@/lib/modules";
 import { navigation } from "@/lib/context";
 import { Brand } from "@/components/brand";
@@ -92,6 +93,16 @@ export default async function Module({
     admin:
       "Administracija je namijenjena isključivo superadministratorima. Ovo je javna informativna stranica modula; nema pristupa administrativnim podacima ili radnjama.",
   };
+  if (module === "merlin" && supabaseConfig() && allowed)
+    return (
+      <LearningShell
+        active={active}
+        courseId={course}
+        name={account?.profile.full_name || "Moj račun"}
+      >
+        <LearningWorkspace courseId={course} view={active} status={status} />
+      </LearningShell>
+    );
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
       <aside className="border-r border-slate-200 bg-white p-6">

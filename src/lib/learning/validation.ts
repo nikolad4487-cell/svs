@@ -60,6 +60,10 @@ export const learningSchemas = {
   }),
 };
 export const learningErrors: Record<string, string> = {
+  quiz_locked:
+    "Nakon prve predaje pitanja, odgovori i bodovi kviza više se ne mijenjaju. Za novu provjeru izradite novi kviz.",
+  quiz_closed: "Kviz još nije otvoren ili je rok za predaju završio.",
+  quiz_done: "Već ste predali ovaj kviz. Dostupan je jedan pokušaj.",
   invalid:
     "Promjena nije spremljena. Provjerite naslov, sadržaj, HTTPS poveznicu, rok i broj bodova.",
   forbidden:

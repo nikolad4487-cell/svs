@@ -10,15 +10,26 @@ import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/academic/shared";
 import { LearningAttachments } from "./attachments";
 import { LearningCreateForm } from "./create-form";
+import { CourseCatalogue } from "./catalogue";
+import {
+  CourseHeader,
+  CourseOverview,
+  CourseDeadlines,
+  CourseGradebook,
+} from "./course-overview";
+import { CourseQuizzes } from "./quizzes";
+import { BookOpen, FileText, ClipboardList } from "lucide-react";
 
 function MoodleAccess({ target }: { target: string | null }) {
   if (!target) return null;
   return (
-    <section
-      className="space-y-4 rounded-xl border border-blue-200 bg-blue-50 p-5"
+    <details
+      className="space-y-4 rounded-xl border border-slate-200 bg-white p-5"
       aria-label="Moodle"
     >
-      <h2 className="text-xl font-bold">Moodle</h2>
+      <summary className="cursor-pointer text-sm font-semibold text-slate-500">
+        Vanjski Moodle na Gnomiju
+      </summary>
       <p className="text-sm leading-6">
         Otvorite materijale, zadatke i kvizove na svojem Moodleu. Prijavite se
         korisničkim računom koji imate na toj stranici.
@@ -31,7 +42,7 @@ function MoodleAccess({ target }: { target: string | null }) {
       <p className="break-all text-xs text-slate-500">
         {new URL(target).hostname}
       </p>
-    </section>
+    </details>
   );
 }
 
@@ -316,15 +327,8 @@ export async function LearningWorkspace({
     filesReady,
   } = data;
   const base = new URL(url("merlin"));
-  const href = (id: string, tab = "Moji kolegiji") => {
-    const u = new URL(base);
-    u.searchParams.set("course", id);
-    u.searchParams.set("view", tab);
-    return u.toString();
-  };
   return (
     <div className="space-y-8">
-      <MoodleAccess target={moodle} />
       {status && (
         <p
           role={status === "saved" ? "status" : "alert"}
@@ -335,90 +339,67 @@ export async function LearningWorkspace({
             : learningErrors[status] || learningErrors.invalid}
         </p>
       )}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold">Moji kolegiji</h2>
-        {courses.length ? (
-          <form
-            method="get"
-            action={base.pathname}
-            className="flex flex-wrap items-end gap-3"
-          >
-            {[...base.searchParams].map(([name, value]) => (
-              <input key={name} type="hidden" name={name} value={value} />
-            ))}
-            <input type="hidden" name="view" value={view} />
-            <label className="min-w-0 flex-1 text-sm font-medium">
-              Kolegij
-              <select
-                className={inputClass}
-                name="course"
-                defaultValue={course?.id || ""}
-                required
-              >
-                <option value="">Odaberite kolegij…</option>
-                {courses.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.institution_name} · {c.code} · {c.name} ·{" "}
-                    {c.academic_year_name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <Button type="submit">Otvori kolegij</Button>
-          </form>
-        ) : (
-          <Empty>
-            Nema kolegija kojima imate pristup. Student mora imati aktivan upis,
-            a nastavnik mora biti dodijeljen kolegiju u Administraciji studija.
-          </Empty>
-        )}
-        {!course &&
-          courses.map((c) => (
-            <a
-              key={c.id}
-              className="block rounded-lg border border-slate-200 p-4 hover:border-blue-400"
-              href={href(c.id)}
-            >
-              <strong>
-                {c.code} · {c.name}
-              </strong>
-              <span className="mt-1 block text-sm text-slate-500">
-                {c.institution_name} · {c.academic_year_name} ·{" "}
-                {c.semester_name}
-              </span>
-            </a>
-          ))}
-      </section>
-      {course && (
+      {!course && (
         <>
-          <section className="rounded-xl bg-blue-50 p-5">
-            <h2 className="text-xl font-bold">
-              {course.code} · {course.name}
-            </h2>
-            <p className="mt-2 text-sm">
-              {course.institution_name} · {course.academic_year_name} ·{" "}
-              {course.semester_name}
+          <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 p-7 text-white md:p-9">
+            <span className="absolute -right-12 -top-14 h-64 w-64 rounded-full border-[40px] border-white/5" />
+            <p className="relative text-xs font-bold uppercase tracking-[.18em] text-orange-300">
+              Vaša akademska učionica
             </p>
-            <div className="mt-4 flex flex-wrap gap-4">
-              {["Moji kolegiji", "Materijali", "Zadaci", "Predaje"].map(
-                (tab) => (
-                  <a
-                    key={tab}
-                    href={href(course.id, tab)}
-                    aria-current={tab === view ? "page" : undefined}
-                    className={`text-sm underline ${view === tab ? "font-bold" : ""}`}
-                  >
-                    {tab}
-                  </a>
-                ),
-              )}
+            <h1 className="relative mt-3 text-3xl font-bold tracking-tight md:text-4xl">
+              Dobro došli
+              {account.profile.full_name
+                ? `, ${account.profile.full_name.split(" ")[0]}`
+                : ""}
+              .
+            </h1>
+            <p className="relative mt-3 max-w-xl text-sm leading-6 text-slate-300">
+              Materijali, zadaci, provjere znanja i povratne informacije na
+              jednom mjestu. Odaberite kolegij i nastavite s učenjem.
+            </p>
+            <div className="relative mt-6 flex flex-wrap gap-5 text-xs font-semibold text-slate-300">
+              <span className="flex items-center gap-2">
+                <BookOpen size={16} />
+                Dostupni kolegiji: {courses.length}
+              </span>
+              <span>
+                Ustanove: {new Set(courses.map((c) => c.institution_id)).size}
+              </span>
             </div>
           </section>
-          {["Moji kolegiji", "Materijali"].includes(view) && (
+          <CourseCatalogue
+            courses={courses}
+            base={base.toString()}
+            userId={account.user.id}
+          />
+        </>
+      )}
+      {course && (
+        <>
+          <CourseHeader data={data} base={base.toString()} view={view} />
+          {view === "Moji kolegiji" && (
+            <CourseOverview data={data} base={base.toString()} />
+          )}
+          {view === "Kvizovi" && <CourseQuizzes data={data} />}
+          {view === "Bodovi" && <CourseGradebook data={data} />}
+          {view === "Rokovi" && (
+            <CourseDeadlines data={data} base={base.toString()} />
+          )}
+          {view === "Materijali" && (
             <section className="space-y-5">
-              <h2 className="text-xl font-bold">Materijali</h2>
+              <div className="flex items-center gap-3">
+                <span className="rounded-xl bg-blue-100 p-3 text-blue-700">
+                  <FileText size={22} />
+                </span>
+                <div>
+                  <h2 className="text-2xl font-bold">Materijali</h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Dokumenti, prezentacije i video vašeg kolegija.
+                  </p>
+                </div>
+              </div>
               {course.can_manage && (
-                <details className="rounded-xl border border-slate-200 p-5">
+                <details className="rounded-2xl border border-dashed border-orange-300 bg-white p-6">
                   <summary className="cursor-pointer font-semibold">
                     Dodaj materijal
                   </summary>
@@ -435,7 +416,7 @@ export async function LearningWorkspace({
               {materials.map((m) => (
                 <article
                   key={m.id}
-                  className="space-y-4 rounded-xl border border-slate-200 p-5"
+                  className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
                 >
                   <h3 className="text-lg font-semibold">
                     {m.title}{" "}
@@ -477,9 +458,10 @@ export async function LearningWorkspace({
               ))}
             </section>
           )}
-          {["Moji kolegiji", "Zadaci", "Predaje"].includes(view) && (
+          {["Zadaci", "Predaje"].includes(view) && (
             <section className="space-y-5">
-              <h2 className="text-xl font-bold">
+              <h2 className="flex items-center gap-3 text-2xl font-bold">
+                <ClipboardList size={25} className="text-orange-600" />
                 {view === "Predaje"
                   ? "Predaje i povratne informacije"
                   : "Zadaci"}
@@ -489,7 +471,7 @@ export async function LearningWorkspace({
                 evidentira se zasebno u ispitnoj evidenciji.
               </p>
               {course.can_manage && view !== "Predaje" && (
-                <details className="rounded-xl border border-slate-200 p-5">
+                <details className="rounded-2xl border border-dashed border-orange-300 bg-white p-6">
                   <summary className="cursor-pointer font-semibold">
                     Dodaj zadatak
                   </summary>
@@ -519,7 +501,7 @@ export async function LearningWorkspace({
                 return (
                   <article
                     key={a.id}
-                    className="space-y-5 rounded-xl border border-slate-200 p-5"
+                    className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
                   >
                     <h3 className="text-lg font-semibold">
                       {a.title}{" "}
@@ -697,6 +679,7 @@ export async function LearningWorkspace({
           )}
         </>
       )}
+      <MoodleAccess target={moodle} />
     </div>
   );
 }
