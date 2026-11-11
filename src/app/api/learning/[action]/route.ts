@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { assertSameOrigin, requestContext } from "@/lib/auth/request";
+import { requireIdentity } from "@/lib/auth/access";
 import { learningMutation } from "@/lib/learning/service";
 
 export async function POST(
@@ -52,6 +53,16 @@ export async function POST(
     } catch (error) {
       if (!(error instanceof z.ZodError)) throw error;
       result = { status: "invalid" };
+    }
+    if (course.success) {
+      const { db } = await requireIdentity("merlin");
+      const row = await db
+        .from("courses")
+        .select("institution_id")
+        .eq("id", course.data)
+        .maybeSingle();
+      if (!row.error && row.data)
+        target.searchParams.set("institution", row.data.institution_id);
     }
     target.searchParams.set("status", result.status);
     if (request.headers.get("accept")?.includes("application/json"))

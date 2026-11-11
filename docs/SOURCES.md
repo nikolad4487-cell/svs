@@ -46,3 +46,8 @@ Korisnik je dostavio 21 PDF/PPTX datoteku. Početne wiki upute za upis te matič
 ## ISSP prikazi korisnika (11. 11. 2026.)
 
 Sedam korisnikovih snimki osobnog pregleda studentskog standarda: zaglavlje s fotografijom, pravima i saldom; kriteriji rada/prehrane; zaposlenje, prestanak, posebno pravo i invaliditet; dom, mirovanje i iskaznice; upisi i ECTS; mobilnost, nadležna ustanova, težinski prosjek i obavijesti; ESI. Koriste se struktura, boje i nazivi evidencija. Osobni identifikatori, fotografija, adrese, ustanove i iznosi sa slika nisu uneseni kao aplikacijski podaci. Korisnik je izričito odabrao vlastitu evidenciju s unosom prava i računa od strane ovlaštenog osoblja. Prikaz ne predstavlja integraciju s državnim ISSP-om/HZMO-om.
+
+
+## Popis 125 ustanova (11. 11. 2026.)
+
+Korisnikov `visoka učilišta.pdf`, šest skeniranih stranica, i izričiti popis 125 ustanova. SHA-256 i podrijetlo spremljeni su u `data/institutions/provenance.json`. Nazivi, sjedišta i roditeljske ustanove iz PDF-a usklađeni su s popisom. Živi službeni registar https://www.isvu.hr/visokaucilista/hr/pretrazivanje blokiran je mrežnom politikom (CONNECT 403). Nijedan pojedinačni službeni zapis još nije dohvaćen. Sedam URL-ova su nepotvrđeni korisnikovi primjeri; ostali URL-ovi i svi službeni ID-ovi ostaju prazni. [Cjelovit izvještaj](../reports/visoka-ucilista-125.md).

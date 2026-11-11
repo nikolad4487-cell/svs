@@ -15,6 +15,7 @@ export async function requestContext() {
     process.env.LOCAL_BASE_DOMAIN || "",
     deploymentHosts(),
     productionCanonicalBase(),
+    true,
   );
   if (!host) throw new Error("Nepodržana domena");
   const fallback = h.get("x-svs-fallback") === "1";

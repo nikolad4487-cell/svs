@@ -1,3 +1,4 @@
+import { officialWebsite, validSubdomain } from "@/lib/institutions/domains";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { assertSameOrigin, requestContext } from "@/lib/auth/request";
@@ -49,7 +50,47 @@ export async function POST(
       account.memberships.some(
         (m) => m.institution_id === id && m.role === "institution_admin",
       );
-    if (action === "institution") {
+    if (action === "registry") {
+      if (!account.superadmin) throw Error("Forbidden");
+      const values = Object.fromEntries(form);
+      const d = z
+        .object({
+          name: z.string().trim().min(2).max(200),
+          short_name: z.string().trim().max(100),
+          headquarters: z.string().trim().max(200),
+          address: z.string().trim().max(1000),
+          official_website: z
+            .string()
+            .trim()
+            .max(2048)
+            .refine((v) => !v || !!officialWebsite(v)),
+          subdomain: z.string().refine(validSubdomain),
+          website_verification_status: z.enum([
+            "requires_verification",
+            "admin_verified",
+          ]),
+          domain_verification_status: z.enum([
+            "requires_verification",
+            "admin_verified",
+          ]),
+          domain_notes: z.string().trim().max(2000),
+          parent_institution_id: z.union([z.uuid(), z.literal("")]),
+          updated_at: z.iso.datetime({ offset: true }),
+        })
+        .parse(values);
+      ({ error } = await account.db.rpc("save_institution_registry", {
+        target: institution_id(),
+        data: {
+          ...d,
+          official_website: d.official_website
+            ? officialWebsite(d.official_website)
+            : "",
+          active: form.get("active") === "on",
+          registry_metadata_locked:
+            form.get("registry_metadata_locked") === "on",
+        },
+      }));
+    } else if (action === "institution") {
       const input = institutionSchema.parse(Object.fromEntries(form));
       const id = form.get("institution_id");
       if (id) {

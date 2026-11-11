@@ -136,3 +136,20 @@ Praktične upute, kompatibilnost povijesnih podataka i koraci primjene: [docs/PO
 - Stvarni PDF svih osobnih računa s hrvatskim znakovima; lokalni pregled posljednjih 30 dana. Spremaju se adresa i odabir obavijesti, bez slanja e-pošte. Nema državnog ISSP/HZMO, blagajničke ili fizičke kartične integracije.
 - Provjereno: 63 jedinična testa, TypeScript, produkcijska webpack izgradnja, čista SQL instalacija (47 RLS tablica), sedam lokalnih DB/HTTP/Chromium ISSP scenarija i osam domenskih scenarija. Testirani i neispravna/valjana fotografija, stvarno otvaranje slike, UTF-8 PDF, unosi kroz obrazac, mobilni prikaz, storna, utrke, tuđi studenti i korisničke ovlasti.
 - Produkcijska baza, DNS, Vercel domene i pošta nisu mijenjani ovim testovima. Koraci za aktivaciju i unos dokumentirani su u `docs/ISSP.md`, a korisniku pripremljena transakcijska migracija za kopiranje.
+
+
+## Katalog 125 ustanova i institucionalne poddomene (11. 11. 2026.)
+
+Stvarna nadogradnja postojećeg projekta: dva nova SQL koraka, katalog, idempotentni uvoz, javne institucionalne stranice i direktorij te superadministratorsko uređivanje. Lokalno uvezeno 125 ustanova; izričita veza čuva postojeći produkcijski UFZG identitet i evidencije. Novi računi, stvarni studentski podaci ili fakultetske e-mail domene nisu stvoreni. Postojeći RLS model zadržan je; sve 47 aplikacijske tablice imaju RLS.
+
+Dokumentacija i preostale operacije: [ustanove i poddomene](docs/USTANOVE-I-PODDOMENE.md). [Tablica svih 125](reports/visoka-ucilista-125.md), [CSV](reports/visoka-ucilista-125.csv).
+
+Izvršene provjere završne verzije:
+
+- 66 jediničnih testova, typecheck i produkcijski `next build --webpack` prolaze.
+- Instalacija svih migracija na novoj lokalnoj PostgreSQL bazi s pravim Auth/Storage shemama prolazi (47 RLS tablica).
+- Osam novih institucionalnih scenarija prolazi: idempotencija, rollback simulacija postojećeg UFZG-a, javni/privatni podaci, odvojeni FER/VUKA studenti i kolegiji, tri hostnamea, lažirana zaglavlja/API parametri, prijava i administratorsko uređivanje/deaktivacija. Osmi scenarij stvarno je izvršen u Chromiumu na dopuštenom localhost prikazu.
+- Postojeće provjere domena (7), kvizova (7), izvornog e-učenja (9) i ISSP-a (6) prolaze.
+- Lokalni REST schema cache zahtijevao je ponovno učitavanje nakon novih kontaktnih stupaca. Privremene testne izmjene potom su vraćene i testovi uspješno ponovljeni.
+
+Otvoreno: mrežna politika blokira službeni registar; sedam URL-ova su samo korisnikovi primjeri, 118 ih nedostaje, nijedan službeni ID nije dohvaćen. Sve poddomene jasno zahtijevaju provjeru. Produkcijski pregled bez upisa potvrđuje da nova migracija još nije primijenjena; baza na produkciji nije promijenjena. Vercel wildcard, javni DNS, HTTPS i produkcijski SSO još nisu provjereni. Kôd i lokalni testovi ne predstavljaju provedbu tih vanjskih koraka.

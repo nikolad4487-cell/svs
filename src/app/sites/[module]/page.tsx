@@ -68,6 +68,7 @@ export default async function Module({
     const target = new URL(url("auth"));
     target.searchParams.set("next", m.slug);
     if (faculty) target.searchParams.set("faculty", faculty);
+    if (institution) target.searchParams.set("institution", institution);
     redirect(target.toString());
   }
   const allowed =
@@ -115,10 +116,12 @@ export default async function Module({
       <LearningShell
         active={active}
         courseId={course}
+        institution={institution}
         name={account?.profile.full_name || "Moj račun"}
       >
         <LearningWorkspace
           courseId={course}
+          institution={institution}
           view={active}
           status={status}
           edit={edit === "1"}
@@ -212,6 +215,7 @@ export default async function Module({
                 status={status}
                 next={next}
                 faculty={loginFaculty}
+                institution={institution}
               />
             ) : !supabaseConfig() ? (
               <ConfigNotice />

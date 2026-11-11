@@ -33,7 +33,11 @@
     "test:learning-files": "node scripts/test-learning-files.mjs",
     "test:learning-quizzes": "node scripts/test-learning-quizzes.mjs",
     "test:learning-sections": "node scripts/test-learning-sections.mjs",
-    "test:issp": "node scripts/test-issp.mjs"
+    "test:issp": "node scripts/test-issp.mjs",
+    "catalog:build": "node --import tsx scripts/build-institution-catalog.mjs",
+    "catalog:import": "node --use-env-proxy scripts/import-institution-catalog.mjs",
+    "test:institution-tenants": "node scripts/test-institution-tenants.mjs",
+    "catalog:collect": "python3 scripts/collect-isvu-registry.py"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",

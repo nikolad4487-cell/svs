@@ -56,3 +56,18 @@ export function publicRoute(
   }
   return path === "/" ? { module, faculty: "" } : null;
 }
+
+export function validInstitutionId(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      value,
+    )
+  );
+}
+export function institutionUrl(base: string, institution?: string) {
+  const url = new URL(base);
+  if (validInstitutionId(institution))
+    url.searchParams.set("institution", institution);
+  return url.toString();
+}

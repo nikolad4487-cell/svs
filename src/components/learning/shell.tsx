@@ -4,17 +4,20 @@ import { navigation } from "@/lib/context";
 export async function LearningShell({
   active,
   courseId,
+  institution,
   name,
   children,
 }: {
   active: string;
   courseId?: string;
+  institution?: string;
   name: string;
   children: React.ReactNode;
 }) {
   const url = await navigation();
   const dashboard = new URL(url("merlin"));
   dashboard.searchParams.set("view", "Moji kolegiji");
+  if (institution) dashboard.searchParams.set("institution", institution);
   return (
     <div className="learning-surface min-h-screen bg-[#f7f8fa] dark:bg-slate-950">
       <header className="sticky top-0 z-30 flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3 lg:px-7">

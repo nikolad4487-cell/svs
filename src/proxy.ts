@@ -1,3 +1,4 @@
+import { institutionDirectory } from "./lib/institutions/public";
 import { NextResponse, type NextRequest } from "next/server";
 import {
   resolveHost,
@@ -11,6 +12,7 @@ import {
   publicRoute,
   facultyUrl,
   validFaculty,
+  validInstitutionId,
 } from "./lib/routes";
 import { supabaseConfig } from "./lib/supabase/config";
 import { refreshSession } from "./lib/supabase/proxy";
@@ -22,6 +24,7 @@ export async function proxy(request: NextRequest) {
     process.env.LOCAL_BASE_DOMAIN || "",
     deploymentHosts(),
     productionCanonicalBase(),
+    true,
   );
   const url = request.nextUrl.clone();
   if (
@@ -31,6 +34,38 @@ export async function proxy(request: NextRequest) {
   ) {
     url.pathname = "/unknown-host";
     return NextResponse.rewrite(url);
+  }
+  if (host.tenantSlug) {
+    if (url.pathname !== "/" || !["GET", "HEAD"].includes(request.method)) {
+      url.pathname = "/unknown-host";
+      return NextResponse.rewrite(url);
+    }
+    const [tenant] = await institutionDirectory(host.tenantSlug);
+    if (!tenant) {
+      url.pathname = "/unknown-host";
+      return NextResponse.rewrite(url);
+    }
+    const scoped = new Headers(request.headers);
+    for (const name of [
+      "x-svs-institution",
+      "x-svs-tenant",
+      "x-svs-faculty",
+      "x-svs-base",
+      "x-svs-fallback",
+      "x-svs-host",
+    ])
+      scoped.delete(name);
+    scoped.set("x-svs-institution", tenant.id);
+    scoped.set("x-svs-tenant", host.tenantSlug);
+    scoped.set("x-svs-host", request.headers.get("host") || "");
+    scoped.set("x-svs-fallback", "0");
+    scoped.set("x-svs-faculty", "");
+    scoped.set("x-svs-base", moduleUrl("home", host));
+    url.pathname = "/tenant";
+    return refreshSession(request, host, () => {
+      scoped.set("cookie", request.headers.get("cookie") || "");
+      return NextResponse.rewrite(url, { request: { headers: scoped } });
+    });
   }
   const oldModule = url.searchParams.get("module");
   if (
@@ -87,6 +122,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(target, 308);
   }
   const headers = new Headers(request.headers);
+  headers.delete("x-svs-institution");
+  headers.delete("x-svs-tenant");
   headers.set("x-svs-faculty", faculty);
   headers.set("x-svs-base", moduleUrl("home", host));
   headers.set(
@@ -125,6 +162,11 @@ export async function proxy(request: NextRequest) {
       );
       login.searchParams.set("next", module);
       if (faculty) login.searchParams.set("faculty", faculty);
+      if (validInstitutionId(url.searchParams.get("institution")))
+        login.searchParams.set(
+          "institution",
+          url.searchParams.get("institution")!,
+        );
       return NextResponse.redirect(login);
     }
     headers.set("cookie", request.headers.get("cookie") || "");

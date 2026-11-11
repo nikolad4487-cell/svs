@@ -1,11 +1,18 @@
 import { supabaseConfig } from "@/lib/supabase/config";
 import { identity } from "@/lib/auth/access";
-import { facultyUrl, validFaculty } from "@/lib/routes";
+import {
+  facultyUrl,
+  validFaculty,
+  validInstitutionId,
+  institutionUrl,
+} from "@/lib/routes";
 import { safeModule } from "@/lib/auth/policy";
 import { navigation } from "@/lib/context";
 import { Field, Submit } from "./forms";
 const statuses: Record<string, string> = {
   invalid: "Podaci nisu ispravni ili prijava nije uspjela.",
+  "institution-denied":
+    "Vaš račun nema ovlasti za odabranu ustanovu. Članstvo se ne dodjeljuje prijavom na njezinu poddomenu.",
   unavailable:
     "Usluga trenutačno nije dostupna. Pokušajte ponovno ili se obratite administratoru.",
   expired: "Poveznica je istekla ili nije valjana. Zatražite novu.",
@@ -38,11 +45,13 @@ export async function AuthPanel({
   status = "",
   next,
   faculty,
+  institution,
 }: {
   mode?: string;
   status?: string;
   next?: string;
   faculty?: string;
+  institution?: string;
 }) {
   if (!supabaseConfig()) return <ConfigNotice />;
   const account = await identity();
@@ -61,6 +70,8 @@ export async function AuthPanel({
     u.searchParams.set("mode", view);
     u.searchParams.set("next", target);
     if (nextFaculty) u.searchParams.set("faculty", nextFaculty);
+    if (validInstitutionId(institution))
+      u.searchParams.set("institution", institution);
     return u.toString();
   };
   if (account && (selected === "login" || selected === "account")) {
@@ -80,9 +91,10 @@ export async function AuthPanel({
           {account.user.email} · E-adresa potvrđena
         </p>
         <a
-          href={
-            nextFaculty ? facultyUrl(url(target), nextFaculty) : url(target)
-          }
+          href={institutionUrl(
+            nextFaculty ? facultyUrl(url(target), nextFaculty) : url(target),
+            institution,
+          )}
           className="inline-block font-semibold text-blue-700"
         >
           Nastavi u modul →
@@ -201,6 +213,9 @@ export async function AuthPanel({
         className="mt-7 space-y-5"
       >
         <input type="hidden" name="next" value={target} />
+        {validInstitutionId(institution) && (
+          <input type="hidden" name="institution" value={institution} />
+        )}
         {nextFaculty && (
           <input type="hidden" name="faculty" value={nextFaculty} />
         )}

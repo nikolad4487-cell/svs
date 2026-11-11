@@ -352,6 +352,7 @@ function SubmissionDetails({ submission }: { submission: Submission }) {
 
 export async function LearningWorkspace({
   courseId,
+  institution,
   view,
   status,
   edit = false,
@@ -362,11 +363,12 @@ export async function LearningWorkspace({
   create?: string;
   section?: string;
   courseId?: string;
+  institution?: string;
   view: string;
   status?: string;
 }) {
   const moodle = moodleLoginUrl(process.env.MERLIN_LMS_URL);
-  const data = await learningData(courseId);
+  const data = await learningData(courseId, institution);
   const url = await navigation();
   if (!data) {
     const administrator = (await identity())?.superadmin;
@@ -410,6 +412,8 @@ export async function LearningWorkspace({
     sectionId,
   };
   const base = new URL(url("merlin"));
+  if (institution || course?.institution_id)
+    base.searchParams.set("institution", institution || course!.institution_id);
   if (editing) base.searchParams.set("edit", "1");
   return (
     <div className="space-y-8">

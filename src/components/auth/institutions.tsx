@@ -1,3 +1,4 @@
+import { RegistryAdmin } from "@/components/institutions/admin";
 import { PendingCredentials } from "./pending-credentials";
 import { CredentialPrint } from "./credential-print";
 import { requestContext } from "@/lib/auth/request";
@@ -129,6 +130,7 @@ export async function Institutions({
   );
   return (
     <div className="space-y-8">
+      {system && account.superadmin && <RegistryAdmin />}
       {system && account.superadmin && (
         <CredentialPrint loginUrl={url("auth")} />
       )}

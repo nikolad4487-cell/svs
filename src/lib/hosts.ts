@@ -1,3 +1,4 @@
+import { validSubdomain } from "./institutions/domains";
 import { centralPath } from "./routes";
 import { isModule, type ModuleSlug } from "./modules";
 export type HostResult = {
@@ -7,6 +8,7 @@ export type HostResult = {
   local: boolean;
   singleDomain?: boolean;
   canonicalBase?: string;
+  tenantSlug?: string;
 } | null;
 function hostname(value: string) {
   if (!/^[a-z0-9.-]+(?::[0-9]{1,5})?$/i.test(value)) return null;
@@ -22,6 +24,7 @@ export function resolveHost(
   localDomain = "",
   deploymentHosts: string[] = [],
   canonicalBase = "",
+  allowTenantHosts = false,
 ): HostResult {
   const parsed = hostname(host);
   if (!parsed) return null;
@@ -38,6 +41,14 @@ export function resolveHost(
     if (parsed.name.endsWith(`.${base}`)) {
       const sub = parsed.name.slice(0, -base.length - 1);
       if (isModule(sub)) return { module: sub, base, port: parsed.port, local };
+      if (allowTenantHosts && validSubdomain(sub))
+        return {
+          module: "home",
+          base,
+          port: parsed.port,
+          local,
+          tenantSlug: sub,
+        };
     }
   }
   // Only exact deployment hosts injected by Vercel; never trust arbitrary *.vercel.app.

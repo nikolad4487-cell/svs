@@ -14,6 +14,8 @@ import {
   LockKeyhole,
   Layers,
 } from "lucide-react";
+import { institutionDirectory } from "@/lib/institutions/public";
+import { InstitutionDirectory } from "@/components/institutions/directory";
 import { modules } from "@/lib/modules";
 import { navigation } from "@/lib/context";
 import { Brand } from "@/components/brand";
@@ -32,6 +34,7 @@ const icons = {
 };
 export default async function Home() {
   const url = await navigation();
+  const institutions = await institutionDirectory();
   return (
     <>
       <header className="border-b border-slate-200 bg-white">
@@ -41,6 +44,7 @@ export default async function Home() {
           </a>
           <nav className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
             <a href="#moduli">Moduli sustava</a>
+            <a href="#ustanove">Visoka učilišta</a>
             <a href="#o-sustavu">O platformi</a>
             <a href="#podrska">Podrška</a>
           </nav>
@@ -186,6 +190,7 @@ export default async function Home() {
             })}
           </div>
         </section>
+        <InstitutionDirectory institutions={institutions} base={url("home")} />
         <section id="o-sustavu" className="border-y border-slate-200 bg-white">
           <div className="mx-auto grid max-w-7xl gap-8 px-6 py-12 md:grid-cols-2">
             <div>
@@ -193,9 +198,10 @@ export default async function Home() {
                 Jedna platforma, više mogućnosti.
               </h2>
               <p className="mt-4 max-w-xl leading-7 text-slate-500">
-                ISVU je modularni informacijski sustav za sveučilišta, fakultete,
-                veleučilišta i akademije. Zajednički vizualni identitet povezuje
-                zasebne prostore za studij, nastavu i administraciju.
+                ISVU je modularni informacijski sustav za sveučilišta,
+                fakultete, veleučilišta i akademije. Zajednički vizualni
+                identitet povezuje zasebne prostore za studij, nastavu i
+                administraciju.
               </p>
             </div>
             <div id="podrska" className="rounded-xl bg-slate-50 p-6">

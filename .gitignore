@@ -8,3 +8,5 @@ node_modules/
 .local-test-users.json
 .local-*.json
 .local-*.env
+
+.local-isvu-register/

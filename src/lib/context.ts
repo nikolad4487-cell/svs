@@ -14,6 +14,7 @@ export async function navigation() {
     process.env.LOCAL_BASE_DOMAIN || "",
     deploymentHosts(),
     productionCanonicalBase(),
+    true,
   );
   if (!host) throw new Error("Nepodržan hostname");
   return (slug: Parameters<typeof moduleUrl>[0]) => {

@@ -12,7 +12,7 @@ import type { LearningFile } from "./files";
 import type { Quiz, QuizQuestion, QuizKey, QuizAttempt } from "./quizzes";
 const missing = (code: string) =>
   ["PGRST202", "PGRST205", "42P01", "42883"].includes(code);
-export async function learningData(courseId?: string) {
+export async function learningData(courseId?: string, institutionId?: string) {
   const account = await requireIdentity("merlin");
   const { db } = account;
   const courses: LearningCourse[] = [];
@@ -22,7 +22,12 @@ export async function learningData(courseId?: string) {
       if (missing(result.error.code)) return null;
       throw new Error("Kolegiji e-učenja nisu dostupni.");
     }
-    courses.push(...result.data);
+    courses.push(
+      ...result.data.filter(
+        (c: LearningCourse) =>
+          !institutionId || c.institution_id === institutionId,
+      ),
+    );
     if (result.data.length < 500) break;
   }
   const course = courses.find((c) => c.id === courseId);

@@ -85,3 +85,8 @@ Opcionalni Chromium test koristi `WORKFLOW_PLAYWRIGHT_MODULE` kao putanju instal
 Testovi pokrivaju kanonske produkcijske adrese kroz HTTP Host zaglavlja, sigurne dijeljene kolačiće, povratak s prijave, očuvanje oznake u navigaciji, izolaciju ustanove i jedno/više referadskih članstava. Chromium provjerava stvarni lokalni tok prijave i rasporeda. To nije potvrda javnog DNS-a, produkcijskih HTTPS certifikata ili dovršene Vercel objave.
 
 ISSP postavljanje, migracija i unos vlastitih prava/računa: [ISSP.md](ISSP.md).
+
+
+## Institucionalne poddomene
+
+[125 ustanova, uvoz, sigurnost i wildcard postavke](USTANOVE-I-PODDOMENE.md). Postojeće tehničke domene ostaju rezervirane. DNS i certifikati za novi wildcard još nisu potvrđeni.
