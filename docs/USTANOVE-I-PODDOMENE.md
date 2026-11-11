@@ -29,9 +29,10 @@ U produkciji postojeća sigurna sesija koristi `Secure`, `HttpOnly` kolačiće z
 U SQL Editoru odgovarajućeg **ISVU** projekta primijeniti redom:
 
 1. `supabase/migrations/202611110002_institution_tenants.sql` — stupci, provjere, zaštita metapodataka i funkcije.
-2. `supabase/migrations/202611110003_institution_catalog_125.sql` — transakcijski uvoz 125 zapisa i pregledano mapiranje UFZG-a.
+2. `supabase/migrations/202611110003_institution_catalog_125.sql` — izvorni transakcijski uvoz 125 zapisa i pregledano mapiranje UFZG-a.
+3. `supabase/migrations/202611110004_institution_short_labels.sql` — ispravak prethodno generiranih dugih oznaka u kratice. Ako su 002 i 003 već primijenjene, primijeniti samo 004; ne ponavljati migraciju koja dodaje stupce.
 
-Postojeće ranije migracije moraju biti primijenjene; ovaj par ne instalira cijelu praznu bazu. Za novu lokalnu bazu postoji generirani `supabase/setup.sql`. SQL paketi za ručno kopiranje imaju `begin`/`commit`; ako nastane konflikt, transakcija se mora poništiti, a uzrok pregledati, bez brisanja postojećih ustanova.
+Postojeće ranije migracije moraju biti primijenjene; ove datoteke ne instaliraju cijelu praznu bazu. Za novu lokalnu bazu postoji generirani `supabase/setup.sql`. SQL paketi za ručno kopiranje imaju `begin`/`commit`; ako nastane konflikt, transakcija se mora poništiti, a uzrok pregledati, bez brisanja postojećih ustanova.
 
 ```sh
 npm run catalog:build
@@ -40,7 +41,7 @@ npm run catalog:import -- --apply      # lokalni uvoz
 npm run catalog:import -- --production # produkcijski pregled bez upisa
 ```
 
-Produkcijski upis putem skripte zahtijeva dodatni `--apply`, prethodnu migraciju i već konfigurirane serverske `SVS_SUPABASE_URL` / `SVS_SUPABASE_SECRET_KEY`. Skripta ograničava cilj na postojeći ISVU projekt. Ključ se ne upisuje u klijentski kod ili repozitorij i ne šalje u razgovor. Seed SQL sam poziva istu funkciju, pa dodatni import nije potreban nakon migracije 003.
+Produkcijski upis putem skripte zahtijeva dodatni `--apply`, prethodnu migraciju i već konfigurirane serverske `SVS_SUPABASE_URL` / `SVS_SUPABASE_SECRET_KEY`. Skripta ograničava cilj na postojeći ISVU projekt. Ključ se ne upisuje u klijentski kod ili repozitorij i ne šalje u razgovor. Izvorni seed SQL poziva istu funkciju; zatim 004 ispravlja automatske duge oznake. Dodatni import nije potreban nakon primjene svih triju migracija.
 
 Ponovljeni uvoz ne stvara duplikate. Prioritet imaju stabilni ključ izvora, zatim službeni ID i izričita pregledana veza s postojećim zapisom. Novi izvorni podaci ne mijenjaju već dodijeljenu poddomenu ni staru rutu rasporeda. `registry_metadata_locked` štiti administratorske odluke; source snapshot ostaje dostupan za usporedbu. Superadministrator uređuje katalog u Administraciji sustava; postojeće upravljanje pozivima i ulogama ustanove ostaje dostupno. Administrator pojedine ustanove nema pravo mijenjati globalni registar.
 
@@ -74,3 +75,10 @@ Tehničke oznake iz `src/lib/institutions/domains.ts` i SQL provjere rezervirane
 `npm test`, `npm run typecheck`, `npm run build -- --webpack`, `npm run test:migrations`, `npm run test:institution-tenants`. Posljednja provjera koristi isključivo lokalnu testnu bazu i privremene članove/evidencije te vraća izmijenjene metapodatke. Za preglednik postaviti `WORKFLOW_PLAYWRIGHT_MODULE` na instalirani Playwright modul. Testovi uključuju ponovljeni uvoz, čuvanje postojećeg UFZG-a, zasebne istoimene ustanove, RLS preko drugih ustanova, zabranu uređivanja metapodataka običnom administratoru, lažirana zaglavlja i URL-ove, FER/FHS/VUKA, nepoznatu poddomenu, administratorsko uređivanje i dinamičku deaktivaciju.
 
 Javni DNS, produkcijske migracije i dohvat živog registra nisu zamijenjeni ovim testovima.
+
+
+## Ispravak kratica prema korisnikovoj dopuni
+
+Poddomene se sada temelje na početnim slovima riječi, npr. **Fakultet elektrotehnike, računarstva i informacijskih tehnologija Osijek → ferito.isvu.me**. Izostavljaju se veznici i prijedlozi `i`, `u`, `za`, `na`, `s`, `sa`, `te`, `od`, `iz`; oznaka pravnog statusa „bez pravne osobnosti” ne ulazi u kraticu. Primjeri su još `adu`, `alu`, `fkit`. Ranije izričito zatražene oznake `fer`, `fhs`, `foi`, `efzg`, `uniri`, `unizg`, `vuka`, `ufzg` i `geofzg` zadržane su kao iznimke. Za iste kratice dodana je oznaka grada, a po potrebi razlikovna riječ (`ef-ri`, `ef-st`, `af-zg-agro`, `af-zg-arhi`). Svih 125 oznaka je jedinstveno i imaju najviše 11 znakova. To su oznake ove aplikacije, a ne tvrdnja o službenim kraticama ili provjerenim web-adresama.
+
+Migracija 004 mijenja samo prepoznate automatski dodijeljene duge oznake iz prethodne verzije. UUID, korisnici, upisi i sve nastavne evidencije ostaju isti. Ranije ručno promijenjene ili zaključane oznake ostaju sačuvane. Ponovljena primjena nema dodatnih učinaka. Stara migracija 003 nije prepisana: nova instalacija prvo uvozi izvorni snapshot, zatim 004 ispravlja oznake. Aktualni JSON katalog i izvještaji već sadrže kratice. Ako korisnik kasnije uređuje naziv ustanove ili se promijeni web-adresa, postojeća poddomena se i dalje ne preimenuje automatski.

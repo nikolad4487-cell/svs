@@ -27,6 +27,15 @@ export function asciiSlug(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }
+// Initials of meaningful words; conjunctions/prepositions do not contribute a letter.
+export function institutionInitials(name: string) {
+  const ignored = new Set(["i", "u", "za", "na", "s", "sa", "te", "od", "iz"]);
+  return asciiSlug(name.replace(/\s+bez pravne osobnosti\s*$/i, ""))
+    .split("-")
+    .filter(word => word && !ignored.has(word))
+    .map(word => word[0])
+    .join("");
+}
 export function validSubdomain(value: unknown): value is string {
   return (
     typeof value === "string" &&

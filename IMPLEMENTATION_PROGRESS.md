@@ -153,3 +153,10 @@ Izvršene provjere završne verzije:
 - Lokalni REST schema cache zahtijevao je ponovno učitavanje nakon novih kontaktnih stupaca. Privremene testne izmjene potom su vraćene i testovi uspješno ponovljeni.
 
 Otvoreno: mrežna politika blokira službeni registar; sedam URL-ova su samo korisnikovi primjeri, 118 ih nedostaje, nijedan službeni ID nije dohvaćen. Sve poddomene jasno zahtijevaju provjeru. Produkcijski pregled bez upisa potvrđuje da nova migracija još nije primijenjena; baza na produkciji nije promijenjena. Vercel wildcard, javni DNS, HTTPS i produkcijski SSO još nisu provjereni. Kôd i lokalni testovi ne predstavljaju provedbu tih vanjskih koraka.
+
+
+## Ispravak dugih poddomena u kratice (korisnikova dopuna)
+
+Početna slova riječi, bez veznika/prijedloga: FERITO umjesto punog naziva ili konvencionalnog FERIT. Sačuvane su ranije izričito zatražene adrese (UFZG, GEOFZG, VUKA i sedam primjera). Novi katalog ima 125 jedinstvenih kratkih oznaka, najviše 11 znakova. Dodana je migracija 202611110004 koja ispravlja 117 prethodno generiranih dugih oznaka uz očuvanje identiteta i ručnih odluka. Izvorna migracija 003 ostaje nepromijenjena. Izvještaji su obnovljeni; produkcijska migracija i DNS ostaju vanjski koraci.
+
+Provjera ispravka: 67 jediničnih testova, typecheck, instalacija svih migracija na svježoj bazi te devet institucionalnih scenarija (uključujući migraciju kratica i Chromium) prolaze.

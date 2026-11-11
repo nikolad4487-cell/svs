@@ -1,8 +1,9 @@
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import {
-  asciiSlug,
   websiteLabel,
+  institutionInitials,
+  asciiSlug,
   allocateSubdomain,
 } from "../src/lib/institutions/domains.ts";
 const source = readFileSync("data/institutions/125-source.psv", "utf8")
@@ -30,6 +31,21 @@ const enrichment = JSON.parse(
   readFileSync("data/institutions/verified-enrichment.json", "utf8"),
 );
 const provenance=JSON.parse(readFileSync("data/institutions/provenance.json","utf8"));
+// Preserve only addresses explicitly requested earlier; all other bases are word initials.
+const explicitLabels = {10:"efzg",16:"fer",21:"fhs",24:"foi",46:"geofzg",93:"uniri",97:"unizg",102:"ufzg",117:"vuka"};
+const bases = source.map(([name], i) => explicitLabels[i+1] || institutionInitials(name));
+const cityCodes = {Zagreb:"zg",Rijeka:"ri",Split:"st",Osijek:"os",Varaždin:"vz",Pula:"pu",Karlovac:"ka",Vukovar:"vu",Sisak:"sk",Šibenik:"si"};
+const shortLabels = Object.fromEntries(source.map(([name, parent, city], i) => {
+  let label = bases[i];
+  if (!explicitLabels[i+1] && bases.filter(b=>b===label).length>1) {
+    const sameCity = source.filter((r,j)=>bases[j]===label && r[2]===city).length>1;
+    const qualifier = cityCodes[city] || institutionInitials(city);
+    const distinctive = asciiSlug(name).split("-").find(word => !["fakultet", "veleuciliste", "sveuciliste", "akademija"].includes(word)) || name;
+    label += "-" + qualifier + (sameCity ? "-" + distinctive.slice(0,4) : "");
+  }
+  return [`hr-isvu-125:${String(i+1).padStart(3,"0")}`, label];
+}));
+writeFileSync("data/institutions/short-labels.json", JSON.stringify(shortLabels,null,2)+"\n");
 const used = new Set();
 const rows = source.map(([name, parent, city], index) => {
   const n = index + 1,
@@ -37,9 +53,10 @@ const rows = source.map(([name, parent, city], index) => {
     extra = enrichment[key] || {};
   const website =
     Object.hasOwn(extra,"official_website") ? extra.official_website : (examples[n] ? `https://${examples[n]}` : null);
-  const manual = n === 102 ? "ufzg" : null;
+  const manual = explicitLabels[n] || null;
   const derived = website ? websiteLabel(website) : null;
-  const proposed = manual || derived || asciiSlug(name);
+  const proposed = shortLabels[key];
+  const abbreviationCollision = !manual && bases.filter(b => b === bases[index]).length > 1;
   const allocated = allocateSubdomain(
     proposed,
     used,
@@ -67,25 +84,27 @@ const rows = source.map(([name, parent, city], index) => {
     source_url:
       extra.source_url || "https://www.isvu.hr/visokaucilista/hr/pretrazivanje",
     subdomain: allocated.subdomain,
-    domain_origin: manual
+    domain_origin: n === 102
       ? "existing_application_route"
-      : derived
+      : (derived && proposed === derived)
         ? "website_candidate"
-        : "provisional_name",
+        : "provisional_abbreviation",
     domain_verification_status:
-      extra.verified && !!website && !allocated.collision && !!derived
+      extra.verified && !!website && !allocated.collision && proposed === derived
         ? "registry_derived"
         : "requires_verification",
-    domain_notes: allocated.collision || (!!website && !derived)
-      ? "Kolizija ili rezervirana oznaka; dodan jedinstveni dodatak."
-      : manual
+    domain_notes: allocated.collision || abbreviationCollision || (!!website && !derived)
+      ? "Jednaka kratica ili rezervirana oznaka; dodana kratka oznaka grada ili razlikovne riječi. Službena web-adresa čeka provjeru."
+      : n === 102
         ? "Očuvana postojeća oznaka UFZG; potrebna provjera izvora."
+        : manual && !derived
+        ? "Očuvana kratka oznaka izričito navedena u korisničkom zahtjevu; izvor čeka provjeru."
         : !website
-          ? "Privremena oznaka izvedena iz naziva; službena web-adresa nije potvrđena."
+          ? "Kratica od početnih slova naziva, bez veznika i prijedloga; službena web-adresa nije potvrđena."
           : extra.verified
             ? ""
             : "Web-adresa navedena kao primjer u korisničkom zahtjevu; registar još nije dohvaćen.",
-    collision: allocated.collision || (!!website && !derived),
+    collision: allocated.collision || abbreviationCollision || (!!website && !derived),
     source_pdf: "visoka učilišta.pdf",
     source_pdf_sha256: provenance.sha256,
     source_record_origin: extra.record_verified
@@ -116,7 +135,7 @@ writeFileSync(
 );
 const json = JSON.stringify(rows).replaceAll("'", "''");
 const map = JSON.stringify(bindings).replaceAll("'", "''");
-writeFileSync(
+if (!existsSync("supabase/migrations/202611110003_institution_catalog_125.sql")) writeFileSync(
   "supabase/migrations/202611110003_institution_catalog_125.sql",
   `-- Idempotent source snapshot of the 125 requested institutions. No users or email domains are created.\n-- Source IDs/websites absent from the supplied PDF remain explicitly unverified.\nselect public.import_institution_catalog('${json}'::jsonb,'${map}'::jsonb);\n`,
 );

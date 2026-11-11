@@ -191,6 +191,21 @@ try {
       );
     },
   );
+  await check("short-label correction renames generated labels once and preserves manual overrides and tenant identities", async () => {
+    const prior = JSON.parse(readFileSync("data/institutions/previous-generated-labels.json", "utf8"));
+    const correction = readFileSync("supabase/migrations/202611110004_institution_short_labels.sql", "utf8");
+    const ferito = rows.find(r=>r.registry_key==="hr-isvu-125:017");
+    sql(`begin;
+      update public.institutions set subdomain='${prior[ferito.registry_key]}', url_slug='${prior[ferito.registry_key]}', short_name=upper('${prior[ferito.registry_key]}'), domain_origin='provisional_name', registry_metadata_locked=false where registry_key='${ferito.registry_key}';
+      update public.institutions set subdomain='manual-${tag}', domain_origin='manual', registry_metadata_locked=true where registry_key='hr-isvu-125:001';
+      ${correction}
+      ${correction}
+      do $test$ begin
+       if not exists(select 1 from public.institutions where registry_key='${ferito.registry_key}' and id='${ferito.id}' and subdomain='ferito' and url_slug='ferito' and short_name='FERITO') then raise exception 'FERITO_CORRECTION_FAILED'; end if;
+       if not exists(select 1 from public.institutions where registry_key='hr-isvu-125:001' and subdomain='manual-${tag}' and registry_metadata_locked) then raise exception 'MANUAL_OVERRIDE_LOST'; end if;
+      end $test$;
+      rollback;`);
+  });
   await check(
     "explicit UFZG binding preserves established IDs, members, email rules and academic records in an isolated rollback",
     async () => {
