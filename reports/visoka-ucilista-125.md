@@ -86,9 +86,9 @@ Ukupno: 125. Potvrđene web-adrese iz živog registra: 0. Nedostajuće web-adres
 | Pravni fakultet Osijek (Sveučilište Josipa Jurja Strossmayera u Osijeku) | Nije potvrđena | pfo.isvu.me | requires_verification; provisional_abbreviation |
 | Prehrambeno-biotehnološki fakultet (Sveučilište u Zagrebu) | Nije potvrđena | pbf.isvu.me | requires_verification; provisional_abbreviation |
 | Prehrambeno-tehnološki fakultet Osijek (Sveučilište Josipa Jurja Strossmayera u Osijeku) | Nije potvrđena | ptfo.isvu.me | requires_verification; provisional_abbreviation |
-| Prirodoslovno-matematički fakultet (Sveučilište u Splitu) | Nije potvrđena | pmf.isvu.me | requires_verification; provisional_abbreviation |
+| Prirodoslovno-matematički fakultet (Sveučilište u Splitu) | Nije potvrđena | pmf-st.isvu.me | requires_verification; provisional_abbreviation |
 | Prirodoslovno-matematički fakultet-matematički odsjek (Sveučilište u Zagrebu) | Nije potvrđena | pmfmo.isvu.me | requires_verification; provisional_abbreviation |
-| Prirodoslovno-matematički fakultet-prirodoslovni odsjeci (Sveučilište u Zagrebu) | Nije potvrđena | pmfpo.isvu.me | requires_verification; provisional_abbreviation |
+| Prirodoslovno-matematički fakultet-prirodoslovni odsjeci (Sveučilište u Zagrebu) | Nije potvrđena | pmf.isvu.me | requires_verification; provisional_abbreviation |
 | Rudarsko-geološko-naftni fakultet (Sveučilište u Zagrebu) | Nije potvrđena | rgnf.isvu.me | requires_verification; provisional_abbreviation |
 | Stomatološki fakultet (Sveučilište u Zagrebu) | Nije potvrđena | sf.isvu.me | requires_verification; provisional_abbreviation |
 | Sveučilišni centar za protestantsku teologiju Matija Vlačić Ilirik (Sveučilište u Zagrebu) | Nije potvrđena | scptmvi.isvu.me | requires_verification; provisional_abbreviation |

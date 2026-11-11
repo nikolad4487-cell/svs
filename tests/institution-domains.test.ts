@@ -121,7 +121,7 @@ test("school labels use word initials, including FERITO, and preserve requested 
   assert.equal(institutionInitials("Akademija dramske umjetnosti"), "adu");
   assert.equal(institutionInitials("Fakultet kemijskog inženjerstva i tehnologije"), "fkit");
   const label = (n: number) => rows.find(r => r.registry_key === `hr-isvu-125:${String(n).padStart(3,"0")}`)?.subdomain;
-  for (const [n, expected] of [[17,"ferito"],[2,"adu"],[23,"fkit"],[46,"geofzg"],[102,"ufzg"],[117,"vuka"]] as const) assert.equal(label(n),expected);
+  for (const [n, expected] of [[17,"ferito"],[81,"pmf-st"],[83,"pmf"],[2,"adu"],[23,"fkit"],[46,"geofzg"],[102,"ufzg"],[117,"vuka"]] as const) assert.equal(label(n),expected);
   assert.ok(rows.every(r=>r.subdomain.length<=14), "No full institution names as school labels");
   assert.notEqual(label(8),label(9), "Equal names need separate labels");
 });

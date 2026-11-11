@@ -31,8 +31,8 @@ const enrichment = JSON.parse(
   readFileSync("data/institutions/verified-enrichment.json", "utf8"),
 );
 const provenance=JSON.parse(readFileSync("data/institutions/provenance.json","utf8"));
-// Preserve only addresses explicitly requested earlier; all other bases are word initials.
-const explicitLabels = {10:"efzg",16:"fer",21:"fhs",24:"foi",46:"geofzg",93:"uniri",97:"unizg",102:"ufzg",117:"vuka"};
+// Preserve requested addresses and the reviewed Split PMF collision qualifier; other bases are word initials.
+const explicitLabels = {10:"efzg",16:"fer",21:"fhs",24:"foi",46:"geofzg",81:"pmf-st",83:"pmf",93:"uniri",97:"unizg",102:"ufzg",117:"vuka"};
 const bases = source.map(([name], i) => explicitLabels[i+1] || institutionInitials(name));
 const cityCodes = {Zagreb:"zg",Rijeka:"ri",Split:"st",Osijek:"os",Varaždin:"vz",Pula:"pu",Karlovac:"ka",Vukovar:"vu",Sisak:"sk",Šibenik:"si"};
 const shortLabels = Object.fromEntries(source.map(([name, parent, city], i) => {
@@ -95,7 +95,11 @@ const rows = source.map(([name, parent, city], index) => {
         : "requires_verification",
     domain_notes: allocated.collision || abbreviationCollision || (!!website && !derived)
       ? "Jednaka kratica ili rezervirana oznaka; dodana kratka oznaka grada ili razlikovne riječi. Službena web-adresa čeka provjeru."
-      : n === 102
+      : n === 83
+        ? "Očuvana postojeća ručna oznaka PMF zagrebačkih prirodoslovnih odsjeka."
+        : n === 81
+        ? "Kratica PMF dopunjena oznakom Splita; oznaka pmf već je ručno dodijeljena drugoj ustanovi."
+        : n === 102
         ? "Očuvana postojeća oznaka UFZG; potrebna provjera izvora."
         : manual && !derived
         ? "Očuvana kratka oznaka izričito navedena u korisničkom zahtjevu; izvor čeka provjeru."

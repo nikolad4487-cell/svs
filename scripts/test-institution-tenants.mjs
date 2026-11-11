@@ -206,6 +206,24 @@ try {
       end $test$;
       rollback;`);
   });
+  await check("occupied manual PMF survives while Split receives pmf-st; other occupied targets get a unique city suffix", async () => {
+    const prior = JSON.parse(readFileSync("data/institutions/previous-generated-labels.json", "utf8"));
+    const correction = readFileSync("supabase/migrations/202611110005_institution_label_conflicts.sql", "utf8");
+    sql(`begin;
+      update public.institutions set subdomain='${prior["hr-isvu-125:081"]}', domain_origin='provisional_name', registry_metadata_locked=false where registry_key='hr-isvu-125:081';
+      update public.institutions set subdomain='pmf', domain_origin='manual', registry_metadata_locked=true where registry_key='hr-isvu-125:083';
+      update public.institutions set subdomain='${prior["hr-isvu-125:002"]}', domain_origin='provisional_name', registry_metadata_locked=false where registry_key='hr-isvu-125:002';
+      update public.institutions set subdomain='adu', domain_origin='manual', registry_metadata_locked=true where registry_key='hr-isvu-125:001';
+      ${correction}
+      ${correction}
+      do $test$ begin
+       if not exists(select 1 from public.institutions where registry_key='hr-isvu-125:081' and subdomain='pmf-st') then raise exception 'SPLIT_PMF_FAILED';end if;
+       if not exists(select 1 from public.institutions where registry_key='hr-isvu-125:083' and subdomain='pmf' and registry_metadata_locked and domain_origin='manual') then raise exception 'MANUAL_PMF_LOST';end if;
+       if not exists(select 1 from public.institutions where registry_key='hr-isvu-125:002' and subdomain='adu-zg') then raise exception 'OTHER_COLLISION_FAILED';end if;
+       if not exists(select 1 from public.institutions where registry_key='hr-isvu-125:001' and subdomain='adu' and registry_metadata_locked) then raise exception 'OTHER_MANUAL_LOST';end if;
+      end $test$;
+      rollback;`);
+  });
   await check(
     "explicit UFZG binding preserves established IDs, members, email rules and academic records in an isolated rollback",
     async () => {

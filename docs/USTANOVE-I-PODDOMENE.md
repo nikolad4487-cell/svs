@@ -82,3 +82,12 @@ Javni DNS, produkcijske migracije i dohvat živog registra nisu zamijenjeni ovim
 Poddomene se sada temelje na početnim slovima riječi, npr. **Fakultet elektrotehnike, računarstva i informacijskih tehnologija Osijek → ferito.isvu.me**. Izostavljaju se veznici i prijedlozi `i`, `u`, `za`, `na`, `s`, `sa`, `te`, `od`, `iz`; oznaka pravnog statusa „bez pravne osobnosti” ne ulazi u kraticu. Primjeri su još `adu`, `alu`, `fkit`. Ranije izričito zatražene oznake `fer`, `fhs`, `foi`, `efzg`, `uniri`, `unizg`, `vuka`, `ufzg` i `geofzg` zadržane su kao iznimke. Za iste kratice dodana je oznaka grada, a po potrebi razlikovna riječ (`ef-ri`, `ef-st`, `af-zg-agro`, `af-zg-arhi`). Svih 125 oznaka je jedinstveno i imaju najviše 11 znakova. To su oznake ove aplikacije, a ne tvrdnja o službenim kraticama ili provjerenim web-adresama.
 
 Migracija 004 mijenja samo prepoznate automatski dodijeljene duge oznake iz prethodne verzije. UUID, korisnici, upisi i sve nastavne evidencije ostaju isti. Ranije ručno promijenjene ili zaključane oznake ostaju sačuvane. Ponovljena primjena nema dodatnih učinaka. Stara migracija 003 nije prepisana: nova instalacija prvo uvozi izvorni snapshot, zatim 004 ispravlja oznake. Aktualni JSON katalog i izvještaji već sadrže kratice. Ako korisnik kasnije uređuje naziv ustanove ili se promijeni web-adresa, postojeća poddomena se i dalje ne preimenuje automatski.
+
+
+## Sukob s postojećom ručnom oznakom PMF
+
+Čitanjem isključivo metapodataka produkcijskog ISVU-a potvrđeno je da `hr-isvu-125:083` (zagrebački prirodoslovni odsjeci) već ima ručnu, zaključanu oznaku `pmf`. Taj zapis se ne preimenuje i njegovi podaci ostaju sačuvani. Novi prijedlog za splitski PMF je `pmf-st`.
+
+Ako je 004 prekinut porukom „Kratica pmf je zauzeta”, pokrenuti **202611110005_institution_label_conflicts.sql** izravno nakon 003. Ova nova datoteka može se primijeniti bez uspješne 004 i može se ponavljati. Ako je 004 već uspješno završio, 005 također vrijedi. Za standardnu novu instalaciju redoslijed je 002, 003, 004, 005; generirani setup uključuje sve.
+
+005 čuva ručne i zaključane oznake. Automatske duge ili stare kratke oznake zamjenjuje novim prijedlogom; kada je i prijedlog zauzet, bira slobodan dodatak grada, pa po potrebi stabilan dodatak iz ključa izvora. Ne preuzima oznaku druge ustanove i ne spaja zapise. ID, članstva i nastavne evidencije ostaju isti. Promjene se izvršavaju u jednoj transakciji. Produkcijski pogled proveden je bez upisa; migraciju u produkciji primjenjuje vlasnik baze.

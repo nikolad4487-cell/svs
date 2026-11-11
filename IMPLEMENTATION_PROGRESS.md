@@ -160,3 +160,8 @@ Otvoreno: mrežna politika blokira službeni registar; sedam URL-ova su samo kor
 Početna slova riječi, bez veznika/prijedloga: FERITO umjesto punog naziva ili konvencionalnog FERIT. Sačuvane su ranije izričito zatražene adrese (UFZG, GEOFZG, VUKA i sedam primjera). Novi katalog ima 125 jedinstvenih kratkih oznaka, najviše 11 znakova. Dodana je migracija 202611110004 koja ispravlja 117 prethodno generiranih dugih oznaka uz očuvanje identiteta i ručnih odluka. Izvorna migracija 003 ostaje nepromijenjena. Izvještaji su obnovljeni; produkcijska migracija i DNS ostaju vanjski koraci.
 
 Provjera ispravka: 67 jediničnih testova, typecheck, instalacija svih migracija na svježoj bazi te devet institucionalnih scenarija (uključujući migraciju kratica i Chromium) prolaze.
+
+
+## Zauzeti PMF — korekcija 005
+
+Produkcijski read-only upit potvrdio je da zagrebački prirodoslovni odsjeci imaju ručni zaključani `pmf`. Splitski prijedlog je `pmf-st`. Dodana je samostalna korekcija 005 koja može slijediti izravno nakon 003 kada 004 nije uspješno završio; čuva ručne oznake te rješava i druge zauzete prijedloge dodatkom grada/stabilnog ključa. Reprodukcija ručnog PMF-a i druge zauzete oznake prolazi u lokalnoj rollback transakciji; prolaze i 67 jediničnih provjera, svježa instalacija (47 RLS tablica) i devet institucionalnih scenarija bez preglednika. Produkcijski upis nije proveden.
