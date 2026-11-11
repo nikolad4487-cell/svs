@@ -76,6 +76,19 @@ export const modules = [
     ],
   },
   {
+    slug: "issp",
+    name: "ISSP",
+    description: "Studentska prava, prehrana, iskaznice i osobni računi.",
+    icon: "Files",
+    color: "emerald",
+    items: [
+      "Pregled osobnih podataka",
+      "Osobni računi",
+      "Postavke obavijesti",
+      "Upravljanje evidencijom",
+    ],
+  },
+  {
     slug: "webmail",
     name: "Webmail",
     description: "Povežite svoju akademsku elektroničku poštu.",

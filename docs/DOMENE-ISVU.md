@@ -10,6 +10,7 @@
 | Studomat | `https://studomat.isvu.me` |
 | Referada | `https://referada.isvu.me` |
 | E-učenje | `https://merlin.isvu.me` |
+| Studentski standard (ISSP) | `https://issp.isvu.me` |
 | Raspored | `https://raspored.isvu.me` |
 | Raspored Učiteljskog fakulteta | `https://raspored.isvu.me/ufzg` |
 | Raspored Geodetskog fakulteta | `https://raspored.isvu.me/geofzg` |
@@ -59,7 +60,7 @@ Raspored `/ufzg` učitava samo ustanovu s tom oznakom i podatke koje prijavljeni
 
 Kod je pripremljen; ove se vanjske postavke ne stvaraju samim Git pushom.
 
-1. U Vercel projektu dodati `isvu.me`, `studomat.isvu.me`, `referada.isvu.me`, `merlin.isvu.me`, `raspored.isvu.me` i `auth.isvu.me` u **Settings → Domains**, sve u isti projekt. Po potrebi dodati `www.isvu.me` i stare poddomene za preusmjeravanja.
+1. U Vercel projektu dodati `isvu.me`, `studomat.isvu.me`, `referada.isvu.me`, `merlin.isvu.me`, `issp.isvu.me`, `raspored.isvu.me` i `auth.isvu.me` u **Settings → Domains**, sve u isti projekt. Po potrebi dodati `www.isvu.me` i stare poddomene za preusmjeravanja.
 2. U Vercel **Environment Variables** postaviti `BASE_DOMAIN=isvu.me` za okruženje objave. To je konfiguracija, bez protokola, putanje i porta. Ako već postoji druga vrijednost, zamijeniti je; zadana vrijednost u novom kodu ne nadjačava postojeću environment varijablu.
 3. U Namecheapu ili kod stvarnog DNS pružatelja upisati **točne A/CNAME/TXT zapise koje Vercel prikaže za ovaj projekt**. Ne pretpostavljati univerzalnu IP adresu ili CNAME cilj. Za putanje `/admin`, `/ufzg` i `/geofzg` ne stvaraju se dodatni DNS zapisi.
 4. Pričekati da Vercel potvrdi domene i HTTPS certifikate te objaviti pripremljenu verziju aplikacije.
@@ -82,3 +83,5 @@ npm run test:domain-routes
 Opcionalni Chromium test koristi `WORKFLOW_PLAYWRIGHT_MODULE` kao putanju instaliranog playwright-core modula. Skripta pokreće vlastiti lokalni Next na portu 3011 i nakon testa vraća prethodne testne oznake i uloge.
 
 Testovi pokrivaju kanonske produkcijske adrese kroz HTTP Host zaglavlja, sigurne dijeljene kolačiće, povratak s prijave, očuvanje oznake u navigaciji, izolaciju ustanove i jedno/više referadskih članstava. Chromium provjerava stvarni lokalni tok prijave i rasporeda. To nije potvrda javnog DNS-a, produkcijskih HTTPS certifikata ili dovršene Vercel objave.
+
+ISSP postavljanje, migracija i unos vlastitih prava/računa: [ISSP.md](ISSP.md).

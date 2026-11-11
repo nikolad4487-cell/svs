@@ -10,6 +10,7 @@ import { Institutions } from "@/components/auth/institutions";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ExternalService } from "@/components/external-service";
+import { IsspWorkspace } from "@/components/issp/workspace";
 import { LearningWorkspace } from "@/components/learning/workspace";
 import { LearningShell } from "@/components/learning/shell";
 import { modules, academicAdminItems, studomatGroups } from "@/lib/modules";
@@ -99,6 +100,16 @@ export default async function Module({
     admin:
       "Administracija je namijenjena isključivo superadministratorima. Ovo je javna informativna stranica modula; nema pristupa administrativnim podacima ili radnjama.",
   };
+  if (module === "issp" && supabaseConfig() && allowed)
+    return (
+      <IsspWorkspace
+        institution={institution}
+        student={student}
+        year={academic_year}
+        view={active}
+        status={status}
+      />
+    );
   if (module === "merlin" && supabaseConfig() && allowed)
     return (
       <LearningShell

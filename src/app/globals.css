@@ -69,3 +69,9 @@ button {
   body { background: white !important; color: black !important; }
   article { break-inside: avoid; }
 }
+.issp-surface { font-family: Arial, Helvetica, sans-serif; }
+.issp-section > summary { list-style: none; }
+.issp-section > summary::-webkit-details-marker { display: none; }
+.issp-section[open] > summary > svg { transform: rotate(90deg); }
+.issp-surface input { accent-color: #657020; }
+.dark .issp-section > summary { background: #455125; color: #f0f4d8; }

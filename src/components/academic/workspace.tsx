@@ -73,6 +73,14 @@ export async function AcademicWorkspace({
   };
   return (
     <div>
+      {["referada", "admin", "isvu", "studomat"].includes(module) && (
+        <a
+          className="mb-5 inline-block rounded-lg border border-lime-300 bg-lime-50 px-4 py-2 text-sm font-semibold text-lime-900"
+          href={`${url("issp")}${url("issp").includes("?") ? "&" : "?"}institution=${data.institution.id}`}
+        >
+          ISSP · prava, iskaznice i osobni računi
+        </a>
+      )}
       {module === "raspored" && faculty ? (
         <p className="mb-6 rounded-lg bg-blue-50 p-4">
           Raspored ustanove: <strong>{data.institution.name}</strong>

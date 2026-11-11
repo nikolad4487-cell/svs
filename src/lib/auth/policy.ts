@@ -24,6 +24,10 @@ export function canAccessModule(
 ) {
   if (superadmin) return true;
   if (module === "admin") return false;
+  if (module === "issp")
+    return memberships.some((m) =>
+      ["student", "institution_admin", "registrar"].includes(m.role),
+    );
   if (module === "isvu" || module === "referada")
     return memberships.some((m) =>
       ["institution_admin", "registrar"].includes(m.role),
@@ -37,6 +41,7 @@ export function safeModule(value: unknown): ModuleSlug {
       "studomat",
       "merlin",
       "webmail",
+      "issp",
       "isvu",
       "referada",
       "raspored",

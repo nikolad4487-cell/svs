@@ -131,6 +131,16 @@ try {
         assert.equal(to.hostname, "auth.isvu.me");
         assert.equal(to.searchParams.get("next"), module);
       }
+      const isspLogin = await request(H("issp"), "/");
+      assert.equal(isspLogin.status, 307);
+      assert.equal(
+        new URL(isspLogin.headers.location).hostname,
+        "auth.isvu.me",
+      );
+      assert.equal(
+        new URL(isspLogin.headers.location).searchParams.get("next"),
+        "issp",
+      );
       for (const [sub, path] of [
         ["portal", "/admin"],
         ["isvu", "/admin/studiji"],
@@ -153,6 +163,7 @@ try {
         `https://isvu.me:${port}/admin/sustav`,
         `https://referada.isvu.me:${port}`,
         `https://studomat.isvu.me:${port}`,
+        `https://issp.isvu.me:${port}`,
         `https://isvu.me:${port}/webmail`,
       ])
         assert.ok(home.text.includes(`href="${target}"`), target);

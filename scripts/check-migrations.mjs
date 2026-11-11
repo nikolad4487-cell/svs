@@ -63,7 +63,7 @@ try {
       "postgres",
     ],
     { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
-  ).replace(/^CREATE POLICY merlin_object_[\s\S]*?;\n/gm, "");
+  ).replace(/^CREATE POLICY (?:merlin_object_|issp_photo_)[\s\S]*?;\n/gm, "");
   sql(name, storage);
   sql(name, readFileSync("supabase/setup.sql", "utf8"));
   const tables = Number(
@@ -72,9 +72,9 @@ try {
       "select count(*) from pg_tables where schemaname='public' and rowsecurity",
     ),
   );
-  if (tables !== 42) throw new Error(`Expected 42 RLS tables, got ${tables}`);
+  if (tables !== 47) throw new Error(`Expected 47 RLS tables, got ${tables}`);
   console.log(
-    "Fresh SQL installer verified on PostgreSQL with real Auth and Storage schemas; all 42 application tables have RLS.",
+    "Fresh SQL installer verified on PostgreSQL with real Auth and Storage schemas; all 47 application tables have RLS.",
   );
 } finally {
   sql("postgres", `drop database ${name}`);

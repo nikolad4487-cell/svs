@@ -64,7 +64,7 @@ function ServiceFields({
     </label>
   ));
 }
-export function StudentServicesAdmin({
+export async function StudentServicesAdmin({
   data,
   module,
 }: {
@@ -80,6 +80,10 @@ export function StudentServicesAdmin({
         studentske evidencije.
       </Empty>
     );
+  const navigationUrl = await navigation();
+  const isspUrl = new URL(navigationUrl("issp"));
+  isspUrl.searchParams.set("institution", data.institution.id);
+  isspUrl.searchParams.set("view", "Upravljanje evidencijom");
   const common = (row?: StudentService) => (
     <>
       <input type="hidden" name="institution_id" value={data.institution.id} />
@@ -124,6 +128,12 @@ export function StudentServicesAdmin({
   );
   return (
     <div className="space-y-8">
+      <a
+        href={isspUrl.toString()}
+        className="inline-block text-sm font-semibold text-green-800 underline"
+      >
+        ISSP · prava, iskaznice i potrošnja
+      </a>
       <p className="text-sm text-slate-500">
         Ovdje referada evidentira prava, financijske obveze, odluke i prisustvo.
         Osobne godišnje podatke unose studenti u Studomatu. Iznosi participacije
@@ -423,6 +433,44 @@ export async function StudentServices({
         </form>
       </Section>
     );
+  if (view === "Razina prava na prehranu") {
+    const issp = await data.account.db
+      .from("issp_accounts")
+      .select("rights_level,dining_enabled,valid_from,valid_until,reference")
+      .eq("institution_id", data.institution.id)
+      .eq("student_id", data.account.user.id)
+      .eq("academic_year_id", year.id)
+      .maybeSingle();
+    if (issp.error && !["PGRST205", "42P01"].includes(issp.error.code))
+      throw new Error("Prava prehrane nisu dostupna.");
+    if (issp.data) {
+      const r = issp.data;
+      const target = new URL(url("issp"));
+      target.searchParams.set("institution", data.institution.id);
+      target.searchParams.set("academic_year", year.id);
+      return (
+        <Section title="Razina prava na prehranu">
+          {chooser}
+          <Table
+            headings={["Podatak", "ISSP evidencija referade"]}
+            rows={[
+              ["Razina prava", r.rights_level || "Nije evidentirano"],
+              ["Odobreno odlukom", r.dining_enabled ? "DA" : "NE"],
+              ["Vrijedi od", r.valid_from],
+              ["Vrijedi do", r.valid_until],
+              ["Izvor / odluka", r.reference],
+            ]}
+          />
+          <a
+            href={target.toString()}
+            className="mt-5 inline-block font-semibold text-green-800 underline"
+          >
+            Otvori ISSP: aktivnost prava, saldo i osobni računi
+          </a>
+        </Section>
+      );
+    }
+  }
   const entry = Object.entries(serviceDefinitions).find(
     ([, d]) => d.title === view,
   );
