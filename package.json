@@ -37,7 +37,10 @@
     "catalog:build": "node --import tsx scripts/build-institution-catalog.mjs",
     "catalog:import": "node --use-env-proxy scripts/import-institution-catalog.mjs",
     "test:institution-tenants": "node scripts/test-institution-tenants.mjs",
-    "catalog:collect": "python3 scripts/collect-isvu-registry.py"
+    "catalog:collect": "python3 scripts/collect-isvu-registry.py",
+    "catalog:programs:build": "python3 scripts/build-study-offerings.py",
+    "catalog:programs:import": "node --use-env-proxy scripts/import-study-offerings.mjs",
+    "test:study-offerings": "node scripts/test-study-offerings.mjs"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",

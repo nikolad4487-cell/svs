@@ -11,6 +11,7 @@ type Field = {
   type?: string;
   options?: Option[];
   optional?: boolean;
+  maxLength?: number;
   step?: string;
 };
 type Resource = {
@@ -87,7 +88,7 @@ function resources(data: AcademicData): Resource[] {
       action: "program",
       title: "Studijski programi",
       fields: [
-        { name: "name", label: "Naziv" },
+        { name: "name", label: "Naziv", maxLength: 1000 },
         { name: "code", label: "Šifra" },
         {
           name: "degree",
@@ -98,9 +99,10 @@ function resources(data: AcademicData): Resource[] {
             "Integrirani",
             "Stručni",
             "Poslijediplomski",
+            "Nije navedeno",
           ].map((v) => ({ id: v, label: v })),
         },
-        { name: "duration_years", label: "Trajanje (godine)", type: "number" },
+        { name: "duration_years", label: "Trajanje (godine; prazno ako nije poznato)", type: "number", optional: true },
       ],
       records: data.programs,
     },
@@ -310,6 +312,12 @@ function RecordForm({
       className="grid gap-4 sm:grid-cols-2"
     >
       <AcademicHidden data={data} module={module} view={view} />
+      {resource.action === "program" && !!record?.catalog_source && (
+        <p className="text-sm text-slate-500 sm:col-span-2">
+          Izvor: popis ponude {(record.catalog_source as {source_year?:number}).source_year || ""}. Način studiranja: {((record.catalog_source as {modes?:string[]}).modes || []).join(", ")}. Mjesta: {((record.catalog_source as {locations?:string[]}).locations || []).join(", ")}.
+          {record.catalog_requires_review ? " Izvorni naziv zahtijeva provjeru." : ""}
+        </p>
+      )}
       {record && (
         <input name="id" type="hidden" value={String(record.id)} />
       )}{" "}
@@ -350,7 +358,7 @@ function RecordForm({
                 {...props}
                 type={field.type || "text"}
                 step={field.step || (field.type === "number" ? "1" : undefined)}
-                maxLength={field.type ? undefined : 200}
+                maxLength={field.maxLength || (field.type ? undefined : 200)}
               />
             )}
           </label>
@@ -388,6 +396,11 @@ export function AcademicAdmin({
           )
           .map((resource) => (
             <Section key={resource.action} title={resource.title}>
+              {resource.action === "program" && data.programs.some(p => p.duration_years === null || p.degree === "Nije navedeno") && (
+                <p className="mb-4 rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
+                  Programi iz popisa ponude 2024. mogu imati nepoznato trajanje i razinu. Dopunite ih kroz Uredi prije upisa studenata. Stare kvote nisu aktualna ponuda upisa.
+                </p>
+              )}
               <details className="rounded-lg border border-slate-200 p-4">
                 <summary className="cursor-pointer font-semibold text-blue-700">
                   Novi zapis · {resource.title.toLowerCase()}

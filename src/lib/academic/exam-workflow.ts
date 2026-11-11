@@ -25,6 +25,7 @@ export const workflowErrors: Record<string, string> = {
     "Upis nije administrativno dovršen. Obratite se referadi za provjeru dokumentacije i upisnog lista.",
   "enrollment-previous":
     "Prethodni upis nije administrativno dovršen. Referada ga treba provjeriti prije otvaranja iduće godine.",
+  "program-metadata": "Prije upisa dopunite trajanje i razinu studijskog programa u administraciji studija.",
   "enrollment-checks":
     "Provjerite sve četiri obvezne stavke i upišite najmanje jedan kolegij prije dovršenja upisa.",
   "enrollment-reopen":
@@ -43,6 +44,7 @@ export const workflowErrors: Record<string, string> = {
     "Rok prijave je istekao. Uredite termin prije otvaranja nacrta.",
 };
 export function workflowErrorStatus(message: string) {
+  if (message === "REGISTRAR_PROGRAM") return "program-metadata";
   if (message === "Upis nije administrativno dovršen. Obratite se referadi.")
     return "enrollment-incomplete";
   if (message === "Prethodni upis nije administrativno dovršen.")

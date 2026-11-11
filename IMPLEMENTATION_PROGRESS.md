@@ -165,3 +165,14 @@ Provjera ispravka: 67 jediničnih testova, typecheck, instalacija svih migracija
 ## Zauzeti PMF — korekcija 005
 
 Produkcijski read-only upit potvrdio je da zagrebački prirodoslovni odsjeci imaju ručni zaključani `pmf`. Splitski prijedlog je `pmf-st`. Dodana je samostalna korekcija 005 koja može slijediti izravno nakon 003 kada 004 nije uspješno završio; čuva ručne oznake te rješava i druge zauzete prijedloge dodatkom grada/stabilnog ključa. Reprodukcija ručnog PMF-a i druge zauzete oznake prolazi u lokalnoj rollback transakciji; prolaze i 67 jediničnih provjera, svježa instalacija (47 RLS tablica) i devet institucionalnih scenarija bez preglednika. Produkcijski upis nije proveden.
+
+
+## Studijski programi iz popisa slobodnih mjesta 2024.
+
+Dostavljeni PDF stvarno je obrađen: 23 stranice, 1.313 izvornih redaka, 179 kombinacija nositelja/izvođača. Katalog dodaje 54 nedostajuće ustanove ili odjela i 706 programa po ustanovama; načini studiranja, lokacije, kandidatske varijante i izvorni redci ostaju dostupni kao metapodaci. Šest postojećih ustanova nema program u izvoru i za njih nisu izmišljeni programi. Jedan skraćeni izvorni popis smjerova označen je za provjeru.
+
+Migracije 202611110006/007 omogućuju nepoznato trajanje i razinu, kontrolirani ponovljivi uvoz te zaštitu od upisa prije dopune programa. Postojeći programi, UUID-ovi, nastavne evidencije i studentske veze ostaju sačuvani. Novi fakulteti ne dobivaju stvarne korisnike ili automatska članstva. Testovima je otkriven i otklonjen postojeći sukob naziva argumenta `address` s fizičkom adresom ustanove u provjeri dopuštene domene poziva; pozivanje i početni pristup referade ponovno prolaze.
+
+Dokazi: 71 jedinični test; typecheck i produkcijski webpack build; sedam novih integracijskih scenarija; 15 postojećih referadskih scenarija (svih osam vrsta upisa) i devet institucionalnih scenarija prolaze. Instalacija na svježem PostgreSQL-u s pravim Auth/Storage shemama ima 47 RLS tablica. Novi test čuva program s drugim izvornim UUID-om i studentskim upisom, provjerava transakcijski rollback, nepoznate podatke i pristup drugoj ustanovi.
+
+Produkcijski read-only pregled prije uvoza: 125 ustanova i jedan postojeći Učiteljski studij. Produkcijski preview potvrđuje da migracija 006 još nije primijenjena. Zato 54 nove ustanove i 706 kataloških zapisa trenutačno postoje u lokalnoj testnoj bazi; produkcijski uvoz zahtijeva pripremljeni SQL paket 006+007. Pregled i CSV: reports/studijski-programi-2024.*. Koraci: docs/STUDIJSKI-PROGRAMI-IZ-PDF-A.md.

@@ -1,0 +1,1457 @@
+[
+  {
+    "owner": "EFFECTUS veleučilište",
+    "provider": "EFFECTUS veleučilište",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:e7168dcae39fdb80"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Evanđeosko teološko veleučilište",
+    "provider": "Evanđeosko teološko veleučilište",
+    "institution_keys": [
+      "hr-isvu-125:012"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Hrvatsko katoličko sveučilište u Zagrebu",
+    "provider": "Hrvatsko katoličko sveučilište u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:052"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Istarsko veleučilište",
+    "provider": "Istarsko veleučilište",
+    "institution_keys": [
+      "hr-isvu-125:053"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Libertas Međunarodno sveučilište",
+    "provider": "Libertas Međunarodno sveučilište",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:7b211523d864f640"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "MUP, Policijska akademija \"Prvi hrvatski redarstvenik\", Veleučilište kriminalistike i javne sigurnosti",
+    "provider": "MUP, Policijska akademija \"Prvi hrvatski redarstvenik\", Veleučilište kriminalistike i javne sigurnosti",
+    "institution_keys": [
+      "hr-isvu-125:068"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Međimursko veleučilište u Čakovcu",
+    "provider": "Međimursko veleučilište u Čakovcu",
+    "institution_keys": [
+      "hr-isvu-125:065"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Poslovno veleučilište Zagreb",
+    "provider": "Poslovno veleučilište Zagreb",
+    "institution_keys": [
+      "hr-isvu-125:074"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "RIT Croatia",
+    "provider": "RIT Croatia",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:9cf52cc7b5f668fa"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Algebra",
+    "provider": "Sveučilište Algebra",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:3c51f98545e34b07"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Akademija za umjetnost i kulturu u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:005"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Ekonomski fakultet Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:011"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Fakultet agrobiotehničkih znanosti Osijek",
+    "institution_keys": [
+      "hr-isvu-125:013"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Fakultet elektrotehnike, računarstva i informacijskih tehnologija Osijek",
+    "institution_keys": [
+      "hr-isvu-125:017"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Fakultet primijenjene matematike i informatike",
+    "institution_keys": [
+      "hr-isvu-125:026"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Fakultet turizma i ruralnog razvoja u Požegi Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:030"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Fakultet za dentalnu medicinu i zdravstvo Osijek",
+    "institution_keys": [
+      "hr-isvu-125:031"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Fakultet za odgojne i obrazovne znanosti Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:036"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Filozofski fakultet Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:042"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Građevinski i arhitektonski fakultet Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:050"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Katolički bogoslovni fakultet u Đakovu Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:056"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Kineziološki fakultet Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:060"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Medicinski fakultet Osijek i Prehrambeno-tehnološki fakultet Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:064",
+      "hr-isvu-125:080"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Medicinski fakultet Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:064"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Odjel za biologiju Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:069"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Odjel za fiziku Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:070"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Odjel za kemiju Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:071"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Pravni fakultet Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:078"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište Josipa Jurja Strossmayera u Osijeku",
+    "provider": "Prehrambeno tehnološki fakultet Sveučilišta u Osijeku",
+    "institution_keys": [
+      "hr-isvu-125:080"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Fakultet ekonomije i turizma Dr. Mijo Mirković u Puli",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:29e865c0267da696"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Fakultet informatike u Puli",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:c4f598dcd5f94c5d"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Fakultet prirodnih znanosti u Puli",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:cf626d30693b050b"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Fakultet za odgojne i obrazovne znanosti u Puli",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:7ceda75c02fe34b8"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Filozofski fakultet u Puli",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:fabaf1938d26df5e"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Medicinski fakultet u Puli",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:7b633f2a1aca165d"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Muzička akademija u Puli",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:fa34d6c0816bc1f0"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Sveučilište Jurja Dobrile u Puli",
+    "institution_keys": [
+      "hr-isvu-125:089"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište Jurja Dobrile u Puli",
+    "provider": "Tehnički fakultet u Puli",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:2877e8e203aa551f"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište Sjever",
+    "provider": "Sveučilište Sjever",
+    "institution_keys": [
+      "hr-isvu-125:091"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište VERN",
+    "provider": "Sveučilište VERN",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:ee5818e7e1d3954f"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište obrane i sigurnosti \"Dr. Franjo Tuđman\"",
+    "provider": "Sveučilište obrane i sigurnosti \"Dr. Franjo Tuđman\"",
+    "institution_keys": [
+      "hr-isvu-125:090"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Dubrovniku",
+    "provider": "Odjel za ekonomiju i poslovnu ekonomiju Sveučilišta u Dubrovniku",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:d47ff0296b4a7931"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Dubrovniku",
+    "provider": "Odjel za elektrotehniku i računarstvo Sveučilišta u Dubrovniku",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:5945f5e2592e2b5c"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Dubrovniku",
+    "provider": "Odjel za humanističke znanosti Sveučilišta u Dubrovniku i Filozofski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:fa9babe0a1c08a87",
+      "hr-isvu-125:045"
+    ],
+    "basis": "Joint Dubrovnik department and Zagreb faculty explicitly named in source."
+  },
+  {
+    "owner": "Sveučilište u Dubrovniku",
+    "provider": "Odjel za komunikologiju Sveučilišta u Dubrovniku",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:f413afd477360568"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Dubrovniku",
+    "provider": "Odjel za primijenjenu ekologiju Sveučilišta u Dubrovniku",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:0a03334f9e303ee5"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Dubrovniku",
+    "provider": "Odjel za stručne studije Sveučilišta u Dubrovniku",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:6c46dff5b08c2202"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Dubrovniku",
+    "provider": "Odjel za umjetnost i restauraciju Sveučilišta u Dubrovniku",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:d6f92d9bf5e5315a"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Dubrovniku",
+    "provider": "Pomorski odjel Sveučilišta u Dubrovniku",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:1dd377814acdbf1a"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Akademija primijenjenih umjetnosti",
+    "institution_keys": [
+      "hr-isvu-125:004"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Ekonomski fakultet Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:008"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Fakultet biotehnologije i razvoja lijekova Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:014"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Fakultet dentalne medicine Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:015"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Fakultet informatike i digitalnih tehnologija Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:022"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Fakultet za fiziku Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:032"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Fakultet za matematiku Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:034"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Fakultet za menadžment u turizmu i ugostiteljstvu Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:035"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Fakultet zdravstvenih studija Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:037"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Filozofski fakultet Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:043"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Građevinski fakultet Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:048"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Medicinski fakultet Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:061"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Medicinski fakultet i Fakultet biotehnologije i razvoja lijekova Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:061",
+      "hr-isvu-125:014"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Pomorski fakultet Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:072"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Pravni fakultet Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:075"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Sveučilište u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:093"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Tehnički fakultet Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:098"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Rijeci",
+    "provider": "Učiteljski fakultet Sveučilišta u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:101"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Slavonskom Brodu",
+    "provider": "Biotehnički odjel Sveučilišta u Slavonskom Brodu",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:1784e6416b829702"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Slavonskom Brodu",
+    "provider": "Odjel društveno-humanističkih znanosti Sveučilišta u Slavonskom Brodu",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:77b3c2a10ed47c43"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Slavonskom Brodu",
+    "provider": "Strojarski fakultet Sveučilišta u Slavonskom Brodu",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:590bee1a6f4c46bc"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Slavonskom Brodu",
+    "provider": "Tehnički odjel Sveučilišta u Slavonskom Brodu",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:d7e60a1771e15799"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Ekonomski fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:009"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Fakultet elektrotehnike, strojarstva i brodogradnje Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:018"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Fakultet građevinarstva, arhitekture i geodezije Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:020"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Filozofski fakultet u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:044"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Katolički bogoslovni fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:054"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Kemijsko-tehnološki fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:057"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Kineziološki fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:058"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Medicinski fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:062"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Medicinski fakultet i Kemijsko-tehnološki fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:062",
+      "hr-isvu-125:057"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Pomorski fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:073"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Pravni fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:076"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Prirodoslovno-matematički fakultet Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:081"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Sveučilišni odjel za forenzične znanosti",
+    "institution_keys": [
+      "hr-isvu-125:033"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Sveučilišni odjel za stručne studije",
+    "institution_keys": [
+      "hr-isvu-125:087"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Sveučilišni odjel za studije mora Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:040"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Sveučilišni odjel zdravstvenih studija Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:039"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Sveučilište u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:095"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Umjetnička akademija Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:103"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Splitu",
+    "provider": "Umjetnička akademija Sveučilišta u Splitu i PMF Sveučilišta u Splitu",
+    "institution_keys": [
+      "hr-isvu-125:103",
+      "hr-isvu-125:081"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za anglistiku Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:a6b7b790be9d9146"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za arheologiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:830a6cc954d41165"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za ekologiju, agronomiju i akvakulturu Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:6d4e725e40d0f377"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za ekonomiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:ae133e5beb3f5bf0"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za etnologiju i antropologiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:e103d7fb7fc2c24c"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za filozofiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:36011f304b48b6a7"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za francuske i frankofonske studije Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:b07cc010169a99aa"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za geografiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:f6ee98a5964ace1b"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za germanistiku Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:244a23f0bcb32b36"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za hispanistiku i iberske studije Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:ff02f20cba0525a7"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za informacijske znanosti Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:8992867ead1405b4"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za izobrazbu učitelja i odgojitelja Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:f7ae3ac13b1c9acf"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za klasičnu filologiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:82e080a8d96c7e88"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za kroatistiku Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:e1086c16610952ae"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za lingvistiku Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:31ce71247714eb9b"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za nastavničke studije u Gospiću",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:281d9c9a92d9c57e"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za pedagogiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:9f2eadf820563bcf"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za povijest Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:544369eb9d82a2f6"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za povijest umjetnosti Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:95165d1ca3748690"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za psihologiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:ccb550b08b7fe38b"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za rusistiku Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:06145a439dca5576"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za sociologiju Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:c767f8662b9cc133"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za talijanistiku Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:e489222886f8f014"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za turizam i komunikacijske znanosti Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:1d16d2e669910f6e"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Odjel za zdravstvene studije Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:8adacf7ae864e797"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Pomorski odjel Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:92e1334a79b970ac"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Sveučilište u Zadru",
+    "institution_keys": [
+      "hr-isvu-125:096"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zadru",
+    "provider": "Teološko-katehetski odjel Sveučilišta u Zadru",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:c651844cf48573a7"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Agronomski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:001"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Akademija dramske umjetnosti Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:002"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Akademija likovnih umjetnosti Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:003"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Arhitektonski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:006"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Edukacijsko-rehabilitacijski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:007"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Ekonomski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:010"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet elektrotehnike i računarstva Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:016"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet elektrotehnike i računarstva i Fakultet strojarstva i brodogradnje Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:016",
+      "hr-isvu-125:028"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet elektrotehnike i računarstva, Fakultet političkih znanosti, Fakultet prometnih znanosti, Građevinski fakultet, Fakultet kemijskog inženjerstva i tehnologije, Geodetski fakultet, Rudarsko-geološko-naftni fakultet, Filozofski fakultet, Pravni fakultet, Fakultet strojarstva i brodogradnje i Fakultet organizacije i informatike Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:016",
+      "hr-isvu-125:025",
+      "hr-isvu-125:027",
+      "hr-isvu-125:049",
+      "hr-isvu-125:023",
+      "hr-isvu-125:046",
+      "hr-isvu-125:084",
+      "hr-isvu-125:045",
+      "hr-isvu-125:077",
+      "hr-isvu-125:028",
+      "hr-isvu-125:024"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet filozofije i religijskih znanosti",
+    "institution_keys": [
+      "hr-isvu-125:019"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet hrvatskih studija Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:021"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet kemijskog inženjerstva i tehnologije Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:023"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet organizacije i informatike u Varaždinu Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:024"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet političkih znanosti Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:025"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet političkih znanosti, Filozofski fakultet, Fakultet elektrotehnike i računarstva, Fakultet strojarstva i brodogradnje, Pravni fakultet i Fakultet organizacije i informatike Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:025",
+      "hr-isvu-125:045",
+      "hr-isvu-125:016",
+      "hr-isvu-125:028",
+      "hr-isvu-125:077",
+      "hr-isvu-125:024"
+    ],
+    "basis": "Reviewed name alias / explicitly named joint providers."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet prometnih znanosti Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:027"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet strojarstva i brodogradnje Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:028"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Fakultet šumarstva i drvne tehnologije",
+    "institution_keys": [
+      "hr-isvu-125:029"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Farmaceutsko-biokemijski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:041"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Filozofski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:045"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Geodetski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:046"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Geotehnički fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:047"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Grafički fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:051"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Građevinski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:049"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Katolički bogoslovni fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:055"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Kineziološki fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:059"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Medicinski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:063"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Metalurški fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:066"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Muzička akademija Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:067"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Pravni fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:077"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Prehrambeno-biotehnološki fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:079"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Prirodoslovno-matematički fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:082",
+      "hr-isvu-125:083"
+    ],
+    "basis": "Same university PMF; mathematics goes to mathematical division, other programmes to science divisions.",
+    "selector": "zagreb_pmf_math_or_science"
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Rudarsko-geološko-naftni fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:084"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Stomatološki fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:085"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Sveučilišni centar za protestantsku teologiju Matija Vlačić Ilirik",
+    "institution_keys": [
+      "hr-isvu-125:086"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Tekstilno-tehnološki fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:100"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Učiteljski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:102"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Sveučilište u Zagrebu",
+    "provider": "Veterinarski fakultet Sveučilišta u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:123"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Tehničko veleučilište u Zagrebu",
+    "provider": "Tehničko veleučilište u Zagrebu",
+    "institution_keys": [
+      "hr-isvu-125:099"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište \"Lavoslav Ružička\" u Vukovaru",
+    "provider": "Veleučilište \"Lavoslav Ružička\" u Vukovaru",
+    "institution_keys": [
+      "hr-isvu-125:104"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište \"Marko Marulić\" u Kninu",
+    "provider": "Veleučilište \"Marko Marulić\" u Kninu",
+    "institution_keys": [
+      "hr-isvu-125:105"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište \"Nikola Tesla\" u Gospiću",
+    "provider": "Veleučilište \"Nikola Tesla\" u Gospiću",
+    "institution_keys": [
+      "hr-isvu-125:111"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište ARCA",
+    "provider": "Veleučilište ARCA",
+    "institution_keys": [
+      "hr-isvu-125:106"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište Aspira",
+    "provider": "Veleučilište Aspira",
+    "institution_keys": [
+      "hr-isvu-125:107"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište Edward Bernays",
+    "provider": "Veleučilište Edward Bernays",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:ce553410ba385744"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  },
+  {
+    "owner": "Veleučilište Hrvatsko zagorje Krapina",
+    "provider": "Veleučilište Hrvatsko zagorje Krapina",
+    "institution_keys": [
+      "hr-isvu-125:108"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište Ivanić-Grad",
+    "provider": "Veleučilište Ivanić-Grad",
+    "institution_keys": [
+      "hr-isvu-125:109"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište PAR",
+    "provider": "Veleučilište PAR",
+    "institution_keys": [
+      "hr-isvu-125:112"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište Velika Gorica",
+    "provider": "Veleučilište Velika Gorica",
+    "institution_keys": [
+      "hr-isvu-125:122"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište menadžmenta i sigurnosti SECURUS",
+    "provider": "Veleučilište menadžmenta i sigurnosti SECURUS",
+    "institution_keys": [
+      "hr-isvu-125:110"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište s pravom javnosti BALTAZAR ZAPREŠIĆ",
+    "provider": "Veleučilište s pravom javnosti BALTAZAR ZAPREŠIĆ",
+    "institution_keys": [
+      "hr-isvu-125:113"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište studija sigurnosti",
+    "provider": "Veleučilište studija sigurnosti",
+    "institution_keys": [
+      "hr-isvu-125:114"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište suvremenih informacijskih tehnologija",
+    "provider": "Veleučilište suvremenih informacijskih tehnologija",
+    "institution_keys": [
+      "hr-isvu-125:115"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište u Bjelovaru",
+    "provider": "Veleučilište u Bjelovaru",
+    "institution_keys": [
+      "hr-isvu-125:116"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište u Karlovcu",
+    "provider": "Veleučilište u Karlovcu",
+    "institution_keys": [
+      "hr-isvu-125:117"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište u Križevcima",
+    "provider": "Veleučilište u Križevcima",
+    "institution_keys": [
+      "hr-isvu-125:118"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište u Rijeci",
+    "provider": "Veleučilište u Rijeci",
+    "institution_keys": [
+      "hr-isvu-125:119"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište u Virovitici",
+    "provider": "Veleučilište u Virovitici",
+    "institution_keys": [
+      "hr-isvu-125:121"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Veleučilište u Šibeniku",
+    "provider": "Veleučilište u Šibeniku",
+    "institution_keys": [
+      "hr-isvu-125:120"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Zagrebačka škola ekonomije i managementa",
+    "provider": "Zagrebačka škola ekonomije i managementa",
+    "institution_keys": [
+      "hr-isvu-125:125"
+    ],
+    "basis": "Exact normalized name and parent; explicit removal of source university suffix."
+  },
+  {
+    "owner": "Zdravstveno veleučilište u Zagrebu",
+    "provider": "Zdravstveno veleučilište u Zagrebu",
+    "institution_keys": [
+      "pdf-admissions-2024:institution:8b04a8a06a04454f"
+    ],
+    "basis": "New source institution/department; no matching institution exists in supplied baseline."
+  }
+]

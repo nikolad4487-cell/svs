@@ -158,6 +158,7 @@ export type StudentYearRecord = {
   details: Record<string, string>;
 };
 export const registrarErrors: Record<string, string> = {
+  "registrar-program": "Prije upisa dopunite trajanje i razinu studijskog programa u administraciji studija.",
   "registrar-identity":
     "Najprije u studentskom dosjeu evidentirajte službeno ime i prezime studenta.",
   "registrar-stale": "Postupak je u međuvremenu promijenjen. Osvježite prikaz.",

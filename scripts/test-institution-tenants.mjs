@@ -145,7 +145,7 @@ try {
         service
           .from("institutions")
           .select("id,registry_key,subdomain,updated_at")
-          .not("registry_key", "is", null)
+          .like("registry_key", "hr-isvu-125:%")
           .order("registry_key"),
       );
       assert.equal(before.length, 125);
@@ -166,7 +166,7 @@ try {
           service
             .from("institutions")
             .select("id,registry_key,subdomain,updated_at")
-            .not("registry_key", "is", null)
+            .like("registry_key", "hr-isvu-125:%")
             .order("registry_key"),
         ),
         before,
@@ -256,7 +256,7 @@ try {
     "public directory exposes no private records and ordinary administrators cannot bypass metadata restrictions",
     async () => {
       const catalog = await ok(anonymous.rpc("institution_directory"));
-      assert.equal(catalog.length, 125);
+      assert.equal(catalog.filter(r=>r.registry_key?.startsWith("hr-isvu-125:")).length, 125);
       assert.ok(!JSON.stringify(catalog).includes("email_domains"));
       const fer = catalog.find((r) => r.subdomain === "fer");
       assert.equal(fer.name, "Fakultet elektrotehnike i računarstva");
@@ -644,7 +644,7 @@ try {
           .fill("elektrotehnike i računarstva");
         await page
           .getByRole("status")
-          .filter({ hasText: "Prikazano 1 od 125" })
+          .filter({ hasText: "Prikazano 1 od" })
           .waitFor();
         await page
           .getByRole("link", { name: "Otvori profil ustanove", exact: true })

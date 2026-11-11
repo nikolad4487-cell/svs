@@ -1,0 +1,1078 @@
+[
+  {
+    "id": "6f23e782-63ae-54e1-a6d6-81ed1e192cb7",
+    "registry_key": "pdf-admissions-2024:institution:e7168dcae39fdb80",
+    "name": "EFFECTUS veleučilište",
+    "source_name": "EFFECTUS veleučilište",
+    "source_owner": "EFFECTUS veleučilište",
+    "headquarters": "Zagreb",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": null,
+    "parent_name": null,
+    "subdomain": "ev",
+    "code": "PDF24-IE39FDB80",
+    "source_year": 2024,
+    "source_pages": [
+      9,
+      12,
+      21
+    ]
+  },
+  {
+    "id": "052c69e1-6b9b-5db0-a31f-fbc0e1ccc9d0",
+    "registry_key": "pdf-admissions-2024:institution:7b211523d864f640",
+    "name": "Libertas Međunarodno sveučilište",
+    "source_name": "Libertas Međunarodno sveučilište",
+    "source_owner": "Libertas Međunarodno sveučilište",
+    "headquarters": "Zagreb",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": null,
+    "parent_name": null,
+    "subdomain": "lms",
+    "code": "PDF24-ID864F640",
+    "source_year": 2024,
+    "source_pages": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "id": "d5fe71fc-1887-5601-acf9-b467120646b5",
+    "registry_key": "pdf-admissions-2024:institution:9cf52cc7b5f668fa",
+    "name": "RIT Croatia",
+    "source_name": "RIT Croatia",
+    "source_owner": "RIT Croatia",
+    "headquarters": "Zagreb",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": null,
+    "parent_name": null,
+    "subdomain": "rc",
+    "code": "PDF24-IB5F668FA",
+    "source_year": 2024,
+    "source_pages": [
+      1,
+      6,
+      7,
+      11
+    ]
+  },
+  {
+    "id": "d809ad15-2b33-5221-a6bb-49ba83f833ac",
+    "registry_key": "pdf-admissions-2024:institution:3c51f98545e34b07",
+    "name": "Sveučilište Algebra",
+    "source_name": "Sveučilište Algebra",
+    "source_owner": "Sveučilište Algebra",
+    "headquarters": "Zagreb",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": null,
+    "parent_name": null,
+    "subdomain": "sa",
+    "code": "PDF24-I45E34B07",
+    "source_year": 2024,
+    "source_pages": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      10,
+      13,
+      14,
+      15,
+      17
+    ]
+  },
+  {
+    "id": "4d82e242-527e-5183-ae9e-04709c1a5039",
+    "registry_key": "pdf-admissions-2024:institution:29e865c0267da696",
+    "name": "Fakultet ekonomije i turizma Dr. Mijo Mirković u Puli",
+    "source_name": "Fakultet ekonomije i turizma Dr. Mijo Mirković u Puli",
+    "source_owner": "Sveučilište Jurja Dobrile u Puli",
+    "headquarters": "Pula",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:089",
+    "parent_name": "Sveučilište Jurja Dobrile u Puli",
+    "subdomain": "fetdmmp",
+    "code": "PDF24-I267DA696",
+    "source_year": 2024,
+    "source_pages": [
+      2,
+      3,
+      8,
+      9,
+      12,
+      16
+    ]
+  },
+  {
+    "id": "52d9f321-1c2c-5d03-a55a-1975926a4e67",
+    "registry_key": "pdf-admissions-2024:institution:c4f598dcd5f94c5d",
+    "name": "Fakultet informatike u Puli",
+    "source_name": "Fakultet informatike u Puli",
+    "source_owner": "Sveučilište Jurja Dobrile u Puli",
+    "headquarters": "Pula",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:089",
+    "parent_name": "Sveučilište Jurja Dobrile u Puli",
+    "subdomain": "fip",
+    "code": "PDF24-ID5F94C5D",
+    "source_year": 2024,
+    "source_pages": [
+      2,
+      5
+    ]
+  },
+  {
+    "id": "c4ea7c26-11eb-54ab-a27c-b4d92a2e5baf",
+    "registry_key": "pdf-admissions-2024:institution:cf626d30693b050b",
+    "name": "Fakultet prirodnih znanosti u Puli",
+    "source_name": "Fakultet prirodnih znanosti u Puli",
+    "source_owner": "Sveučilište Jurja Dobrile u Puli",
+    "headquarters": "Pula",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:089",
+    "parent_name": "Sveučilište Jurja Dobrile u Puli",
+    "subdomain": "fpzp",
+    "code": "PDF24-I693B050B",
+    "source_year": 2024,
+    "source_pages": [
+      7
+    ]
+  },
+  {
+    "id": "cf505122-d5fd-54cd-ab8b-fd10abdb3124",
+    "registry_key": "pdf-admissions-2024:institution:7ceda75c02fe34b8",
+    "name": "Fakultet za odgojne i obrazovne znanosti u Puli",
+    "source_name": "Fakultet za odgojne i obrazovne znanosti u Puli",
+    "source_owner": "Sveučilište Jurja Dobrile u Puli",
+    "headquarters": "Pula",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:089",
+    "parent_name": "Sveučilište Jurja Dobrile u Puli",
+    "subdomain": "foozp",
+    "code": "PDF24-I02FE34B8",
+    "source_year": 2024,
+    "source_pages": [
+      5,
+      9,
+      16
+    ]
+  },
+  {
+    "id": "3d2f4bfe-53a1-5c7f-ae74-f13321d9a34d",
+    "registry_key": "pdf-admissions-2024:institution:fabaf1938d26df5e",
+    "name": "Filozofski fakultet u Puli",
+    "source_name": "Filozofski fakultet u Puli",
+    "source_owner": "Sveučilište Jurja Dobrile u Puli",
+    "headquarters": "Pula",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:089",
+    "parent_name": "Sveučilište Jurja Dobrile u Puli",
+    "subdomain": "ffp",
+    "code": "PDF24-I8D26DF5E",
+    "source_year": 2024,
+    "source_pages": [
+      5,
+      7,
+      8,
+      10,
+      12,
+      13,
+      20
+    ]
+  },
+  {
+    "id": "fceb9297-f42e-5ff8-a3d4-6f125f9e569c",
+    "registry_key": "pdf-admissions-2024:institution:7b633f2a1aca165d",
+    "name": "Medicinski fakultet u Puli",
+    "source_name": "Medicinski fakultet u Puli",
+    "source_owner": "Sveučilište Jurja Dobrile u Puli",
+    "headquarters": "Pula",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:089",
+    "parent_name": "Sveučilište Jurja Dobrile u Puli",
+    "subdomain": "mfp",
+    "code": "PDF24-I1ACA165D",
+    "source_year": 2024,
+    "source_pages": [
+      7,
+      11
+    ]
+  },
+  {
+    "id": "7d80ac30-70e0-5fd4-a169-f69dadf143db",
+    "registry_key": "pdf-admissions-2024:institution:fa34d6c0816bc1f0",
+    "name": "Muzička akademija u Puli",
+    "source_name": "Muzička akademija u Puli",
+    "source_owner": "Sveučilište Jurja Dobrile u Puli",
+    "headquarters": "Pula",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:089",
+    "parent_name": "Sveučilište Jurja Dobrile u Puli",
+    "subdomain": "map",
+    "code": "PDF24-I816BC1F0",
+    "source_year": 2024,
+    "source_pages": [
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "id": "96acad43-4632-52c5-a463-7afdc847a2e5",
+    "registry_key": "pdf-admissions-2024:institution:2877e8e203aa551f",
+    "name": "Tehnički fakultet u Puli",
+    "source_name": "Tehnički fakultet u Puli",
+    "source_owner": "Sveučilište Jurja Dobrile u Puli",
+    "headquarters": "Pula",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:089",
+    "parent_name": "Sveučilište Jurja Dobrile u Puli",
+    "subdomain": "tfp",
+    "code": "PDF24-I03AA551F",
+    "source_year": 2024,
+    "source_pages": [
+      8,
+      12
+    ]
+  },
+  {
+    "id": "584bae83-1c8d-550f-a3c7-6e403b46ca64",
+    "registry_key": "pdf-admissions-2024:institution:ee5818e7e1d3954f",
+    "name": "Sveučilište VERN",
+    "source_name": "Sveučilište VERN",
+    "source_owner": "Sveučilište VERN",
+    "headquarters": "Zagreb",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": null,
+    "parent_name": null,
+    "subdomain": "sv",
+    "code": "PDF24-IE1D3954F",
+    "source_year": 2024,
+    "source_pages": [
+      4,
+      5,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14,
+      16
+    ]
+  },
+  {
+    "id": "b0d8f494-c395-56f8-afa1-8b3f158e574c",
+    "registry_key": "pdf-admissions-2024:institution:d47ff0296b4a7931",
+    "name": "Odjel za ekonomiju i poslovnu ekonomiju",
+    "source_name": "Odjel za ekonomiju i poslovnu ekonomiju Sveučilišta u Dubrovniku",
+    "source_owner": "Sveučilište u Dubrovniku",
+    "headquarters": "Dubrovnik",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:092",
+    "parent_name": "Sveučilište u Dubrovniku",
+    "subdomain": "oepe",
+    "code": "PDF24-I6B4A7931",
+    "source_year": 2024,
+    "source_pages": [
+      9,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      20
+    ]
+  },
+  {
+    "id": "8b395d76-9dde-5d46-aba3-bcfa4c4437f1",
+    "registry_key": "pdf-admissions-2024:institution:5945f5e2592e2b5c",
+    "name": "Odjel za elektrotehniku i računarstvo",
+    "source_name": "Odjel za elektrotehniku i računarstvo Sveučilišta u Dubrovniku",
+    "source_owner": "Sveučilište u Dubrovniku",
+    "headquarters": "Dubrovnik",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:092",
+    "parent_name": "Sveučilište u Dubrovniku",
+    "subdomain": "oer",
+    "code": "PDF24-I592E2B5C",
+    "source_year": 2024,
+    "source_pages": [
+      10,
+      14,
+      17,
+      20
+    ]
+  },
+  {
+    "id": "b1baa6f0-3b41-5c36-ae21-e30a6fa058b3",
+    "registry_key": "pdf-admissions-2024:institution:fa9babe0a1c08a87",
+    "name": "Odjel za humanističke znanosti",
+    "source_name": "Odjel za humanističke znanosti Sveučilišta u Dubrovniku i Filozofski fakultet Sveučilišta u Zagrebu",
+    "source_owner": "Sveučilište u Dubrovniku",
+    "headquarters": "Dubrovnik",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:092",
+    "parent_name": "Sveučilište u Dubrovniku",
+    "subdomain": "ohz",
+    "code": "PDF24-IA1C08A87",
+    "source_year": 2024,
+    "source_pages": [
+      13,
+      17,
+      20
+    ]
+  },
+  {
+    "id": "630484e0-8aa8-59e9-ab5e-86bb59bf12ea",
+    "registry_key": "pdf-admissions-2024:institution:f413afd477360568",
+    "name": "Odjel za komunikologiju",
+    "source_name": "Odjel za komunikologiju Sveučilišta u Dubrovniku",
+    "source_owner": "Sveučilište u Dubrovniku",
+    "headquarters": "Dubrovnik",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:092",
+    "parent_name": "Sveučilište u Dubrovniku",
+    "subdomain": "ok-du",
+    "code": "PDF24-I77360568",
+    "source_year": 2024,
+    "source_pages": [
+      6,
+      14,
+      17
+    ]
+  },
+  {
+    "id": "5fa0fb38-414a-5228-ad6b-a94da8b0742a",
+    "registry_key": "pdf-admissions-2024:institution:0a03334f9e303ee5",
+    "name": "Odjel za primijenjenu ekologiju",
+    "source_name": "Odjel za primijenjenu ekologiju Sveučilišta u Dubrovniku",
+    "source_owner": "Sveučilište u Dubrovniku",
+    "headquarters": "Dubrovnik",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:092",
+    "parent_name": "Sveučilište u Dubrovniku",
+    "subdomain": "ope",
+    "code": "PDF24-I9E303EE5",
+    "source_year": 2024,
+    "source_pages": [
+      16,
+      17
+    ]
+  },
+  {
+    "id": "8275cae0-80be-59aa-a374-a27cbaa9e33c",
+    "registry_key": "pdf-admissions-2024:institution:6c46dff5b08c2202",
+    "name": "Odjel za stručne studije",
+    "source_name": "Odjel za stručne studije Sveučilišta u Dubrovniku",
+    "source_owner": "Sveučilište u Dubrovniku",
+    "headquarters": "Dubrovnik",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:092",
+    "parent_name": "Sveučilište u Dubrovniku",
+    "subdomain": "oss",
+    "code": "PDF24-IB08C2202",
+    "source_year": 2024,
+    "source_pages": [
+      7,
+      15,
+      17
+    ]
+  },
+  {
+    "id": "8ce7eb0a-2a32-5c8a-ac92-f1b8f1befa82",
+    "registry_key": "pdf-admissions-2024:institution:d6f92d9bf5e5315a",
+    "name": "Odjel za umjetnost i restauraciju",
+    "source_name": "Odjel za umjetnost i restauraciju Sveučilišta u Dubrovniku",
+    "source_owner": "Sveučilište u Dubrovniku",
+    "headquarters": "Dubrovnik",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:092",
+    "parent_name": "Sveučilište u Dubrovniku",
+    "subdomain": "our",
+    "code": "PDF24-IF5E5315A",
+    "source_year": 2024,
+    "source_pages": [
+      10,
+      16,
+      17
+    ]
+  },
+  {
+    "id": "c6891d7b-a0ac-5b59-aa5c-09760ea6b8d5",
+    "registry_key": "pdf-admissions-2024:institution:1dd377814acdbf1a",
+    "name": "Pomorski odjel",
+    "source_name": "Pomorski odjel Sveučilišta u Dubrovniku",
+    "source_owner": "Sveučilište u Dubrovniku",
+    "headquarters": "Dubrovnik",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:092",
+    "parent_name": "Sveučilište u Dubrovniku",
+    "subdomain": "po",
+    "code": "PDF24-I4ACDBF1A",
+    "source_year": 2024,
+    "source_pages": [
+      5,
+      10,
+      13,
+      16,
+      17,
+      20
+    ]
+  },
+  {
+    "id": "23ee69da-f60a-5416-a600-55d4884a63b8",
+    "registry_key": "pdf-admissions-2024:institution:1784e6416b829702",
+    "name": "Biotehnički odjel",
+    "source_name": "Biotehnički odjel Sveučilišta u Slavonskom Brodu",
+    "source_owner": "Sveučilište u Slavonskom Brodu",
+    "headquarters": "Slavonski Brod",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:094",
+    "parent_name": "Sveučilište u Slavonskom Brodu",
+    "subdomain": "bo",
+    "code": "PDF24-I6B829702",
+    "source_year": 2024,
+    "source_pages": [
+      11
+    ]
+  },
+  {
+    "id": "84d80f85-c3c7-5f08-a5a2-9cbc1db6b974",
+    "registry_key": "pdf-admissions-2024:institution:77b3c2a10ed47c43",
+    "name": "Odjel društveno-humanističkih znanosti",
+    "source_name": "Odjel društveno-humanističkih znanosti Sveučilišta u Slavonskom Brodu",
+    "source_owner": "Sveučilište u Slavonskom Brodu",
+    "headquarters": "Slavonski Brod",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:094",
+    "parent_name": "Sveučilište u Slavonskom Brodu",
+    "subdomain": "odhz",
+    "code": "PDF24-I0ED47C43",
+    "source_year": 2024,
+    "source_pages": [
+      3,
+      5,
+      9,
+      12
+    ]
+  },
+  {
+    "id": "332bf590-0454-5d7a-a4f8-022fa896cb0d",
+    "registry_key": "pdf-admissions-2024:institution:590bee1a6f4c46bc",
+    "name": "Strojarski fakultet",
+    "source_name": "Strojarski fakultet Sveučilišta u Slavonskom Brodu",
+    "source_owner": "Sveučilište u Slavonskom Brodu",
+    "headquarters": "Slavonski Brod",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:094",
+    "parent_name": "Sveučilište u Slavonskom Brodu",
+    "subdomain": "sf-sb",
+    "code": "PDF24-I6F4C46BC",
+    "source_year": 2024,
+    "source_pages": [
+      6,
+      11
+    ]
+  },
+  {
+    "id": "6d0febea-9af7-51a4-afb3-d9c4e02ae478",
+    "registry_key": "pdf-admissions-2024:institution:d7e60a1771e15799",
+    "name": "Tehnički odjel",
+    "source_name": "Tehnički odjel Sveučilišta u Slavonskom Brodu",
+    "source_owner": "Sveučilište u Slavonskom Brodu",
+    "headquarters": "Slavonski Brod",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:094",
+    "parent_name": "Sveučilište u Slavonskom Brodu",
+    "subdomain": "to",
+    "code": "PDF24-I71E15799",
+    "source_year": 2024,
+    "source_pages": [
+      7,
+      10
+    ]
+  },
+  {
+    "id": "a3c6ca99-674f-5c9d-a8ae-9bee8b142c70",
+    "registry_key": "pdf-admissions-2024:institution:a6b7b790be9d9146",
+    "name": "Odjel za anglistiku",
+    "source_name": "Odjel za anglistiku Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "oa",
+    "code": "PDF24-IBE9D9146",
+    "source_year": 2024,
+    "source_pages": [
+      2,
+      15
+    ]
+  },
+  {
+    "id": "5310efe6-4564-5606-afb8-6b2e086e0083",
+    "registry_key": "pdf-admissions-2024:institution:830a6cc954d41165",
+    "name": "Odjel za arheologiju",
+    "source_name": "Odjel za arheologiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "oa-zd",
+    "code": "PDF24-I54D41165",
+    "source_year": 2024,
+    "source_pages": [
+      8,
+      11,
+      20,
+      21
+    ]
+  },
+  {
+    "id": "2be2224c-69b8-5c5b-a95c-21bbc40665f1",
+    "registry_key": "pdf-admissions-2024:institution:6d4e725e40d0f377",
+    "name": "Odjel za ekologiju, agronomiju i akvakulturu",
+    "source_name": "Odjel za ekologiju, agronomiju i akvakulturu Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "oeaa",
+    "code": "PDF24-I40D0F377",
+    "source_year": 2024,
+    "source_pages": [
+      10,
+      12,
+      14,
+      16,
+      21
+    ]
+  },
+  {
+    "id": "7c90c773-e53d-5962-a6e6-3676a44e49ea",
+    "registry_key": "pdf-admissions-2024:institution:ae133e5beb3f5bf0",
+    "name": "Odjel za ekonomiju",
+    "source_name": "Odjel za ekonomiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "oe",
+    "code": "PDF24-IEB3F5BF0",
+    "source_year": 2024,
+    "source_pages": [
+      2,
+      6,
+      20,
+      21
+    ]
+  },
+  {
+    "id": "72159bb5-12a1-5461-a2e5-f3c64010a826",
+    "registry_key": "pdf-admissions-2024:institution:e103d7fb7fc2c24c",
+    "name": "Odjel za etnologiju i antropologiju",
+    "source_name": "Odjel za etnologiju i antropologiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "oea",
+    "code": "PDF24-I7FC2C24C",
+    "source_year": 2024,
+    "source_pages": [
+      10,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "5d02f46e-af7d-50c8-ab26-7e6110b19f2f",
+    "registry_key": "pdf-admissions-2024:institution:36011f304b48b6a7",
+    "name": "Odjel za filozofiju",
+    "source_name": "Odjel za filozofiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "of-zd",
+    "code": "PDF24-I4B48B6A7",
+    "source_year": 2024,
+    "source_pages": [
+      9,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "cf15ca3e-3921-566e-a702-7c748cec600e",
+    "registry_key": "pdf-admissions-2024:institution:b07cc010169a99aa",
+    "name": "Odjel za francuske i frankofonske studije",
+    "source_name": "Odjel za francuske i frankofonske studije Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "offs",
+    "code": "PDF24-I169A99AA",
+    "source_year": 2024,
+    "source_pages": [
+      10,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "a848f8cd-28fd-5975-ad2b-1fe28140cbc7",
+    "registry_key": "pdf-admissions-2024:institution:f6ee98a5964ace1b",
+    "name": "Odjel za geografiju",
+    "source_name": "Odjel za geografiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "og",
+    "code": "PDF24-I964ACE1B",
+    "source_year": 2024,
+    "source_pages": [
+      8,
+      9,
+      20,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "c36088ce-b66c-554a-aa51-26fa647b5940",
+    "registry_key": "pdf-admissions-2024:institution:244a23f0bcb32b36",
+    "name": "Odjel za germanistiku",
+    "source_name": "Odjel za germanistiku Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "og-zd",
+    "code": "PDF24-IBCB32B36",
+    "source_year": 2024,
+    "source_pages": [
+      7,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "8d77d9fe-394c-5183-a339-27a1f98f3b74",
+    "registry_key": "pdf-admissions-2024:institution:ff02f20cba0525a7",
+    "name": "Odjel za hispanistiku i iberske studije",
+    "source_name": "Odjel za hispanistiku i iberske studije Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "ohis",
+    "code": "PDF24-IBA0525A7",
+    "source_year": 2024,
+    "source_pages": [
+      6,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "627fbf18-9459-5c19-a9ec-47ed01c247a3",
+    "registry_key": "pdf-admissions-2024:institution:8992867ead1405b4",
+    "name": "Odjel za informacijske znanosti",
+    "source_name": "Odjel za informacijske znanosti Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "oiz",
+    "code": "PDF24-IAD1405B4",
+    "source_year": 2024,
+    "source_pages": [
+      11,
+      20,
+      21
+    ]
+  },
+  {
+    "id": "e7525860-ad86-5133-a8dd-0600470b77a0",
+    "registry_key": "pdf-admissions-2024:institution:f7ae3ac13b1c9acf",
+    "name": "Odjel za izobrazbu učitelja i odgojitelja",
+    "source_name": "Odjel za izobrazbu učitelja i odgojitelja Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "oiuo",
+    "code": "PDF24-I3B1C9ACF",
+    "source_year": 2024,
+    "source_pages": [
+      3,
+      4,
+      14,
+      19,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "597d9b52-79e6-576e-aa25-1a52e30aa16a",
+    "registry_key": "pdf-admissions-2024:institution:82e080a8d96c7e88",
+    "name": "Odjel za klasičnu filologiju",
+    "source_name": "Odjel za klasičnu filologiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "okf",
+    "code": "PDF24-ID96C7E88",
+    "source_year": 2024,
+    "source_pages": [
+      13,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "8ecf99c6-fd68-5663-a76c-5ac584a725ed",
+    "registry_key": "pdf-admissions-2024:institution:e1086c16610952ae",
+    "name": "Odjel za kroatistiku",
+    "source_name": "Odjel za kroatistiku Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "ok-zd",
+    "code": "PDF24-I610952AE",
+    "source_year": 2024,
+    "source_pages": [
+      7,
+      13,
+      16,
+      20,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "3052326f-6c2e-5aad-a333-cef142833277",
+    "registry_key": "pdf-admissions-2024:institution:31ce71247714eb9b",
+    "name": "Odjel za lingvistiku",
+    "source_name": "Odjel za lingvistiku Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "ol",
+    "code": "PDF24-I7714EB9B",
+    "source_year": 2024,
+    "source_pages": [
+      9,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "a694a9a6-9789-5516-ab48-602f8b7af47f",
+    "registry_key": "pdf-admissions-2024:institution:281d9c9a92d9c57e",
+    "name": "Odjel za nastavničke studije u Gospiću",
+    "source_name": "Odjel za nastavničke studije u Gospiću",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Gospić",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "onsg",
+    "code": "PDF24-I92D9C57E",
+    "source_year": 2024,
+    "source_pages": [
+      13,
+      15,
+      19
+    ]
+  },
+  {
+    "id": "32c309b6-9fbf-5025-a051-e21e023d45b2",
+    "registry_key": "pdf-admissions-2024:institution:9f2eadf820563bcf",
+    "name": "Odjel za pedagogiju",
+    "source_name": "Odjel za pedagogiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "op",
+    "code": "PDF24-I20563BCF",
+    "source_year": 2024,
+    "source_pages": [
+      2,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "20426659-f88d-5854-a9a1-33ac69900806",
+    "registry_key": "pdf-admissions-2024:institution:544369eb9d82a2f6",
+    "name": "Odjel za povijest",
+    "source_name": "Odjel za povijest Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "op-zd",
+    "code": "PDF24-I9D82A2F6",
+    "source_year": 2024,
+    "source_pages": [
+      7,
+      11,
+      20,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "efdce5fd-cdef-5bbf-a3e0-f4cee5d43de7",
+    "registry_key": "pdf-admissions-2024:institution:95165d1ca3748690",
+    "name": "Odjel za povijest umjetnosti",
+    "source_name": "Odjel za povijest umjetnosti Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "opu",
+    "code": "PDF24-IA3748690",
+    "source_year": 2024,
+    "source_pages": [
+      10,
+      12,
+      20,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "ba0d1f5c-a987-5d47-a8bb-29bcbf2d442f",
+    "registry_key": "pdf-admissions-2024:institution:ccb550b08b7fe38b",
+    "name": "Odjel za psihologiju",
+    "source_name": "Odjel za psihologiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "op-zd-psih",
+    "code": "PDF24-I8B7FE38B",
+    "source_year": 2024,
+    "source_pages": [
+      3,
+      16
+    ]
+  },
+  {
+    "id": "4b3afbb5-53f5-5027-ae4a-475c8e1fc76e",
+    "registry_key": "pdf-admissions-2024:institution:06145a439dca5576",
+    "name": "Odjel za rusistiku",
+    "source_name": "Odjel za rusistiku Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "or",
+    "code": "PDF24-I9DCA5576",
+    "source_year": 2024,
+    "source_pages": [
+      12,
+      16,
+      21
+    ]
+  },
+  {
+    "id": "5a76bdd0-dc8b-50b2-a6bc-ef092889b4c7",
+    "registry_key": "pdf-admissions-2024:institution:c767f8662b9cc133",
+    "name": "Odjel za sociologiju",
+    "source_name": "Odjel za sociologiju Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "os",
+    "code": "PDF24-I2B9CC133",
+    "source_year": 2024,
+    "source_pages": [
+      3,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "acc0d9c1-4c80-5851-a44c-e2fbc50a1702",
+    "registry_key": "pdf-admissions-2024:institution:e489222886f8f014",
+    "name": "Odjel za talijanistiku",
+    "source_name": "Odjel za talijanistiku Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "ot",
+    "code": "PDF24-I86F8F014",
+    "source_year": 2024,
+    "source_pages": [
+      7,
+      9,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "d1bd0021-dd12-5e72-ab5f-949d66769876",
+    "registry_key": "pdf-admissions-2024:institution:1d16d2e669910f6e",
+    "name": "Odjel za turizam i komunikacijske znanosti",
+    "source_name": "Odjel za turizam i komunikacijske znanosti Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "otkz",
+    "code": "PDF24-I69910F6E",
+    "source_year": 2024,
+    "source_pages": [
+      3,
+      11,
+      21
+    ]
+  },
+  {
+    "id": "4a085160-5fb3-5d5a-a81e-0f883d3a856b",
+    "registry_key": "pdf-admissions-2024:institution:8adacf7ae864e797",
+    "name": "Odjel za zdravstvene studije",
+    "source_name": "Odjel za zdravstvene studije Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "ozs",
+    "code": "PDF24-IE864E797",
+    "source_year": 2024,
+    "source_pages": [
+      3,
+      21
+    ]
+  },
+  {
+    "id": "bb5cb5ba-b61d-5a1d-a95e-fbb7bdee6ded",
+    "registry_key": "pdf-admissions-2024:institution:92e1334a79b970ac",
+    "name": "Pomorski odjel",
+    "source_name": "Pomorski odjel Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "po-zd",
+    "code": "PDF24-I79B970AC",
+    "source_year": 2024,
+    "source_pages": [
+      5,
+      7,
+      14,
+      15,
+      20,
+      21
+    ]
+  },
+  {
+    "id": "3f698148-b199-549e-aed7-eef83fd9e737",
+    "registry_key": "pdf-admissions-2024:institution:c651844cf48573a7",
+    "name": "Teološko-katehetski odjel",
+    "source_name": "Teološko-katehetski odjel Sveučilišta u Zadru",
+    "source_owner": "Sveučilište u Zadru",
+    "headquarters": "Zadar",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": "hr-isvu-125:096",
+    "parent_name": "Sveučilište u Zadru",
+    "subdomain": "tko",
+    "code": "PDF24-IF48573A7",
+    "source_year": 2024,
+    "source_pages": [
+      11,
+      21,
+      22
+    ]
+  },
+  {
+    "id": "26bb552b-0a71-5519-a01a-d73a75c41b06",
+    "registry_key": "pdf-admissions-2024:institution:ce553410ba385744",
+    "name": "Veleučilište Edward Bernays",
+    "source_name": "Veleučilište Edward Bernays",
+    "source_owner": "Veleučilište Edward Bernays",
+    "headquarters": "Zagreb",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": null,
+    "parent_name": null,
+    "subdomain": "veb",
+    "code": "PDF24-IBA385744",
+    "source_year": 2024,
+    "source_pages": [
+      4,
+      10,
+      12,
+      17
+    ]
+  },
+  {
+    "id": "5b949b6b-9da7-5857-abac-20798aee4b7f",
+    "registry_key": "pdf-admissions-2024:institution:8b04a8a06a04454f",
+    "name": "Zdravstveno veleučilište u Zagrebu",
+    "source_name": "Zdravstveno veleučilište u Zagrebu",
+    "source_owner": "Zdravstveno veleučilište u Zagrebu",
+    "headquarters": "Zagreb",
+    "headquarters_basis": "Most frequent programme location in the supplied PDF; not independently verified headquarters.",
+    "parent_registry_key": null,
+    "parent_name": null,
+    "subdomain": "zvz",
+    "code": "PDF24-I6A04454F",
+    "source_year": 2024,
+    "source_pages": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      9
+    ]
+  }
+]

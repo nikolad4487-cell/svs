@@ -51,3 +51,8 @@ Sedam korisnikovih snimki osobnog pregleda studentskog standarda: zaglavlje s fo
 ## Popis 125 ustanova (11. 11. 2026.)
 
 Korisnikov `visoka učilišta.pdf`, šest skeniranih stranica, i izričiti popis 125 ustanova. SHA-256 i podrijetlo spremljeni su u `data/institutions/provenance.json`. Nazivi, sjedišta i roditeljske ustanove iz PDF-a usklađeni su s popisom. Živi službeni registar https://www.isvu.hr/visokaucilista/hr/pretrazivanje blokiran je mrežnom politikom (CONNECT 403). Nijedan pojedinačni službeni zapis još nije dohvaćen. Sedam URL-ova su nepotvrđeni korisnikovi primjeri; ostali URL-ovi i svi službeni ID-ovi ostaju prazni. [Cjelovit izvještaj](../reports/visoka-ucilista-125.md).
+
+
+## Popis ponude studija 2024. — korisnikov PDF
+
+`slobodna-mjesta-na-fakultetima.pdf`, 23 stranice, naslov izvorne tablice uključuje 2024., PDF nastao 17. 7. 2024. Tekstualni položaji znakova daju 1.313 redaka. Izvor i SHA-256: `data/study-programs/provenance.json`. Preuzeti su nazivi nositelja, izvođača, programa, način studiranja i mjesto; stare kvote nisu tretirane kao aktualne, a trajanje i razina nisu izmišljeni. Svaki redak ima pregledano mapiranje; zajednički izvođači nisu spojeni u novu ustanovu. Jedan popis smjerova izobrazbe trenera u izvornom PDF-u je nepotpun i označen za provjeru. [Postupak i ograničenja](STUDIJSKI-PROGRAMI-IZ-PDF-A.md).

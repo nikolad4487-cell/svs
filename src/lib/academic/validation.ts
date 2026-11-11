@@ -14,7 +14,7 @@ const time = z.string().transform((v, ctx) => {
 });
 export const schemas = {
   program: z.object({
-    name,
+    name: z.string().trim().min(2).max(1000),
     code,
     degree: z.enum([
       "Prijediplomski",
@@ -22,8 +22,9 @@ export const schemas = {
       "Integrirani",
       "Stručni",
       "Poslijediplomski",
+      "Nije navedeno",
     ]),
-    duration_years: z.coerce.number().int().min(1).max(8),
+    duration_years: z.preprocess(v => v === "" || v === null || v === undefined ? null : v, z.coerce.number().int().min(1).max(8).nullable()),
   }),
   year: z
     .object({

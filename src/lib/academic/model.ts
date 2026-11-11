@@ -14,7 +14,9 @@ export type Program = {
   name: string;
   code: string;
   degree: string;
-  duration_years: number;
+  duration_years: number | null;
+  catalog_source?: { source_year?: number; modes?: string[]; locations?: string[] };
+  catalog_requires_review?: boolean;
 };
 export type Year = {
   id: string;
