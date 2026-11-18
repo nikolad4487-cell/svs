@@ -113,6 +113,20 @@ export async function proxy(request: NextRequest) {
   if (
     !host.local &&
     !host.singleDomain &&
+    host.module === "home" &&
+    module !== "home" &&
+    !centralPath(module) &&
+    !url.pathname.startsWith("/api/") &&
+    ["GET", "HEAD"].includes(request.method)
+  ) {
+    const target = new URL(moduleUrl(module, host));
+    target.search = url.search;
+    target.searchParams.delete("module");
+    return NextResponse.redirect(target, 308);
+  }
+  if (
+    !host.local &&
+    !host.singleDomain &&
     host.module !== "home" &&
     centralPath(host.module) &&
     !url.pathname.startsWith("/api/")

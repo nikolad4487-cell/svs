@@ -50,7 +50,7 @@ Prijavi se u svaki stvoreni sandučić preko adrese koju Zoho koristi za tvoj po
 2. Dodaj ili uredi **WEBMAIL_LOGIN_URL**.
 3. Kao vrijednost stavi punu HTTPS adresu Zoho prijave koju stvarno koristiš, primjerice `https://mail.zoho.eu`. To je obična konfiguracija; ne treba unositi e-adresu, lozinku ili administratorski ključ.
 4. Primijeni vrijednost za Production i pokreni novu objavu (**Redeploy** ili sljedeći GitHub push).
-5. Nakon dovršetka otvori `https://isvu.me/webmail` i klikni **Otvori Webmail**. Otvara se Zoho, gdje se korisnik prijavljuje svojim Zoho podacima.
+5. Nakon dovršetka otvori `https://webmail.isvu.me` i klikni **Otvori Webmail**. Otvara se Zoho, gdje se korisnik prijavljuje svojim Zoho podacima.
 
 ISVU prijava ne prijavljuje automatski u Zoho. Tipka ne stvara sandučiće, ne kopira poruke u ISVU i ne zaobilazi ograničenje paketa.
 

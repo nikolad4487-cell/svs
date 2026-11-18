@@ -12,7 +12,9 @@ test("production central portal and both administrations use root-domain paths; 
     ["studomat", "https://studomat.isvu.me"],
     ["merlin", "https://merlin.isvu.me"],
     ["auth", "https://auth.isvu.me"],
-    ["webmail", "https://isvu.me/webmail"],
+    ["webmail", "https://webmail.isvu.me"],
+    ["raspored", "https://raspored.isvu.me"],
+    ["issp", "https://issp.isvu.me"],
   ] as const)
     assert.equal(moduleUrl(module, host("auth.isvu.me")), url);
   for (const [path, module] of [
@@ -99,6 +101,7 @@ test("configured custom domain keeps canonical navigation when Vercel also injec
   assert.equal(moduleUrl("admin", production), "https://isvu.me/admin/sustav");
   assert.equal(moduleUrl("studomat", production), "https://studomat.isvu.me");
   assert.equal(moduleUrl("referada", production), "https://referada.isvu.me");
+  assert.equal(moduleUrl("webmail", production), "https://webmail.isvu.me");
 });
 
 test("production deployment aliases generate canonical destinations while preview aliases remain isolated", () => {
@@ -108,6 +111,7 @@ test("production deployment aliases generate canonical destinations while previe
   assert.equal(moduleUrl("admin", production), "https://isvu.me/admin/sustav");
   assert.equal(moduleUrl("referada", production), "https://referada.isvu.me");
   assert.equal(moduleUrl("auth", production), "https://auth.isvu.me");
+  assert.equal(moduleUrl("webmail", production), "https://webmail.isvu.me");
   const preview = resolveHost(alias, "isvu.me", "", [alias])!;
   assert.equal(
     moduleUrl("portal", preview),

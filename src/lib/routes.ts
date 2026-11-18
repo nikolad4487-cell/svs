@@ -4,8 +4,9 @@ export const centralPaths = {
   portal: "/admin",
   isvu: "/admin/studiji",
   admin: "/admin/sustav",
-  webmail: "/webmail",
 } as const;
+// Recognize old bookmarks without making them canonical navigation targets.
+const legacyPaths = { webmail: "/webmail" } as const;
 export function centralPath(module: ModuleSlug | "home") {
   return centralPaths[module as keyof typeof centralPaths];
 }
@@ -38,10 +39,12 @@ export function publicRoute(
   let module: ModuleSlug | "home" =
     fallback && isModule(fallback) ? fallback : host.module;
   if (host.module === "home") {
-    const central = Object.entries(centralPaths).find(([, p]) => p === path);
-    if (central) {
-      if (fallback && fallback !== central[0]) return null;
-      module = central[0] as ModuleSlug;
+    const matchedPath = Object.entries({ ...centralPaths, ...legacyPaths }).find(
+      ([, p]) => p === path,
+    );
+    if (matchedPath) {
+      if (fallback && fallback !== matchedPath[0]) return null;
+      module = matchedPath[0] as ModuleSlug;
       return { module, faculty: "" };
     }
   }

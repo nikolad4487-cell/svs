@@ -15,17 +15,17 @@
 | Raspored Učiteljskog fakulteta | `https://raspored.isvu.me/ufzg` |
 | Raspored Geodetskog fakulteta | `https://raspored.isvu.me/geofzg` |
 | Prijava | `https://auth.isvu.me` |
-| Pristup pošti | `https://isvu.me/webmail` |
+| Pristup pošti | `https://webmail.isvu.me` |
 
 Portal na `/admin` dostupan je prijavljenom korisniku prema njegovim ovlastima. Administracija sustava i dalje je samo za glavnoga administratora, a administracija studija za odgovarajuće osoblje. Sam naziv putanje ne daje administratorsku ovlast.
 
-Ranije poddomene `portal`, `isvu`, `admin` i `webmail` na vlastitoj produkcijskoj domeni preusmjeravaju na odgovarajuće nove putanje. Za takve stare poveznice poddomene i dalje moraju biti spojene na Vercel. Lokalne i Vercel preview adrese zadržavaju postojeći `?module=` način rada; prihvaćaju i nove putanje. Webmail tipke koriste postojeću glavnu domenu, pa za njih nije potrebno stvarati `webmail.isvu.me`.
+Ranije poddomene `portal`, `isvu` i `admin` na vlastitoj produkcijskoj domeni preusmjeravaju na odgovarajuće nove putanje. Za takve stare poveznice poddomene i dalje moraju biti spojene na Vercel. Lokalne i Vercel preview adrese zadržavaju postojeći `?module=` način rada; prihvaćaju i nove putanje. Webmail ima vlastitu poddomenu `webmail.isvu.me`. Stara putanja `https://isvu.me/webmail` trajno preusmjerava na nju, uz očuvanje odabrane ustanove i parametara prikaza. Za Webmail se više ne generiraju tipke na glavnoj domeni.
 
 ## Pošta i e-učenje
 
 Merlin ima vlastiti izgled e-učenja, materijale, zadatke, kvizove, predaje i povratne informacije povezane s ISVU kolegijima. Za uključivanje su potrebne migracije `202611090002_native_learning.sql`, za slike/videa/dokumente `202611090003_learning_files.sql` i `202611090004_learning_files_1gb.sql`, a za kvizove `202611100001_learning_quizzes.sql`; vidi [MERLIN.md](MERLIN.md). Opcionalna Vercel varijabla `MERLIN_LMS_URL` postavlja adresu zasebnog Moodlea dostupnog kroz sklopljeni dodatni odjeljak.
 
-Webmail stranica na `/webmail` koristi opcionalnu varijablu `WEBMAIL_LOGIN_URL` za punu HTTPS adresu prijave pružatelja pošte. Bez nje prikazuje da servis nije povezan. Najprije treba aktivirati poštansku domenu i zasebne sandučiće kod odabranog pružatelja. ISVU adresa za prijavu sama ne stvara sandučić.
+Webmail stranica na `webmail.isvu.me` koristi opcionalnu varijablu `WEBMAIL_LOGIN_URL` za punu HTTPS adresu prijave pružatelja pošte. Bez nje prikazuje da servis nije povezan. Najprije treba aktivirati poštansku domenu i zasebne sandučiće kod odabranog pružatelja. ISVU adresa za prijavu sama ne stvara sandučić.
 
 Za korisnikov Zoho paket i Namecheap DNS prati [ZOHO-POSTAVLJANJE.md](ZOHO-POSTAVLJANJE.md). Webmail URL je konfiguracija; SMTP lozinke se ne stavljaju u njega.
 
@@ -60,7 +60,7 @@ Raspored `/ufzg` učitava samo ustanovu s tom oznakom i podatke koje prijavljeni
 
 Kod je pripremljen; ove se vanjske postavke ne stvaraju samim Git pushom.
 
-1. U Vercel projektu dodati `isvu.me`, `studomat.isvu.me`, `referada.isvu.me`, `merlin.isvu.me`, `issp.isvu.me`, `raspored.isvu.me` i `auth.isvu.me` u **Settings → Domains**, sve u isti projekt. Po potrebi dodati `www.isvu.me` i stare poddomene za preusmjeravanja.
+1. U Vercel projektu dodati `isvu.me`, `studomat.isvu.me`, `referada.isvu.me`, `merlin.isvu.me`, `issp.isvu.me`, `raspored.isvu.me`, `auth.isvu.me` i `webmail.isvu.me` u **Settings → Domains**, sve u isti projekt. Po potrebi dodati `www.isvu.me` i stare poddomene za preusmjeravanja.
 2. U Vercel **Environment Variables** postaviti `BASE_DOMAIN=isvu.me` za okruženje objave. To je konfiguracija, bez protokola, putanje i porta. Ako već postoji druga vrijednost, zamijeniti je; zadana vrijednost u novom kodu ne nadjačava postojeću environment varijablu.
 3. U Namecheapu ili kod stvarnog DNS pružatelja upisati **točne A/CNAME/TXT zapise koje Vercel prikaže za ovaj projekt**. Ne pretpostavljati univerzalnu IP adresu ili CNAME cilj. Za putanje `/admin`, `/ufzg` i `/geofzg` ne stvaraju se dodatni DNS zapisi.
 4. Pričekati da Vercel potvrdi domene i HTTPS certifikate te objaviti pripremljenu verziju aplikacije.

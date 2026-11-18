@@ -176,3 +176,12 @@ Migracije 202611110006/007 omogućuju nepoznato trajanje i razinu, kontrolirani 
 Dokazi: 71 jedinični test; typecheck i produkcijski webpack build; sedam novih integracijskih scenarija; 15 postojećih referadskih scenarija (svih osam vrsta upisa) i devet institucionalnih scenarija prolaze. Instalacija na svježem PostgreSQL-u s pravim Auth/Storage shemama ima 47 RLS tablica. Novi test čuva program s drugim izvornim UUID-om i studentskim upisom, provjerava transakcijski rollback, nepoznate podatke i pristup drugoj ustanovi.
 
 Produkcijski read-only pregled prije uvoza: 125 ustanova i jedan postojeći Učiteljski studij. Produkcijski preview potvrđuje da migracija 006 još nije primijenjena. Zato 54 nove ustanove i 706 kataloških zapisa trenutačno postoje u lokalnoj testnoj bazi; produkcijski uvoz zahtijeva pripremljeni SQL paket 006+007. Pregled i CSV: reports/studijski-programi-2024.*. Koraci: docs/STUDIJSKI-PROGRAMI-IZ-PDF-A.md.
+
+
+## Webmail na vlastitoj poddomeni (18. 11. 2026.)
+
+Ispravljen je preostali kanonski zapis Webmaila: navigacija sada generira `https://webmail.isvu.me`. Stara putanja `https://isvu.me/webmail` preusmjerava statusom 308 na tu poddomenu, zadržava ustanovu i parametre prikaza te uklanja zastarjeli `module` parametar. Webmail poddomena više ne preusmjerava natrag na glavnu domenu, pa nema petlje. Lokalni i preview prikaz ostaju podržani; ranije odabrane putanje centralnog portala i administracija ostaju iste.
+
+Provjereni su Studomat, Referada, Merlin, Raspored, ISSP, Webmail i Prijava, uključujući generirane tipke, anonimni pristup i povratni modul prijave. Prolaze 71 jedinični test, typecheck, produkcijska webpack izgradnja, sedam HTTP scenarija domena i devet postojećih scenarija izvornog e-učenja (uključujući poveznicu pružatelja pošte). Promjena ne zahtijeva SQL ili izmjene korisničkih podataka. Dokumentacija domena, Merlina i Zoho konfiguracije usklađena je s novom adresom.
+
+Javna HTTPS provjera iz ovog okruženja nije potvrđena: naslijeđeni mrežni proxy odbija CONNECT za `webmail.isvu.me` odgovorom 403. Lokalne provjere stvarnih HTTP Host zahtjeva ne predstavljaju provjeru javnog DNS-a, certifikata ili statusa Vercel objave. DNS i Vercel postavke nisu mijenjane.

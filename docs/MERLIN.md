@@ -70,7 +70,7 @@ To je poveznica na zasebnu Moodle prijavu, bez prijenosa lozinki, jedinstvene pr
 
 Prema korisnikovu odabranom paketu Zoho je ograničen na pet poštanskih sandučića. To ne ograničava broj ISVU računa. Svaki sandučić ima vlastitu prijavu; ne treba dijeliti jedan sandučić među studentima ili ustanovama.
 
-Webmail na `https://isvu.me/webmail` otvara vanjsku prijavu kada se u Vercelu postavi `WEBMAIL_LOGIN_URL` na stvarnu HTTPS adresu korištenog Zoho podatkovnog centra, primjerice `https://mail.zoho.eu` ili `https://mail.zoho.com`, i pokrene nova objava. Varijabla je konfiguracija; ne unositi Zoho lozinku. Tipka ne stvara dodatne račune ili poruke i ne zaobilazi ograničenje paketa.
+Webmail na `https://webmail.isvu.me` otvara vanjsku prijavu kada se u Vercelu postavi `WEBMAIL_LOGIN_URL` na stvarnu HTTPS adresu korištenog Zoho podatkovnog centra, primjerice `https://mail.zoho.eu` ili `https://mail.zoho.com`, i pokrene nova objava. Varijabla je konfiguracija; ne unositi Zoho lozinku. Tipka ne stvara dodatne račune ili poruke i ne zaobilazi ograničenje paketa.
 
 Koraci za Namecheap, MX, SPF, DKIM, otvaranje računa i provjeru poruka: [ZOHO-POSTAVLJANJE.md](ZOHO-POSTAVLJANJE.md).
 

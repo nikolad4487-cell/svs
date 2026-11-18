@@ -131,16 +131,14 @@ try {
         assert.equal(to.hostname, "auth.isvu.me");
         assert.equal(to.searchParams.get("next"), module);
       }
-      const isspLogin = await request(H("issp"), "/");
-      assert.equal(isspLogin.status, 307);
-      assert.equal(
-        new URL(isspLogin.headers.location).hostname,
-        "auth.isvu.me",
-      );
-      assert.equal(
-        new URL(isspLogin.headers.location).searchParams.get("next"),
-        "issp",
-      );
+      for (const module of ["studomat", "referada", "merlin", "raspored", "issp", "webmail"]) {
+        const login = await request(H(module), "/");
+        assert.equal(login.status, 307, module);
+        const target = new URL(login.headers.location);
+        assert.equal(target.hostname, "auth.isvu.me", module);
+        assert.equal(target.searchParams.get("next"), module);
+      }
+      assert.equal((await request(H("auth"), "/")).status, 200);
       for (const [sub, path] of [
         ["portal", "/admin"],
         ["isvu", "/admin/studiji"],
@@ -164,7 +162,10 @@ try {
         `https://referada.isvu.me:${port}`,
         `https://studomat.isvu.me:${port}`,
         `https://issp.isvu.me:${port}`,
-        `https://isvu.me:${port}/webmail`,
+        `https://webmail.isvu.me:${port}`,
+        `https://merlin.isvu.me:${port}`,
+        `https://raspored.isvu.me:${port}`,
+        `https://auth.isvu.me:${port}`,
       ])
         assert.ok(home.text.includes(`href="${target}"`), target);
       assert.ok(
@@ -239,15 +240,27 @@ try {
     },
   );
   await check(
-    "external services show connection status and Webmail uses the existing root domain",
+    "Webmail uses its own subdomain; old bookmarks preserve context and never redirect back to the root path",
     async () => {
-      const anonymous = await request(H(""), "/webmail");
+      const legacy = await request(H(""), "/webmail?institution=" + f.a + "&view=Posta");
+      assert.equal(legacy.status, 308);
+      const destination = new URL(legacy.headers.location);
+      assert.equal(destination.hostname, "webmail.isvu.me");
+      assert.equal(destination.pathname, "/");
+      assert.equal(destination.searchParams.get("institution"), f.a);
+      assert.equal(destination.searchParams.get("view"), "Posta");
+      const legacyWithOverride = await request(H(""), "/webmail?module=studomat");
+      assert.equal(legacyWithOverride.status, 308);
+      const overrideTarget = new URL(legacyWithOverride.headers.location);
+      assert.equal(overrideTarget.hostname, "webmail.isvu.me");
+      assert.equal(overrideTarget.searchParams.has("module"), false);
+      const anonymous = await request(H("webmail"), "/");
       assert.equal(anonymous.status, 307);
       assert.equal(
         new URL(anonymous.headers.location).searchParams.get("next"),
         "webmail",
       );
-      const webmail = await request(H(""), "/webmail", null, cookies.student);
+      const webmail = await request(H("webmail"), "/", null, cookies.student);
       assert.equal(webmail.status, 200);
       assert.ok(webmail.text.includes("Poštanski servis još nije povezan"));
       assert.ok(!webmail.text.includes("WEBMAIL_LOGIN_URL"));
@@ -256,9 +269,7 @@ try {
       assert.ok(merlin.text.includes("Moji kolegiji"));
       assert.ok(merlin.text.includes("Odaberite kolegij"));
       assert.ok(!merlin.text.includes("Funkcionalnosti ovog"));
-      const old = await request(H("webmail"), "/");
-      assert.equal(old.status, 308);
-      assert.equal(new URL(old.headers.location).pathname, "/webmail");
+      assert.ok(!webmail.text.includes(`https://isvu.me:${port}/webmail`));
     },
   );
   await check(
