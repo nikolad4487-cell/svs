@@ -185,3 +185,12 @@ Ispravljen je preostali kanonski zapis Webmaila: navigacija sada generira `https
 Provjereni su Studomat, Referada, Merlin, Raspored, ISSP, Webmail i Prijava, uključujući generirane tipke, anonimni pristup i povratni modul prijave. Prolaze 71 jedinični test, typecheck, produkcijska webpack izgradnja, sedam HTTP scenarija domena i devet postojećih scenarija izvornog e-učenja (uključujući poveznicu pružatelja pošte). Promjena ne zahtijeva SQL ili izmjene korisničkih podataka. Dokumentacija domena, Merlina i Zoho konfiguracije usklađena je s novom adresom.
 
 Javna HTTPS provjera iz ovog okruženja nije potvrđena: naslijeđeni mrežni proxy odbija CONNECT za `webmail.isvu.me` odgovorom 403. Lokalne provjere stvarnih HTTP Host zahtjeva ne predstavljaju provjeru javnog DNS-a, certifikata ili statusa Vercel objave. DNS i Vercel postavke nisu mijenjane.
+
+
+## Kolokviji u Studomatu (25. 11. 2026.)
+
+Dodana je stavka Ispiti → Kolokviji za profesora i studenta. Profesor određuje datum/vrijeme, rokove prijave i odjave i broj mjesta za svoje kolegije; može urediti/otkazati budući termin i pregledati prijavljene. Student se prijavljuje ili odjavljuje na aktivno upisanom kolegiju. Pregled grupira i filtrira termine po mjesecu održavanja prema Europe/Zagreb. Kolokviji su odvojeni od završnih ispita/ocjena.
+
+Migracija 202611250001_colloquia.sql dodaje dvije RLS tablice i kontrolirane funkcije; broj aplikacijskih RLS tablica je 49. Kontrole uključuju vlastitu ustanovu/kolegij, aktivni upis, rokove, jedinstvenost prijave, kapacitet pod zaključavanjem, revizije i zabranu izravnih upisa. UI nedostajuću migraciju prikazuje samo na novoj stranici, bez blokiranja ostalih modula. Produkcijski upis migracije nije proveden; datoteka je pripremljena za vlasnika baze.
+
+Provjere: 73 jedinična testa, typecheck i produkcijski webpack build prolaze; novi integracijski scenariji provjeravaju profesora, studente i drugu ustanovu, istodobne prijave zadnjeg mjesta, privatnost, odjavu, rokove, otkazivanje, zastarjele revizije i stvarni HTTP obrazac s hrvatskim vremenom, mjesečni filtar i odbijanje studentskih izmjena/stranog Origina. Prolazi i devet postojećih scenarija ispitnog postupka. Svježa instalacija provjerena je s pravom Auth/Storage shemom i 49 RLS tablica. Koraci u docs/KOLOKVIJI.md.

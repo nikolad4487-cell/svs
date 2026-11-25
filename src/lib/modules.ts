@@ -2,6 +2,7 @@ export const studomatGroups = {
   Početna: ["Pregled studija"],
   Ispiti: [
     "Prijava ispita",
+    "Kolokviji",
     "Odjava ispita",
     "Ispiti u tijeku",
     "Pregled ispitnih rokova",

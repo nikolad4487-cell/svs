@@ -1,3 +1,5 @@
+import { Colloquia } from "./colloquia";
+import {colloquiumErrors} from "@/lib/academic/colloquia";
 import { facultyUrl } from "@/lib/routes";
 import { academicData } from "@/lib/academic/data";
 import { navigation } from "@/lib/context";
@@ -115,7 +117,7 @@ export async function AcademicWorkspace({
           role="alert"
           className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
         >
-          {workflowErrors[status] || registrarErrors[status] || (
+          {colloquiumErrors[status] || workflowErrors[status] || registrarErrors[status] || (
             <>
               Promjena nije spremljena. Provjerite unesene vrijednosti,
               studenta, povezanost programa, akademske godine i kolegija, rokove
@@ -136,6 +138,8 @@ export async function AcademicWorkspace({
         <RegistrarWorkspace data={data} view={view} studentId={studentId} />
       ) : module === "portal" ? (
         <Portal data={data} view={view} status={status} />
+      ) : module === "studomat" && view === "Kolokviji" ? (
+        <Colloquia data={data} month={date} />
       ) : module === "studomat" ? (
         <Studomat
           data={data}

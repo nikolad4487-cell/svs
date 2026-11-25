@@ -47,3 +47,8 @@ Rezultat se zaokružuje na dva decimalna mjesta. Vrijednosti i obrazloženje uno
 - `npm run test:student-cohort`: izdvojeni lokalni podaci provjeravaju skrivanje agregata za 1–4 studenta te točne ECTS i brojeve kolegija za pet studenata, bez izmišljene ocjene kada nema rezultata.
 
 Testovi ne koriste produkcijske ključeve ni stvarne podatke. Preglednički su provjereni prijava, početna statistika, otvaranje detalja kolegija, osobni obrazac i širina 390 px. Izgradnja je lokalno provjerena s `npx next build --webpack`; TypeScript s `npm run typecheck`.
+
+
+## Kolokviji
+
+[Prijave kolokvija po mjesecima, nastavnički termini i migracija](KOLOKVIJI.md). Kolokviji se vode odvojeno od završnih ispita i ocjena.

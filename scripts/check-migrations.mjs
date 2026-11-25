@@ -72,9 +72,9 @@ try {
       "select count(*) from pg_tables where schemaname='public' and rowsecurity",
     ),
   );
-  if (tables !== 47) throw new Error(`Expected 47 RLS tables, got ${tables}`);
+  if (tables !== 49) throw new Error(`Expected 49 RLS tables, got ${tables}`);
   console.log(
-    "Fresh SQL installer verified on PostgreSQL with real Auth and Storage schemas; all 47 application tables have RLS.",
+    "Fresh SQL installer verified on PostgreSQL with real Auth and Storage schemas; all 49 application tables have RLS.",
   );
 } finally {
   sql("postgres", `drop database ${name}`);
